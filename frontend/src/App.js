@@ -7,6 +7,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Carousel from 'react-bootstrap/Carousel';
 
 
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -153,24 +154,36 @@ function App() {
           </Form>
         </div>        
       ) : (
-        <div className="center">
-          <Form onSubmit={e => submitLogin(e)}>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" placeholder="Enter email" value={email} onChange={e => setEmail(e.target.value)} />
-              <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-              </Form.Text>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </Form>
-        </div>
+        // <div className="center">
+        //   <Form onSubmit={e => submitLogin(e)}>
+        //     <Form.Group className="mb-3" controlId="formBasicEmail">
+        //       <Form.Label>Email address</Form.Label>
+        //       <Form.Control type="email" placeholder="Enter email" value={email} onChange={e => setEmail(e.target.value)} />
+        //       <Form.Text className="text-muted">
+        //         We'll never share your email with anyone else.
+        //       </Form.Text>
+        //     </Form.Group>
+        //     <Form.Group className="mb-3" controlId="formBasicPassword">
+        //       <Form.Label>Password</Form.Label>
+        //       <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+        //     </Form.Group>
+        //     <Button variant="primary" type="submit">
+        //       Submit
+        //     </Button>
+        //   </Form>
+        // </div>
+        <div>
+      <Carousel>
+        <Carousel.Item interval={7000}>
+          <img className="d-block w-100" src="https://static.vecteezy.com/system/resources/previews/021/501/598/non_2x/boy-recycling-cartoon-colored-clipart-illustration-free-vector.jpg"/>
+        </Carousel.Item>
+        <Carousel.Item interval={7000}>
+          <img
+            className="d-block w-100"   src="https://grupodeblas.com/wp-content/uploads/2023/07/simbolos-de-reciclaje-grupodeblas2.jpg"
+          />
+        </Carousel.Item>
+      </Carousel>
+    </div>
       )
     }
     </div>
