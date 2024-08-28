@@ -56,13 +56,13 @@ class UsuarioManager(BaseUserManager):
 class Usuario (AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(max_length=70,unique=True,primary_key=True)
     username = models.CharField(max_length=50)
-    nombre = models.CharField(max_length=50)
-    apellido = models.CharField(max_length=50)
-    fechaNac = models.DateField()
+    nombre = models.CharField(max_length=50,null=True)
+    apellido = models.CharField(max_length=50,null=True)
+    fechaNac = models.DateField(null=True)
     estado = models.BooleanField(default=True)
-    tipoUser = models.ForeignKey(TipoUsuario,on_delete=models.CASCADE)
-    telefono = models.CharField(max_length=50)
-    foto = models.CharField(max_length=50)
+    tipoUser = models.ForeignKey(TipoUsuario,on_delete=models.CASCADE,null=True)
+    telefono = models.CharField(max_length=50,null=True)
+    foto = models.CharField(max_length=50,null=True)
     fechaReg = models.DateField(auto_now_add=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FILEDS = ['username']
