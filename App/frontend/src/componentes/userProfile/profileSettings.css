@@ -1,0 +1,12 @@
+.profile-settings-container {
+    margin: 2rem 0;
+}
+  
+.profile-settings-form {
+    max-width: 600px;
+    margin: auto;
+}
+  
+.profile-settings-form .form-label {
+    margin-bottom: 0.5rem;
+}

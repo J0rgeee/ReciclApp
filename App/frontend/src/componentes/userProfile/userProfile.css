@@ -1,0 +1,21 @@
+.user-profile-container {
+    margin-top: 2rem;
+  }
+  
+  .user-profile-card {
+    text-align: center;
+  }
+  
+  .user-profile-image {
+    width: 150px;
+    border-radius: 50%;
+  }
+  
+  .user-profile-title {
+    margin-top: 1rem;
+  }
+  
+  .user-profile-email {
+    color: #6c757d;
+  }
+  
