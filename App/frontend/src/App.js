@@ -11,14 +11,10 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 
-
-
-
-import { BarraNavegacion } from './componentes/BarraNavegacion';
 import { Carrusel } from './componentes/Carrusel';
-
-
 
 
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -33,6 +29,7 @@ function App() {
   
   const [usuarioActivo,setUsuarioActivo] = useState();
   const [email,setEmail] = useState('');
+  const [registerForm,setRegisterForm] = useState('');
   const [password,setPassword] = useState('');
 
   useEffect(()=> {
@@ -69,17 +66,46 @@ function App() {
     });
   }
 
+  function update_from_btn(){
+    if(registerForm){
+      document.getElementById("form_btn").innerHTML = "Register";
+      setRegisterForm(false);
+    } else {
+      document.getElementById("form_btn").innerHTML = "Log in";
+      setRegisterForm(true);
+    }
+  }
+
   if(usuarioActivo){
     return (
       <div>
-        <BarraNavegacion/>
+        <Navbar bg="dark" variant="dark">
+          <Container>
+            <Navbar.Brand>ReciclApp</Navbar.Brand>
+            <Navbar.Brand><img
+                  src=""
+                  width="30"
+                  height="30"
+                  className="d-inline-block align-top"
+                  alt="logoReci"
+                /></Navbar.Brand>
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Button >Inicio</Button> 
+              <Button >Foro</Button>
+              <form onSubmit={e=> submitLogout(e)}>
+                <Button type="submit" variant="primary" > Logout </Button>    
+                </form>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+
+
         <br></br>
         <br></br>
         <br></br>
         <Container>
-          <form onSubmit={e=> submitLogout(e)}>
-            <Button type="submit" variant="secundary" > Logout </Button>    
-          </form>
+         
         </Container>
       </div>
     )
@@ -88,11 +114,36 @@ function App() {
   
   return (
     <div>
-     <BarraNavegacion/>
+      <Navbar bg="dark" variant="dark">
+          <Container>
+            <Navbar.Brand>ReciclApp</Navbar.Brand>
+            <Navbar.Brand><img
+                  src=""
+                  width="30"
+                  height="30"
+                  className="d-inline-block align-top"
+                  alt="logoReci"
+                /></Navbar.Brand>
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Button >Inicio</Button> 
+              <Button >Foro</Button>
+              <Button type="submit" variant="primary" id='form_btn' onClick={update_from_btn}> Registrarse </Button>    
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
      <br></br>
      <br></br>
      <br></br>
-     <Container>
+
+    {
+      registerForm ? (
+        <div>
+          Formulario de registro 
+        </div>
+      ):
+      (
+        <Container>
         <Row>
           <Col>  
             <Carrusel/>
@@ -125,6 +176,8 @@ function App() {
           </Col>
         </Row>
       </Container>
+      )
+    }     
     </div>
   );
 }
