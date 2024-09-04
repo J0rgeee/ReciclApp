@@ -1,38 +1,77 @@
-import React from "react";
-import './userProfile.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from "react";
+import './UserProfile.css'
+import { Container, Row, Col, Card, Button, ListGroup, ListGroupItem, CardBody } from 'react-bootstrap';
+import ProfileSettings from './profileSettings';
 
+const UserProfile = () => {
+  const [selectedOption, setSelectedOption] = useState('perfil');
+  const [showAddressForm, setShowAddressForm] = useState(false);
 
-export function userProfile(){
-    return (
-    <div className="user-profile-container container">
+  const toogleAddressForm = () => {
+    setShowAddressForm((prev) => !prev);
+  };
 
-      <div className="card user-profile-card">
+  return (
+    <Container>
+      <Row>
+        <Col>
+          <ListGroup>
+            <ListGroupItem action active={selectedOption === 'perfil'} onClick={() => 
+              { setSelectedOption('perfil');
+              setShowAddressForm(false);
+              }}>
+              Mi Perfil
+            </ListGroupItem>
 
-        <div className="card-body">
-          <h4 className="card-title user-profile-title">Nombre del Usuario</h4>
-          <p className="text-muted user-profile-email">Correo</p>
-          <br></br>
-          {/*Falta route que diriga a configuracion*/}
-          <button className="btn btn-primary">Editar Perfil</button>
-        </div>
+            <ListGroupItem action active={selectedOption === 'configuracion'} onClick={() => 
+              { setSelectedOption('configuracion');
+                setShowAddressForm(false);
+              }}>
+              Configuracion
+            </ListGroupItem>
 
-      </div>
+            <ListGroupItem action active={selectedOption === 'direcciones'} onClick={() => { 
+              setSelectedOption('direcciones');
+              setShowAddressForm(false);
+              }}>
+              Direcciones de domicilio
+            </ListGroupItem>
 
-      <div>
-        <h3>Datos de reciclaje</h3>
-        <br></br>
-        <p>Puntos de reciclapp</p>
-      </div>
+          </ListGroup>
+        </Col>
 
-      <div>
-        <h2>Mis direcciones</h2>
-        <br></br>
-        <p>Datos de direcciones</p>
-        {/*Deberia enrutar igualmente a usersettings*/}
-        <button>Configurar direcciones</button>
-      </div>
+        <Col>
 
-    </div>
-    )
-}
+          {selectedOption === 'perfil' && (
+            <Card className="user-profile-card">
+              <CardBody>
+                <h4>Nombre</h4>
+                <p>Email</p>
+                <Button variant="primary" onClick={() => setSelectedOption('configuracion')}>
+                  Editar perfil
+                </Button>
+              </CardBody>
+            </Card>
+          )}
+          
+          {selectedOption === 'configuracion' && <ProfileSettings/>}
+
+          {selectedOption === 'direcciones' && (
+            <Card className="address-card">
+              <CardBody>
+                <h4>Direcciones de domicilio</h4>
+                <ul>
+                  <li>Calle Huechuraba, 1540</li>
+                </ul>
+                <Button variant="secondary" onClick={toogleAddressForm}>{showAddressForm ? 'Ocultar' : 'Agregar Direccion'}</Button>
+                {showAddressForm && <ProfileSettings showAddressForm={showAddressForm}/>}
+              </CardBody>
+            </Card>
+          )}
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+export default UserProfile;
