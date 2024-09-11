@@ -6,6 +6,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import { Carrusel } from './componentes/Carrusel';
@@ -50,22 +52,28 @@ export function Home() {
         });
     }
 
-    function submitLogout(e){
+    function submitLogout(e) {
         e.preventDefault();
         client.post(
-          "/api/logout",
-          {withCredentials:true}
-        ).then(function(res){
-          setUsuarioActivo(false);
+            "/api/logout",
+            { withCredentials: true }
+        ).then(function (res) {
+            setUsuarioActivo(false);
         });
-      }
+    }
+    
+    const [show, setShow] = useState(false);
 
-    if(usuarioActivo){
-        return(
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+
+    if (usuarioActivo) {
+        return (
             <div>
-                <h1>MENU USUARIO</h1>    
-                <form onSubmit={e=> submitLogout(e)}>
-                <Button type="submit" variant="primary" > Logout </Button>    
+                <h1>MENU USUARIO</h1>
+                <form onSubmit={e => submitLogout(e)}>
+                    <Button type="submit" variant="primary" > Logout </Button>
                 </form>
             </div>
         )
@@ -100,7 +108,23 @@ export function Home() {
                                     <br></br>
                                     <Button variant="primary" type='submit'>Iniciar sesion</Button>
                                 </Card.Body>
-                                <Card.Footer className="text-muted">Crea tu cuenta aqui!</Card.Footer>
+                                <Card.Footer className="text-muted">
+                                    <Button variant="primary" onClick={handleShow}> Crea tu cuenta aqui! </Button>
+                                    <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} >
+                                        <Modal.Header closeButton>
+                                            <Modal.Title>Registrarse</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            Formulario de registro 
+                                        </Modal.Body>
+                                        <Modal.Footer>
+                                            <Button variant="secondary" onClick={handleClose}>
+                                                Close
+                                            </Button>
+                                            <Button variant="primary">Crear cuenta</Button>
+                                        </Modal.Footer>
+                                    </Modal>
+                                </Card.Footer>
                             </Card>
                         </Form>
                     </Col>
