@@ -74,9 +74,9 @@ export function BarraNavegacion() {
                 /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Link to='/'><Button >Inicio</Button></Link> 
-              <Link to='/foro'><Button >Foro</Button></Link>
-              <Link to='/tienda'><Button >Tienda</Button></Link>
+              <Link to='/'>       <Button >Inicio</Button>  </Link> 
+              <Link to='/foro'>   <Button >Foro</Button>    </Link>
+              <Link to='/tienda'> <Button >Tienda</Button>  </Link>
             </Navbar.Collapse>
           </Container>
         </Navbar>

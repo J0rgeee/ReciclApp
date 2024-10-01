@@ -1,7 +1,5 @@
 import './App.css';
 import React from 'react';
-import axios from 'axios';
-import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Routes,Route} from 'react-router-dom'
 
@@ -10,16 +8,6 @@ import {Home } from './pages/Home'
 import {Foro} from './pages/Foro'
 import {Tienda } from './pages/Tienda'
 
-
-
-
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.withCredentials = true;
-
-const client = axios.create({
-  baseURL: "http://localhost:8000"
-});
 
 function App() {
   

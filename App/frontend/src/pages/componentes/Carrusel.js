@@ -1,22 +1,25 @@
 import React from 'react'
 import Carousel from 'react-bootstrap/Carousel';
+import { Image } from 'react-bootstrap';
+import './styles.css';
 
 
 export function Carrusel() {
   return (
     <div>
     <Carousel fade>
+
       <Carousel.Item>
-        <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-        </Carousel.Caption>
+        <div className='contenedor'>
+          <Image src="/carrusel.png" fluid className='imagen'/>
+        </div>
       </Carousel.Item>
       <Carousel.Item>
-        <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </Carousel.Caption>
+        <div className='contenedor'>
+          <Image src="/carrusel2.jpg" fluid className='imagen'/>
+
+        </div>
+
       </Carousel.Item>
     </Carousel>
 

@@ -1,0 +1,13 @@
+.imagen{
+    width: 70%;  /* Ajusta el ancho como desees */
+    height: 100%; /* Ajusta la altura como desees */
+    object-fit: cover; /* Mantiene la proporción y recorta la imagen si es necesario */
+}
+
+
+.contenedor {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;     /* Centra verticalmente */
+    height: 100vh;          /* Ajusta la altura según sea necesario */
+}
