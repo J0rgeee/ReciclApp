@@ -2,49 +2,51 @@ import React from 'react'
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
-import { Outlet,Link } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import './barranav.style.css';
+import { Image } from 'react-bootstrap';
 
 const client = axios.create({
-    baseURL: "http://localhost:8000"
-  });
+  baseURL: "http://localhost:8000"
+});
 
 
 export function BarraNavegacion() {
 
 
-  const [usuarioActivo,setUsuarioActivo] = useState();
-  useEffect(()=> {
-    client.get("/api/user").then(function(res){
+  const [usuarioActivo, setUsuarioActivo] = useState();
+  useEffect(() => {
+    client.get("/api/user").then(function (res) {
       setUsuarioActivo(true);
     })
-    .catch(function(error){
-      setUsuarioActivo(false);
-    });
+      .catch(function (error) {
+        setUsuarioActivo(false);
+      });
   }, []);
 
- 
 
 
-  if(usuarioActivo){
+
+  if (usuarioActivo) {
     return (
       <div>
-        <Navbar bg="dark" variant="dark">
+        <Navbar className='navbar-reci' expand="lg">
           <Container>
             <Navbar.Brand>ReciclApp</Navbar.Brand>
             <Navbar.Brand><img
-                  src=""
-                  width="30"
-                  height="30"
-                  className="d-inline-block align-top"
-                  alt="logoReci"
-                /></Navbar.Brand>
+              src=""
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+              alt="logoReci"
+            /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Button >Inicio</Button> 
+              <Button >Inicio</Button>
               <Button >Foro</Button>
-            
+
             </Navbar.Collapse>
           </Container>
         </Navbar>
@@ -54,34 +56,31 @@ export function BarraNavegacion() {
         <br></br>
         <br></br>
         <Container>
-         
+
         </Container>
       </div>
     )
-  } 
+  }
 
   return (
     <div>
-    <Navbar bg="dark" variant="dark">
-          <Container>
-            <Navbar.Brand>ReciclApp</Navbar.Brand>
-            <Navbar.Brand><img
-                  src=""
-                  width="30"
-                  height="30"
-                  className="d-inline-block align-top"
-                  alt="logoReci"
-                /></Navbar.Brand>
-            <Navbar.Toggle />
-            <Navbar.Collapse className="justify-content-end">
-              <Link to='/'>       <Button >Inicio</Button>  </Link> 
-              <Link to='/foro'>   <Button >Foro</Button>    </Link>
-              <Link to='/tienda'> <Button >Tienda</Button>  </Link>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
+      <Navbar className='navbar-reci'>
+        <Container>
+          <Navbar.Brand>
+            <img src="/logo.png" width="100" height="100" className="d-inline-block align-top" alt="logoReci" />
+          </Navbar.Brand>
+          <Navbar.Brand>ReciclApp</Navbar.Brand>
 
-        <Outlet/>
+          <Navbar.Toggle />
+          <Navbar.Collapse className="justify-content-end">
+            <Link to='/'>      <Image src='/botones/b1.png'  width="100" className="d-inline-block align-top"/>  </Link>
+            <Link to='/foro'>   <Image src='/botones/b2.png'  width="100" className="d-inline-block align-top"/>    </Link>
+            <Link to='/tienda'> <Image src='/botones/b3.png'  width="100" className="d-inline-block align-top"/>  </Link>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
+      <Outlet />
     </div>
   )
 }

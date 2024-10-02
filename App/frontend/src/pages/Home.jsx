@@ -11,6 +11,7 @@ import Card from 'react-bootstrap/Card';
 import { Carrusel } from './componentes/Carrusel';
 import { Register } from './componentes/Register';
 import { Login } from './componentes/Login';
+import { MenuUsuario } from './componentes/MenuUsuario';
 
 
 
@@ -48,7 +49,7 @@ export function Home() {
     if (usuarioActivo) {
         return (
             <div>
-                <h1>MENU USUARIO</h1>
+                {/* <MenuUsuario/> */}
                 <form onSubmit={e => submitLogout(e)}>
                     <Button type="submit" variant="primary" > Logout </Button>
                 </form>

@@ -16,7 +16,7 @@ const client = axios.create({
 
 export function Login() {
     
-    const [usuarioActivo, setUsuarioActivo] = useState();
+    const [, setUsuarioActivo] = useState();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 

@@ -1,0 +1,19 @@
+.navbar-reci{
+    background-color: #228b22;
+}
+
+.navbar-reci .navbar-brand,
+.navbar-reci .nav-link{
+    color: white;
+}
+
+.navbar-reci .nav-link:hover{
+    color: #a9dfbf;
+}
+
+.imagen{
+    width: 100;  /* Ajusta el ancho como desees */
+    height: 100; /* Ajusta la altura como desees */
+    object-fit: cover; /* Mantiene la proporción y recorta la imagen si es necesario */
+}
+
