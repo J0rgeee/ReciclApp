@@ -1,7 +1,8 @@
 import React from 'react'
 import { useState } from 'react';
-import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import axios from 'axios';
 
 import Form from 'react-bootstrap/Form';
@@ -35,18 +36,38 @@ export function Login() {
     }
 
     return (
-        <div>
-            <Form onSubmit={e => submitLogin(e)}>
-                <Form.Group as={Row} className="auto" controlId="formPlaintextEmail">
-                        <Form.Control size="lg" placeholder="email@example.com" value={email} onChange={e => setEmail(e.target.value)} />
-                </Form.Group>
-                <br></br>
-                <Form.Group as={Row} className="auto" controlId="formPlaintextPassword">
-                    <Form.Control size="lg" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-                </Form.Group>
-                <br></br>
-                <Button variant="primary" type='submit' id='login'>Iniciar sesion</Button>
-            </Form>
-        </div>
+        
+      
+            <div className='container centrar'>
+                <Card className='cont-login text-center'>
+                        <Card.Title className='card-title'>Inicia sesión con tu cuenta</Card.Title>
+                        
+                            <Form onSubmit={e => submitLogin(e)}>
+                                <Form.Group controlId="formPlaintextEmail" className='mb-3'>
+                                    <FloatingLabel 
+                                    controlId="floatingInput" 
+                                    label="Usuario"
+                                    className='mb-3'
+                                    >
+                                    <Form.Control className='control' placeholder="" value={email} onChange={e => setEmail(e.target.value)} />
+                                    </FloatingLabel>
+                                </Form.Group>
+                            
+                                <Form.Group controlId="formPlaintextPassword" className="mb-3">
+                                    <FloatingLabel 
+                                    controlId="floatingInput" 
+                                    label="Contraseña"
+                                    className='mb-3'
+                                    >
+                                    <Form.Control className='control' type="password" placeholder="" value={password} onChange={e => setPassword(e.target.value)} />
+                                    </FloatingLabel>
+                                </Form.Group>
+                                <Button className='boton' type='submit' id='login'>Iniciar sesion</Button>
+                                <Card.Link className='mb-3 centrar' href='home'>Crear cuenta</Card.Link>
+                            </Form>
+                        
+                </Card>
+            </div>
+        
     )
 }

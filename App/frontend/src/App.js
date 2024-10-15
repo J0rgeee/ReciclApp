@@ -7,6 +7,7 @@ import {BarraNavegacion } from './componentes/BarraNavegacion'
 import {Home } from './pages/Home'
 import {Foro} from './pages/Foro'
 import {Tienda } from './pages/Tienda'
+import {Sesion} from './pages/Sesion'
 
 
 function App() {
@@ -16,14 +17,15 @@ function App() {
   
   return (
     <div>
-    <Routes>
-        <Route path='/' element={<BarraNavegacion/>}>
-          <Route path='foro' element={<Foro/>} />
-          <Route path='/' element={<Home/>} />
-          <Route path='tienda' element={<Tienda/>} />
-        </Route>
-    </Routes>
-        </div>
+      <Routes>
+          <Route path='/' element={<BarraNavegacion/>}>
+            <Route path='foro' element={<Foro/>} />
+            <Route path='/' element={<Home/>} />
+            <Route path='tienda' element={<Tienda/>} />
+          </Route>
+          <Route path='sesion' element={<Sesion/>} />
+      </Routes>
+    </div>
   );
 }
 

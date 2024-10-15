@@ -62,20 +62,22 @@ export function BarraNavegacion() {
     )
   }
 
+
   return (
     <div>
       <Navbar className='navbar-reci'>
-        <Container>
+        <Container className='container-fluid'>
           <Navbar.Brand>
-            <img src="/logo.png" width="100" height="100" className="d-inline-block align-top" alt="logoReci" />
+            <img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" />
           </Navbar.Brand>
           <Navbar.Brand>ReciclApp</Navbar.Brand>
 
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
-            <Link to='/'>      <Image src='/botones/b1.png'  width="100" className="d-inline-block align-top"/>  </Link>
-            <Link to='/foro'>   <Image src='/botones/b2.png'  width="100" className="d-inline-block align-top"/>    </Link>
-            <Link to='/tienda'> <Image src='/botones/b3.png'  width="100" className="d-inline-block align-top"/>  </Link>
+            <Link to='/'> <Button variant='none'><Image src='/botones/b1.png'  width="80" className="d-inline-block align-top p-2 imgbr"/> </Button> </Link>
+            <Link to='/foro'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
+            <Link to='/tienda'> <Image src='/botones/b3.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
+            <Link to='/sesion'> <Image src='/botones/b4.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
           </Navbar.Collapse>
         </Container>
       </Navbar>

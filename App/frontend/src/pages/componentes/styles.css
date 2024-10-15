@@ -1,5 +1,5 @@
 .imagen{
-    width: 70%;  /* Ajusta el ancho como desees */
+    width: 100%;  /* Ajusta el ancho como desees */
     height: 100%; /* Ajusta la altura como desees */
     object-fit: cover; /* Mantiene la proporción y recorta la imagen si es necesario */
 }
@@ -10,4 +10,48 @@
     justify-content: center; /* Centra horizontalmente */
     align-items: center;     /* Centra verticalmente */
     height: 100vh;          /* Ajusta la altura según sea necesario */
+}
+
+.centrar {
+    display: flex;
+    justify-content: center;
+}
+
+.cont-login {
+    justify-content: center;
+    background-color: rgba(240, 255, 255, 0.836);
+    margin-top: 60px;
+    padding: 20px;
+    width: 60%;
+    height: 450px;
+
+    .card-title{
+        font-weight: bold;
+        margin-bottom: 20px;
+        display: grid;
+        justify-content: center;
+    }
+}
+
+.control {
+    width: 100% !important;
+}
+
+.boton {
+    background-color: rgb(99, 99, 94);
+    border: 0;
+    --bs-btn-hover-bg: #228b22;
+    border-radius: 1cap;
+    box-shadow: 20%;
+}
+
+.navsesion {
+    background-color: #228b22;
+    .ajuste {
+        justify-content: flex-start !important;
+    }
+    img {
+        border-radius: 10%;
+    }
+
 }

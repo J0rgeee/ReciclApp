@@ -17,3 +17,11 @@
     object-fit: cover; /* Mantiene la proporción y recorta la imagen si es necesario */
 }
 
+.logoreci {
+    border-radius: 20%;
+}
+
+.imgbr {
+    
+}
+
