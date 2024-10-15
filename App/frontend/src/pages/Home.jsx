@@ -80,7 +80,6 @@ export function Home() {
                                 </Card.Footer>
                             </Card>
                     </Col>
-                    <button onClick={() => Navigate('/map')}>Puntos Verdes</button>
                 </Row>
             </Container>
 

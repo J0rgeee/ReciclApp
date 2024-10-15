@@ -78,6 +78,7 @@ export function BarraNavegacion() {
             <Link to='/foro'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
             <Link to='/tienda'> <Image src='/botones/b3.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
             <Link to='/sesion'> <Image src='/botones/b4.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
+            <Link to='/mapa'>  mapa</Link>
           </Navbar.Collapse>
         </Container>
       </Navbar>

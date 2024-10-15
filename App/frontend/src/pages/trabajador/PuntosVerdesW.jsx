@@ -7,8 +7,8 @@ const containerStyle = {
 };
 
 const center = {
-  lat: -3.745,
-  lng: -38.523,
+  lat: -33.36345671340809, 
+  lng: -70.67807161791903,
 };
 
 function PuntosVerdesW() {
@@ -37,13 +37,14 @@ function PuntosVerdesW() {
   };
 
   return (
-    <LoadScript googleMapsApiKey='AIzaSyB6QP-vSFY3Hzzf-3Zq20bMB5NWlt4mI-8' libraries={['places']}>
+    <LoadScript googleMapsApiKey='AIzaSyAKEX7Y7Xo0tSLxB5fSZGuRZwMlV4NwANY' libraries={['places']}>
       <div>
+      <br></br>
         <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
           <input 
             type='text'
             placeholder='Ingresa direccion'
-            style={{ width: '300px', height: '40px', marginBottom: '10px' }} // Ajusté el tamaño del input
+            style={{ width: '300px', height: '50px', marginBottom: '20px', marginLeft: '20px' }} // DA ERROR AL INTENTAR BUSCAR DIRECCION
           />
         </Autocomplete>
         <button onClick={handleAddMarker} style={{ height: '30px', marginLeft: '10px' }}>
@@ -53,7 +54,7 @@ function PuntosVerdesW() {
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={10}
+        zoom={20}
         onLoad={(map) => setMap(map)}
       >
         {marker && <Marker position={marker} />} {/* Si hay un marcador, se mostrará en la ubicación seleccionada */}
