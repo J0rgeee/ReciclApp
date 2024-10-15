@@ -12,6 +12,8 @@ import { Carrusel } from './componentes/Carrusel';
 import { Register } from './componentes/Register';
 import { Login } from './componentes/Login';
 import { MenuUsuario } from './componentes/MenuUsuario';
+import {PuntosVerdesW} from './trabajador/PuntosVerdesW';
+import { Navigate } from 'react-router-dom';
 
 
 
@@ -78,6 +80,7 @@ export function Home() {
                                 </Card.Footer>
                             </Card>
                     </Col>
+                    <button onClick={() => Navigate('/map')}>Puntos Verdes</button>
                 </Row>
             </Container>
 

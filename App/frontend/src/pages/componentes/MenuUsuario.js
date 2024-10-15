@@ -1,5 +1,5 @@
 import React from 'react'
-import { Sidebar, SidebarItem } from "react-responsive-sidebar";
+import { Sidebar, SidebarItem } from 'react-responsive-sidebar';
 
 
 export function MenuUsuario() {
