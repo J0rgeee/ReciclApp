@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import { Card } from 'react-bootstrap';
 
 
 export function Register() {
@@ -41,7 +42,7 @@ export function Register() {
     }
     return (
         <div>
-            <Button variant="primary" onClick={handleShow}> Crea tu cuenta aqui! </Button>
+            <Card.Link variant="primary" onClick={handleShow} className='pd-2'> Crear cuenta </Card.Link>
             <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} >
                 <Form onSubmit={e => submitRegister(e)}>
                     <Modal.Header closeButton>

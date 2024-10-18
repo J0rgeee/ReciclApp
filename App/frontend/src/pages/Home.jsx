@@ -59,9 +59,10 @@ export function Home() {
         )
     }
 
-    return (
+    return ( 
         <div>
-            <Container>
+            
+           <Container>
                 <Row>
                     <Col>
                         <Carrusel />

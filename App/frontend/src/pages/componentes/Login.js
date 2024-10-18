@@ -6,6 +6,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import axios from 'axios';
 
 import Form from 'react-bootstrap/Form';
+import { Register } from './Register';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -31,7 +32,7 @@ export function Login() {
             }
         ).then(function (res) {
             setUsuarioActivo(true);
-            window.location.reload(); 
+            window.location.replace('/'); 
         });
     }
 
@@ -63,7 +64,8 @@ export function Login() {
                                     </FloatingLabel>
                                 </Form.Group>
                                 <Button className='boton' type='submit' id='login'>Iniciar sesion</Button>
-                                <Card.Link className='mb-3 centrar' href='home'>Crear cuenta</Card.Link>
+                                
+                                <Register/>
                             </Form>
                         
                 </Card>
