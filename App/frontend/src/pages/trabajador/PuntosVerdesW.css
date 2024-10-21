@@ -1,0 +1,76 @@
+/* Container principal */
+.map-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Mapa */
+.map-section {
+  width: 100%; 
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.autocomplete-input {
+  width: 100%;
+  height: 50px;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 18px;
+  box-sizing: border-box;
+}
+
+.add-marker-button {
+  width: 100%;
+  height: 50px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.google-map {
+  width: 100%;
+  height: 550px;
+}
+
+/* Lista de puntos verdes */
+.list-section {
+  width: 30%;
+  padding: 10px;
+}
+
+.puntos-verdes-lista {
+  list-style-type: none;
+  padding: 0;
+}
+
+.list-item {
+  padding: 10px;
+  background-color: #f1f1f1;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.location-link {
+  cursor: pointer;
+  flex: 1;
+  margin-right: 10px;
+}
+
+.boton-eliminar {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
