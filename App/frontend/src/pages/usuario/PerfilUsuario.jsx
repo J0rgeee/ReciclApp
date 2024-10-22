@@ -52,7 +52,7 @@ const PerfilUsuario = () => {
             </Card>
           )}
           
-          {selectedOption === 'configuracion' && <ProfileSettings/>}
+          {selectedOption === 'configuracion'}
 
           {selectedOption === 'direcciones' && (
             <Card className="address-card">
@@ -62,7 +62,7 @@ const PerfilUsuario = () => {
                   <li>Calle Huechuraba, 1540</li>
                 </ul>
                 <Button variant="secondary" onClick={toogleAddressForm}>{showAddressForm ? 'Ocultar' : 'Agregar Direccion'}</Button>
-                {showAddressForm && <ProfileSettings showAddressForm={showAddressForm}/>}
+                {showAddressForm}
               </CardBody>
             </Card>
           )}

@@ -14,6 +14,9 @@ import { Login } from './componentes/Login';
 import { MenuUsuario } from './componentes/MenuUsuario';
 import {PuntosVerdesW} from './trabajador/PuntosVerdesW';
 import { Navigate } from 'react-router-dom';
+import PerfilUsuario from './usuario/PerfilUsuario';
+import AdminHome from './admin/AdminHome';
+import PerfilTrabajador from './trabajador/PerfilTrabajador';
 
 
 
@@ -28,10 +31,20 @@ const client = axios.create({
 export function Home() {
 
     const [usuarioActivo, setUsuarioActivo] = useState();
+    const [usuario, setUsuario] = useState([]);
+
+    const usuAct = async() =>{
+        const useract = await axios.get('http://localhost:8000/api/user');
+        //  console.log(useract);
+        setUsuario(useract.data.user);
+        console.log(usuario);
+  
+      }
 
     useEffect(() => {
         client.get("/api/user").then(function (res) {
             setUsuarioActivo(true);
+            usuAct();
         })
             .catch(function (error) {
                 setUsuarioActivo(false);
@@ -45,19 +58,38 @@ export function Home() {
             { withCredentials: true }
         ).then(function (res) {
             setUsuarioActivo(false);
+            window.location.replace('/'); 
+
         });
     }
 
-    if (usuarioActivo) {
-        return (
-            <div>
-                {/* <MenuUsuario/> */}
-                <form onSubmit={e => submitLogout(e)}>
-                    <Button type="submit" variant="primary" > Logout </Button>
-                </form>
-            </div>
-        )
-    }
+    if (usuario.tipoUser===1)
+        {
+            return(
+                <div>
+                        <AdminHome/>
+                </div>
+            )
+        } 
+
+    if (usuario.tipoUser===2)
+        {
+            return(
+                <div>
+                    <PerfilUsuario/>
+                </div>
+            )
+        } 
+    if (usuario.tipoUser===3)
+        {
+            return(
+                <div>
+                        <PerfilTrabajador/>
+                </div>
+            )
+        } 
+    
+
 
     return ( 
         <div>

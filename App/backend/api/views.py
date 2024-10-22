@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets,permissions, status
-from .serializer import PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer # type: ignore
-from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv
+from .serializer import PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,UsuarioActivoSerializar # type: ignore
+from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -73,3 +73,7 @@ class UserView(APIView):
 	def get(self, request):
 		serializer = UsuarioSerializer(request.user)
 		return Response({'user': serializer.data}, status=status.HTTP_200_OK)   
+	
+class UsuarioActivo (viewsets.ModelViewSet):
+    serializer_class = UsuarioActivoSerializar
+    queryset = Usuario.objects.all()

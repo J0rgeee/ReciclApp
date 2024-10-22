@@ -86,4 +86,11 @@ class UsuarioLoginSerializer(serializers.Serializer):
 class UsuarioSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserModel
-		fields = ('email', 'username')
+		fields =  '__all__'
+          
+
+
+class UsuarioActivoSerializar(serializers.ModelSerializer):
+     class Meta:
+          model = UserModel
+          fields = '__all__'
