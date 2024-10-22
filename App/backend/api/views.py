@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,UsuarioActivoSerializar # type: ignore
-from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario
+from .serializer import PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
+from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -13,6 +13,10 @@ from rest_framework.response import Response
 class PtoVerdeView (viewsets.ModelViewSet):
     serializer_class = PuntoVerdeSerializer
     queryset = PuntoVerde.objects.all()
+
+class PublicacionesView(viewsets.ModelViewSet):
+	serializar_class = PublicacionSerializer
+	queryset = Publicacion.objects.all()
 
 class CiudadView (viewsets.ModelViewSet):
     serializer_class = CiudadSerializer
@@ -74,8 +78,8 @@ class UserView(APIView):
 		serializer = UsuarioSerializer(request.user)
 		return Response({'user': serializer.data}, status=status.HTTP_200_OK)   
 	
-class UsuarioActivo (viewsets.ModelViewSet):
-    serializer_class = UsuarioActivoSerializar
+class AdminUsuarios (viewsets.ModelViewSet):
+    serializer_class = AdminUsuariosSerializer
     queryset = Usuario.objects.all()
 
 

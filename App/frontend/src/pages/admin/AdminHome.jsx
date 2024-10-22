@@ -1,9 +1,10 @@
 import React from 'react';
+import SidebarAdmin from './SidebarAdmin';
 
 const AdminHome = () => {
   return (  
    <div>
-    menu admin
+    <SidebarAdmin/>
    </div>
   )
 }

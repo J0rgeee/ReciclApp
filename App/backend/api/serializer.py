@@ -89,7 +89,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 		fields =  '__all__'
           
 
-class UsuarioActivoSerializar(serializers.ModelSerializer):
+class AdminUsuariosSerializer(serializers.ModelSerializer):
      class Meta:
           model = UserModel
           fields = '__all__'

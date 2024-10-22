@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, ListGroup, ListGroupItem, CardBody } from 'react-bootstrap';
-import VerPerfil from "./VerPerfil";
-import PuntosVerdesW from "../mapa/PuntosVerdesW";
-import Retiros from "../retiros/Retiros";
 import axios from 'axios';
+import AdminUsuarios from "./AdminUsuarios";
+import AdminPV from "./AdminPV";
 
 
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -15,7 +14,7 @@ const client = axios.create({
 });
 
 
-const Sidebar = () => {
+const SidebarAdmin = () => {
     const [activeDiv, setActiveDiv] = useState(null);
     const [usuarioActivo, setUsuarioActivo] = useState();
     const [usuario, setUsuario] = useState([]);
@@ -52,23 +51,27 @@ const Sidebar = () => {
             style={{ borderRadius: '50%', width: '100px', height: '100px', margin: '20px auto' }}
           />
           <Card.Body>
-            <Card.Title>{usuario.username}</Card.Title>
+            <Card.Title>Menu de administrador <br/>{usuario.username}</Card.Title>
           </Card.Body>
         </Card>
         <div className="d-flex flex-column align-items-center">
-          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(1)}>Perfil</Button>
-          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(2)}>Ver Puntos Verdes</Button>
-          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(3)}>Solicitar Retiros</Button>
+          
+          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(1)}>Administrar Usuarios</Button>
+          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(2)}>Administrar Puntos Verdes</Button>
+          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(3)}>Administrar Publicaciones</Button>
+          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(4)}>Administrar Retiros</Button>
+
         </div>
         
       </div>
       <div>
-        {activeDiv === 1 && <div><VerPerfil usuario={usuario}/></div>}
-        {activeDiv === 2 && <div><PuntosVerdesW/></div>}
-        {activeDiv === 3 && <div><Retiros/></div>}
+        {activeDiv === 1 && <div><AdminUsuarios/></div>}
+        {activeDiv === 2 && <div><AdminPV/></div>}
+        {activeDiv === 3 && <div></div>}
+        {activeDiv === 4 && <div></div>}
       </div>
     </div>
   );
 };
 
-export default Sidebar;
+export default SidebarAdmin;
