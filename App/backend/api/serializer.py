@@ -15,7 +15,7 @@ class DireccionesSerializer(serializers.ModelSerializer):
         model = Direcciones
         fields = '__all__'
 
-class Serializer(serializers.ModelSerializer):
+class PublicacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Publicacion
         fields = '__all__'
@@ -86,4 +86,17 @@ class UsuarioLoginSerializer(serializers.Serializer):
 class UsuarioSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserModel
-		fields = ('email', 'username')
+		fields =  '__all__'
+          
+
+class AdminUsuariosSerializer(serializers.ModelSerializer):
+     class Meta:
+          model = UserModel
+          fields = '__all__'
+
+
+class UsuarioUpdateSerializaer(serializers.ModelSerializer):
+    class Meta:
+          model = UserModel
+          fields = ['email','username','nombre','apellido','telefono']
+

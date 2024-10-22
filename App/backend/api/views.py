@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from rest_framework import viewsets,permissions, status
-from .serializer import PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer # type: ignore
-from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv
+from rest_framework import viewsets,permissions, status,generics
+from .serializer import PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
+from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -15,6 +15,10 @@ from django.core.mail import send_mail
 class PtoVerdeView (viewsets.ModelViewSet):
     serializer_class = PuntoVerdeSerializer
     queryset = PuntoVerde.objects.all()
+
+class PublicacionesView(viewsets.ModelViewSet):
+	serializar_class = PublicacionSerializer
+	queryset = Publicacion.objects.all()
 
 class CiudadView (viewsets.ModelViewSet):
     serializer_class = CiudadSerializer
@@ -74,6 +78,21 @@ class UserView(APIView):
 	##
 	def get(self, request):
 		serializer = UsuarioSerializer(request.user)
+		return Response({'user': serializer.data}, status=status.HTTP_200_OK)   
+	
+class AdminUsuarios (viewsets.ModelViewSet):
+    serializer_class = AdminUsuariosSerializer
+    queryset = Usuario.objects.all()
+
+
+class UpdateUsuario(generics.UpdateAPIView):
+	serializar_class = UsuarioUpdateSerializaer
+	queryset = Usuario.objects.all()
+	permission_classes = [permissions.IsAuthenticated] 
+
+	# def get_queryset(self):
+    	# return self.queryset.filter(email=self.request.Usuario.email)
+
 		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 	
 class DesactivarCuenta(APIView):
