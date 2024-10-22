@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, Button, ListGroup, ListGroupItem, CardBody }
 import axios from 'axios';
 import AdminUsuarios from "./AdminUsuarios";
 import AdminPV from "./AdminPV";
+import AdminPubli from "./AdminPubli";
+import AdminRetiros from "./AdminRetiros";
 
 
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -67,8 +69,8 @@ const SidebarAdmin = () => {
       <div>
         {activeDiv === 1 && <div><AdminUsuarios/></div>}
         {activeDiv === 2 && <div><AdminPV/></div>}
-        {activeDiv === 3 && <div></div>}
-        {activeDiv === 4 && <div></div>}
+        {activeDiv === 3 && <div><AdminPubli/></div>}
+        {activeDiv === 4 && <div><AdminRetiros/></div>}
       </div>
     </div>
   );

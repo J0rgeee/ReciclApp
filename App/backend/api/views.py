@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
-from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion
+from .serializer import RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
+from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -13,10 +13,6 @@ from rest_framework.response import Response
 class PtoVerdeView (viewsets.ModelViewSet):
     serializer_class = PuntoVerdeSerializer
     queryset = PuntoVerde.objects.all()
-
-class PublicacionesView(viewsets.ModelViewSet):
-	serializar_class = PublicacionSerializer
-	queryset = Publicacion.objects.all()
 
 class CiudadView (viewsets.ModelViewSet):
     serializer_class = CiudadSerializer
@@ -90,3 +86,14 @@ class UpdateUsuario(generics.UpdateAPIView):
 
 	# def get_queryset(self):
     	# return self.queryset.filter(email=self.request.Usuario.email)
+
+
+class PublicacionesView(viewsets.ModelViewSet):
+	queryset = Publicacion.objects.all()
+	def get_serializer_class(self):
+		return PublicacionSerializer 
+
+class RetiroView(viewsets.ModelViewSet):
+	queryset = RegistroRetiro.objects.all()
+	def get_serializer_class(self):
+		return RegistroRetiroSerializer 

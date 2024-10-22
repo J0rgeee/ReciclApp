@@ -35,7 +35,7 @@ export function Register() {
                 email: email,
                 username: username,
                 password: password,
-                tipoUser: 2,
+                tipoUser: '2',
             }
         ).then(function (res){
             window.location.reload();

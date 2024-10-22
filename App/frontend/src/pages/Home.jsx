@@ -99,20 +99,6 @@ export function Home() {
                     <Col>
                         <Carrusel />
                     </Col>
-                    <Col xs lg="3">
-                            <Card className="text-center">
-                                <Card.Header>Inicio de sesion</Card.Header>
-                                <Card.Body>
-                                    <br></br>
-                                    <Card.Title>Ingrese sus credenciales</Card.Title>
-                                    <Login/>
-                                    <br></br>
-                                </Card.Body>
-                                <Card.Footer className="text-muted">
-                                    <Register/>
-                                </Card.Footer>
-                            </Card>
-                    </Col>
                 </Row>
             </Container>
 
