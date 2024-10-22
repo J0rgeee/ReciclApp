@@ -70,7 +70,7 @@ export function BarraNavegacion() {
             <Navbar.Collapse className="justify-content-end">
             <Link to='/'>   <Image src='/botones/b1.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
               
-              <Link to='/foro'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
+              <Link to='/foro'>  <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
               <Link to='/tienda'> <Image src='/botones/b3.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
               
             </Navbar.Collapse>
@@ -80,6 +80,7 @@ export function BarraNavegacion() {
                     <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5"/>
                   </svg> Logout </Button>
               </form></Navbar.Brand>
+
           </Container>
         </Navbar>
         <Outlet />
@@ -161,7 +162,7 @@ export function BarraNavegacion() {
             <Link to='/foro'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
             <Link to='/tienda'> <Image src='/botones/b3.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
             <Link to='/sesion'> <Image src='/botones/b4.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
-            <Link to='/mapa'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/> </Link>
+            <Link to='/mapa'>   <Image src='/botones/botonMapa.png'  width="80" className="d-inline-block align-top p-2 imgbr"/> </Link>
           </Navbar.Collapse>
         </Container>
       </Navbar>

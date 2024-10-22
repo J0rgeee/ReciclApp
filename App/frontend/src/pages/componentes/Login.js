@@ -46,7 +46,7 @@ export function Login() {
                             <Form onSubmit={e => submitLogin(e)}>
                                 <Form.Group controlId="formPlaintextEmail" className='mb-3'>
                                     <FloatingLabel 
-                                    controlId="floatingInput" 
+                                    controlId="userinput" 
                                     label="Usuario"
                                     className='mb-3'
                                     >
@@ -56,7 +56,7 @@ export function Login() {
                             
                                 <Form.Group controlId="formPlaintextPassword" className="mb-3">
                                     <FloatingLabel 
-                                    controlId="floatingInput" 
+                                    controlId="passinput" 
                                     label="Contraseña"
                                     className='mb-3'
                                     >
