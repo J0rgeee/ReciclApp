@@ -68,6 +68,7 @@ export function BarraNavegacion() {
             <Navbar.Brand><img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
+            <Link to='/'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
               
               <Link to='/foro'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
               <Link to='/tienda'> <Image src='/botones/b3.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
@@ -126,7 +127,7 @@ export function BarraNavegacion() {
             <Navbar.Brand><img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              
+              <Link to='/'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
               <Link to='/foro'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
               <Link to='/tienda'> <Image src='/botones/b3.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
               
