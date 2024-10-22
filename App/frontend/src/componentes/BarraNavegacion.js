@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import './barranav.style.css';
 import { Image } from 'react-bootstrap';
+import { MenuUsuario } from '../pages/componentes/MenuUsuario';
 
 const client = axios.create({
   baseURL: "http://localhost:8000"
@@ -53,7 +54,7 @@ export function BarraNavegacion() {
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
               
-              <Link to='/foro'>   <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
+              <Link to='/foro'>  <Image src='/botones/b2.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>    </Link>
               <Link to='/tienda'> <Image src='/botones/b3.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
               
             </Navbar.Collapse>
@@ -63,10 +64,11 @@ export function BarraNavegacion() {
                     <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5"/>
                   </svg> Logout </Button>
               </form></Navbar.Brand>
+
           </Container>
         </Navbar>
         <div>
-                {/* <MenuUsuario/> */}
+                { <MenuUsuario/> }
                 
             </div>
 

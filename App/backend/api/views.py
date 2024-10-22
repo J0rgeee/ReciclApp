@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -72,4 +74,39 @@ class UserView(APIView):
 	##
 	def get(self, request):
 		serializer = UsuarioSerializer(request.user)
-		return Response({'user': serializer.data}, status=status.HTTP_200_OK)   
+		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+	
+class DesactivarCuenta(APIView):
+    permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
+
+    def delete(self, request):
+        usuario = request.user
+        usuario.estado = False  # Desactivamos la cuenta
+        usuario.save()
+
+        # Enviar notificación por correo electrónico
+        enviar_notificacion_correo(usuario)
+
+        return Response({'mensaje': 'Tu cuenta ha sido desactivada. Si deseas reactivarla, contacta al administrador.'}, status=status.HTTP_200_OK)
+
+
+def enviar_notificacion_correo(usuario):
+    """Envía un correo electrónico notificando que la cuenta ha sido desactivada"""
+    asunto = 'Tu cuenta ha sido desactivada'
+    mensaje = f'Hola {usuario.username}, tu cuenta ha sido desactivada. Si no fuiste tú quien solicitó esto, por favor contáctanos.'
+    remitente = 'soporte@duocuc.cl'
+    destinatario = [usuario.email]
+
+    send_mail(asunto, mensaje, remitente, destinatario)
+
+class ReactivarCuenta(APIView):
+    permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
+
+    def post(self, request):
+        usuario = request.user
+        if not usuario.is_active:
+            usuario.is_active = True  # Reactivamos la cuenta
+            usuario.save()
+            return Response({'mensaje': 'Tu cuenta ha sido reactivada exitosamente.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Tu cuenta ya está activa.'}, status=status.HTTP_400_BAD_REQUEST)

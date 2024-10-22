@@ -54,7 +54,7 @@ export function Register() {
                             <Form.Label>Ingrese su email</Form.Label>
                             <Form.Control type="email" placeholder="name@ejemplo.com" value={email} onChange={e => setEmail(e.target.value)} />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="email">
+                        <Form.Group className="mb-3" controlId="usuario">
                             <Form.Label>Nombre de usuario</Form.Label>
                             <Form.Control type="text" placeholder="Nombre de usuario" value={username} onChange={e => setUsername(e.target.value)} />
                         </Form.Group>

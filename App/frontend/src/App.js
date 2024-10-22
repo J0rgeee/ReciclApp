@@ -9,6 +9,7 @@ import {Foro} from './pages/Foro'
 import {Tienda } from './pages/Tienda'
 import {Sesion} from './pages/Sesion'
 import  PuntosVerdesW from './pages/trabajador/PuntosVerdesW'
+import PerfilConf from './pages/usuario/PerfilConf';
 
 
 function App() {
