@@ -92,8 +92,6 @@ class UpdateUsuario(generics.UpdateAPIView):
 
 	# def get_queryset(self):
     	# return self.queryset.filter(email=self.request.Usuario.email)
-
-		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 	
 class DesactivarCuenta(APIView):
     permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
