@@ -61,7 +61,7 @@ export function BarraNavegacion() {
       return (
         <div>
           <Navbar className='navbar-reci' expand="lg">
-          <Container>
+          <Container >
             <Navbar.Brand>ReciclApp</Navbar.Brand>
             <Navbar.Brand>Bienvenio señor admin: {usuario.username}</Navbar.Brand>
 
@@ -150,7 +150,6 @@ export function BarraNavegacion() {
   return (
     <div>
       <Navbar className='navbar-reci'>
-        <Container className='container-fluid'>
           <Navbar.Brand>
             <img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" />
           </Navbar.Brand>
@@ -164,7 +163,6 @@ export function BarraNavegacion() {
             <Link to='/sesion'> <Image src='/botones/b4.png'  width="80" className="d-inline-block align-top p-2 imgbr"/>  </Link>
             <Link to='/mapa'>   <Image src='/botones/botonMapa.png'  width="80" className="d-inline-block align-top p-2 imgbr"/> </Link>
           </Navbar.Collapse>
-        </Container>
       </Navbar>
 
       <Outlet />
