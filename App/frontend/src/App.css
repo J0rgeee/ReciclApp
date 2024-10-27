@@ -36,12 +36,19 @@ span.input-group-addon {
     margin-top: 5%;
 }
 
+/* Sesion */
 .sesion {
   background-image: url("../public/back2.png");
   width: 100%;
-  height: 773px;
   background-repeat: no-repeat;
-  background-position: 50%;
-  
   background-size: 100%;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 90vh;
 }
+
+.cont-sesion {
+  flex: 1;
+}
+/* Sesion */

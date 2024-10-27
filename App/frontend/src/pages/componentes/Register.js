@@ -42,8 +42,8 @@ export function Register() {
         })
     }
     return (
-        <div>
-            <Card.Link variant="primary" onClick={handleShow} className='pd-2'> Crear cuenta </Card.Link>
+        <div className='reg'>
+            <Button onClick={handleShow} className='pd-2 boton'> Crear cuenta </Button>
             <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} >
                 <Form onSubmit={e => submitRegister(e)}>
                     <Modal.Header closeButton>

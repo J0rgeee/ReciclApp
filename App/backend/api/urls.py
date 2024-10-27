@@ -3,6 +3,7 @@ from rest_framework import routers # type: ignore
 from rest_framework.documentation import include_docs_urls # type: ignore
 from api import views
 from . import views
+from .views import DesactivarCuenta, ReactivarCuenta
 
 router = routers.DefaultRouter()
 router.register(r'ptoverde',views.PtoVerdeView,'ptoverde')
@@ -48,6 +49,8 @@ urlpatterns = [
 	path('login', views.UserLogin.as_view(), name='login'),
 	path('logout', views.UserLogout.as_view(), name='logout'),
 	path('user', views.UserView.as_view(), name='user'),
-	path('user/update', views.UpdateUsuario.as_view(), name='user-update')
+	path('user/update', views.UpdateUsuario.as_view(), name='user-update'),
+    path('desactivar-cuenta/', DesactivarCuenta.as_view(), name='desactivar_cuenta'),
+    path('reactivar-cuenta/', ReactivarCuenta.as_view(), name='reactivar_cuenta'),
     
 ]   

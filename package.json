@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "firebase": "^11.0.1",
     "react-responsive-sidebar": "^0.1.16"
   }
 }

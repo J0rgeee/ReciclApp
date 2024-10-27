@@ -99,3 +99,39 @@ class RetiroView(viewsets.ModelViewSet):
 	queryset = RegistroRetiro.objects.all()
 	def get_serializer_class(self):
 		return RegistroRetiroSerializer 
+
+
+class DesactivarCuenta(APIView):
+    permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
+
+    def delete(self, request):
+        usuario = request.user
+        usuario.estado = False  # Desactivamos la cuenta
+        usuario.save()
+
+        # Enviar notificación por correo electrónico
+        enviar_notificacion_correo(usuario)
+
+        return Response({'mensaje': 'Tu cuenta ha sido desactivada. Si deseas reactivarla, contacta al administrador.'}, status=status.HTTP_200_OK)
+
+
+def enviar_notificacion_correo(usuario):
+    """Envía un correo electrónico notificando que la cuenta ha sido desactivada"""
+    asunto = 'Tu cuenta ha sido desactivada'
+    mensaje = f'Hola {usuario.username}, tu cuenta ha sido desactivada. Si no fuiste tú quien solicitó esto, por favor contáctanos.'
+    remitente = 'soporte@tusitio.com'
+    destinatario = [usuario.email]
+
+    send_mail(asunto, mensaje, remitente, destinatario)
+
+class ReactivarCuenta(APIView):
+    permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
+
+    def post(self, request):
+        usuario = request.user
+        if not usuario.is_active:
+            usuario.is_active = True  # Reactivamos la cuenta
+            usuario.save()
+            return Response({'mensaje': 'Tu cuenta ha sido reactivada exitosamente.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Tu cuenta ya está activa.'}, status=status.HTTP_400_BAD_REQUEST)
