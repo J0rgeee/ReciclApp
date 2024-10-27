@@ -12,6 +12,7 @@
     height: 100vh;          /* Ajusta la altura según sea necesario */
 }
 
+/* Estilos Login */
 .centrar {
     display: flex;
     justify-content: center;
@@ -20,10 +21,10 @@
 .cont-login {
     justify-content: center;
     background-color: rgba(240, 255, 255, 0.836);
-    margin-top: 60px;
+    margin-top: 50px;
     padding: 20px;
     width: 60%;
-    height: 450px;
+    height: 400px;
 
     .card-title{
         font-weight: bold;
@@ -44,14 +45,10 @@
     border-radius: 1cap;
     box-shadow: 20%;
 }
+/* Estilos Login */
 
-.navsesion {
-    background-color: #228b22;
-    .ajuste {
-        justify-content: flex-start !important;
-    }
-    img {
-        border-radius: 10%;
-    }
-
+/* Estilos Resgister */
+.reg {
+    display: contents;
 }
+/* Estilos Resgister */

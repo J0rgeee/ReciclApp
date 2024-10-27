@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import  { useState,useEffect } from 'react';
-import { Card, Button,Form, CardBody, FormControl, FormGroup, FormLabel , Offcanvas} from 'react-bootstrap';
+import { Button,Form, } from 'react-bootstrap';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -74,6 +74,8 @@ const VerPerfil = ({usuario}) => {
       });
 }
 
+
+
   return (
       <div style={{ marginLeft: '250px', flexGrow: 1 }}>
           <Form style={{ margin: '20px' }} onSubmit={e => submitUpdate(e)}>
@@ -81,17 +83,10 @@ const VerPerfil = ({usuario}) => {
               {isDisabled ? 'Modificar Perfil' :'No modificar' }
               
             </Button>
-            <Button variant="danger" onClick={handleShow}>
+            <Button variant="danger" onClick={DesactivarCuenta}>
               Eliminar Perfil
             </Button>
-            <Offcanvas show={show} onHide={handleClose}>
-              <Offcanvas.Header closeButton>
-              <Offcanvas.Title>Offcanvas</Offcanvas.Title>
-            </Offcanvas.Header>
-            <Offcanvas.Body>
-          Eliminar el perifil <Button> si </Button> <Button> no </Button>
-            </Offcanvas.Body>
-            </Offcanvas>
+            
             
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
@@ -150,6 +145,38 @@ const VerPerfil = ({usuario}) => {
           </Form>
       </div>
   );
+};
+
+//Codigo para desactivar cuenta
+const DesactivarCuenta = () => {
+  const desactivarCuenta = async () => {
+    if (window.confirm('¿Estás seguro de que deseas desactivar tu cuenta?')) {
+      try {
+        const token = localStorage.getItem('token');  // Obtener el token de autenticación
+        const response = await axios.delete('/api/desactivar-cuenta/', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 200) {
+          alert('Tu cuenta ha sido desactivada. Revisa tu correo para más información.');
+          // Opcional: Redirigir al usuario a la página de inicio
+          window.location.href = '/sesion';
+        }
+      } catch (error) {
+        console.error('Error al desactivar la cuenta:', error);
+        alert('Hubo un problema al desactivar tu cuenta.');
+      }
+    }
+  };
+  
+  return (
+    <div>
+      <h1>Desactivar cuenta</h1>
+      <Button onClick={desactivarCuenta}>Desactivar mi cuenta</Button>
+    </div>
+  )
 };
 
 export default VerPerfil;

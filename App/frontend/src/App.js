@@ -9,6 +9,7 @@ import {Foro} from './pages/Foro'
 import {Tienda } from './pages/Tienda'
 import {Sesion} from './pages/Sesion'
 import  PuntosVerdesW from './pages/trabajador/PuntosVerdesW'
+import { Footer } from './componentes/Footer'
 
 
 function App() {
@@ -24,10 +25,11 @@ function App() {
           <Route path='/' element={<Home/>} />
           <Route path='tienda' element={<Tienda/>} />
           <Route path='mapa' element={< PuntosVerdesW />}/>
-        </Route>
-        <Route path='sesion' element={<Sesion/>} />
+          <Route path='sesion' element={<Sesion/>} />
+          <Route path='/' element={<Footer/>}/>
+        </Route>    
     </Routes>
-        </div>
+    </div>
   );
 }
 

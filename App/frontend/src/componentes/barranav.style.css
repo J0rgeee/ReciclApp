@@ -1,5 +1,6 @@
 .navbar-reci{
     background-color: #228b22;
+    
 }
 
 .navbar-reci .navbar-brand,
@@ -21,7 +22,17 @@
     border-radius: 20%;
 }
 
-.imgbr {
-    
+.titulo {
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
 }
+
+.imgbr {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.imgbr:hover {
+    transform:  scale(1.1);
+    opacity: 0.9;
+}
+
 

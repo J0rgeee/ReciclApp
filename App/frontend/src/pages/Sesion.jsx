@@ -1,9 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Login } from './componentes/Login';
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
-import { BarraNavegacion } from '../componentes/BarraNavegacion';
+import { Footer } from '../componentes/Footer';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -18,13 +16,10 @@ export function Sesion() {
     
     return (
         <div className='sesion'>
-            <div>
-                <BarraNavegacion/>
-            
-                <div className='container'>
-                    <Login/>
-                </div>
+            <div className='cont-sesion'>
+                <Login/>
             </div>
+            <Footer/>
         </div>
     )
 }
