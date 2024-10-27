@@ -150,7 +150,7 @@ export function BarraNavegacion() {
   return (
     <div>
       <Navbar className='navbar-reci' expand='md'>
-        <Container className='container-fluid'>
+       
           <Navbar.Brand>
             <img src="/logo.png" width="80" height="80" className="d-inline-block align-top logoreci" alt="logoReci" />
           </Navbar.Brand>
