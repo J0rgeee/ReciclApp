@@ -5,18 +5,15 @@ import { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-
-import Card from 'react-bootstrap/Card';
 import { Carrusel } from './componentes/Carrusel';
-import { Register } from './componentes/Register';
-import { Login } from './componentes/Login';
-import { MenuUsuario } from './componentes/MenuUsuario';
-import {PuntosVerdesW} from './trabajador/PuntosVerdesW';
-import { Navigate } from 'react-router-dom';
 import PerfilUsuario from './usuario/PerfilUsuario';
 import AdminHome from './admin/AdminHome';
 import PerfilTrabajador from './trabajador/PerfilTrabajador';
+import BajaNavBar from './componentes/BajadaNavBar';
+import Empresas from './componentes/Empresas';
+import Demo from './componentes/Demo';
+import Contacto from './componentes/Contacto';
+import Footer from './componentes/Footer';
 
 
 
@@ -35,10 +32,8 @@ export function Home() {
 
     const usuAct = async() =>{
         const useract = await axios.get('http://localhost:8000/api/user');
-        //  console.log(useract);
         setUsuario(useract.data.user);
         console.log(usuario);
-  
       }
 
     useEffect(() => {
@@ -50,18 +45,6 @@ export function Home() {
                 setUsuarioActivo(false);
             });
     }, []);
-
-    function submitLogout(e) {
-        e.preventDefault();
-        client.post(
-            "/api/logout",
-            { withCredentials: true }
-        ).then(function (res) {
-            setUsuarioActivo(false);
-            window.location.replace('/'); 
-
-        });
-    }
 
     if (usuario.tipoUser===1)
         {
@@ -92,11 +75,21 @@ export function Home() {
     return ( 
         <div>
             
-           <Container>
+           <Container fluid >
                 <Row>
-                    <Col>
-                        <Carrusel />
-                    </Col>
+                    <BajaNavBar/>
+                </Row>
+                <Row>
+                    <Empresas/>
+                </Row>
+                <Row>
+                    <Demo/>
+                </Row>
+                <Row>
+                    <Contacto/>
+                </Row>
+                <Row>
+                    <Footer/>
                 </Row>
             </Container>
 

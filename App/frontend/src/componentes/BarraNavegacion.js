@@ -164,7 +164,6 @@ export function BarraNavegacion() {
             <Link to='/sesion'> <Image src='/botones/b4.png'  width="70" className="d-inline-block align-top p-2 imgbr"/> </Link>
             <Link to='/mapa'> <Image src='/botones/botonMapa.png'  width="80" className="d-inline-block align-top p-2 imgbr"/> </Link>
           </Navbar.Collapse>
-        </Container>
       </Navbar>
 
       <Outlet />
