@@ -13,8 +13,9 @@ from django.core.mail import send_mail
 
 # Create your views here.
 class PtoVerdeView (viewsets.ModelViewSet):
-    serializer_class = PuntoVerdeSerializer
-    queryset = PuntoVerde.objects.all()
+	permission_classes = (permissions.AllowAny,)
+	serializer_class = PuntoVerdeSerializer
+	queryset = PuntoVerde.objects.all()
 
 class CiudadView (viewsets.ModelViewSet):
     serializer_class = CiudadSerializer
@@ -25,8 +26,9 @@ class ComunaView (viewsets.ModelViewSet):
     queryset = Comuna.objects.all()
 
 class TipoReciclajeView (viewsets.ModelViewSet):
-    serializer_class = TipoReciclajeSerializer
-    queryset = TipoReciclaje.objects.all()
+	permission_classes = (permissions.AllowAny,)
+	serializer_class = TipoReciclajeSerializer	
+	queryset = TipoReciclaje.objects.all()
 
 class TipoReciclajePvView (viewsets.ModelViewSet):
     serializer_class = TipoReciclajePveSerializer

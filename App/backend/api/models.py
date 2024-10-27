@@ -14,6 +14,11 @@ class Comuna(models.Model):
 class TipoReciclaje (models.Model):
     idTR = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
+    imagen = models.CharField(max_length=100,null=True)
+    desc = models.CharField(max_length=1000,null=True)
+    comollevar = models.CharField(max_length=1000,null=True)
+    reconocer = models.CharField(max_length=1000,null=True)
+    nollevar= models.CharField(max_length=1000,null=True)
 
 class PuntoVerde(models.Model):
     idPv = models.AutoField(primary_key=True)

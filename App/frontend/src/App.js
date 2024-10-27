@@ -10,12 +10,10 @@ import {Tienda } from './pages/Tienda'
 import {Sesion} from './pages/Sesion'
 import  PuntosVerdesW from './pages/trabajador/PuntosVerdesW'
 import { Footer } from './componentes/Footer'
+import { Reciclaje } from './pages/Reciclaje';
 
 
 function App() {
-  
-  
- 
   
   return (
     <div>
@@ -27,6 +25,8 @@ function App() {
           <Route path='mapa' element={< PuntosVerdesW />}/>
           <Route path='sesion' element={<Sesion/>} />
           <Route path='/' element={<Footer/>}/>
+          <Route path='reciclaje' element={<Reciclaje/>}/>
+
         </Route>    
     </Routes>
     </div>

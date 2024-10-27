@@ -1,11 +1,24 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+
 import {
   GoogleMap,
   LoadScript,
   Autocomplete,
   Marker,
 } from "@react-google-maps/api";
+
 import "./PuntosVerdesW.css";
+
+import axios from 'axios';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+
+const client = axios.create({
+  baseURL: "http://localhost:8000"
+});
+
 
 const initialCenter = {
   lat: -33.363579,
@@ -13,11 +26,17 @@ const initialCenter = {
 };
 
 function PuntosVerdesW() {
+
+  const [items, setItems] = useState([]); // Estado para almacenar los datos de las cajitas
+
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [searchLocation, setSearchLocation] = useState(null);
+
   const [puntosVerdes, setPuntosVerdes] = useState([]);
   const [center, setCenter] = useState(initialCenter);
+  const [error, setError] = useState('');
+
   const autoCompleteRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -67,10 +86,49 @@ function PuntosVerdesW() {
     }
   };
 
+
+  const fetchItems = async () => {
+    
+    try {
+      const response = await client.get('/api/PtoVerde/ptoverde/'); // URL de la API
+      setItems(response.data); // Guarda los datos en el estado
+
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+    }
+  };
+
+  // Llama a la función fetchItems cuando el componente se monta
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+
+  const handleAddressClick = async (ptoVerde) => {
+    try {
+      const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+        params: {
+          ptoVerde: ptoVerde.direccion,
+          key: 'AIzaSyAKEX7Y7Xo0tSLxB5fSZGuRZwMlV4NwANY', // Reemplaza con tu clave de API
+        },
+      });
+
+      if (response.data.status === 'OK') {
+        const { lat, lng } = response.data.results[0].geometry.location;
+        setMarker({ lat, lng });
+        map.panTo({ lat, lng }); // Mover el mapa a la nueva ubicación
+        setError('');
+      } else {
+        setError('No se encontró la dirección.');
+      }
+    } catch (err) {
+      setError('Error al obtener la dirección.');
+      console.error(err);
+    }
+  };
+
   return (
-    <LoadScript
-      googleMapsApiKey="AIzaSyAKEX7Y7Xo0tSLxB5fSZGuRZwMlV4NwANY"
-      libraries={["places"]}
+    <LoadScript googleMapsApiKey="AIzaSyAKEX7Y7Xo0tSLxB5fSZGuRZwMlV4NwANY"libraries={["places"]}
     >
       <div className="map-container">
         {/* Mapa de Google */}
@@ -100,21 +158,8 @@ function PuntosVerdesW() {
         <div className="list-section">
           <h3>Puntos Verdes Guardados</h3>
           <ul className="puntos-verdes-lista">
-            {puntosVerdes.map((punto, index) => (
-              <li key={index} className="list-item">
-                <span
-                  onClick={() => handleLocationClick(punto)}
-                  className="location-link"
-                >
-                  {punto.address || "Dirección no disponible"}
-                </span>
-                <button
-                  onClick={() => handleDelete(index)}
-                  className="boton-eliminar"
-                >
-                  Eliminar
-                </button>
-              </li>
+              {items.map((ptoVerde) =>(
+                  <li key={ptoVerde.idPv} onClick={()=>handleAddressClick({ptoVerde})} >{ptoVerde.direccion} #{ptoVerde.nro} COMUNA {ptoVerde.nomComuna}</li>
             ))}
           </ul>
         </div>
