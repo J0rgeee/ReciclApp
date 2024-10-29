@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Card, Button, ListGroup, ListGroupItem, CardBody } from 'react-bootstrap';
-import Sidebar from "./Sidebar";
+import React from "react";
+import { Container } from 'react-bootstrap';
+import MenuUsuario from "./MenuUsuario";
 
 const PerfilUsuario = () => {
 
   return (
     <Container>
-      <Sidebar/>
+      <MenuUsuario/>
     </Container>
   );
 };

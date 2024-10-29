@@ -75,6 +75,24 @@ class Usuario (AbstractBaseUser,PermissionsMixin):
     def __str__(self):
         return self.username
     
+class PuntuacioUsuario(models.Model):
+    emailusuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    puntosplas = models.IntegerField()
+    puntospapel = models.IntegerField()
+    putnosvidrio = models.IntegerField()
+    puntoscarton = models.IntegerField()
+    puntoslatas = models.IntegerField()
+
+class TransPuntos(models.Model):
+    emailusuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    puntosplas = models.IntegerField()
+    puntospapel = models.IntegerField()
+    putnosvidrio = models.IntegerField()
+    puntoscarton = models.IntegerField()
+    puntoslatas = models.IntegerField()
+    fechatrans = models.DateField(auto_now_add=True)
+    estado = models.BooleanField(default=True)
+
 
 class Direcciones (models.Model):
     idDireccion = models.AutoField(primary_key=True)

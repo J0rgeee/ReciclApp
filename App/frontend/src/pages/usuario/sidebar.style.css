@@ -1,0 +1,9 @@
+.div-sidebar-usuario
+{
+    width: '250px';
+    background-color: '#228b22';
+    height: 'calc(100vh - 56px)';
+    position: 'fixed';
+    left: 0;
+    top: '125px';
+}

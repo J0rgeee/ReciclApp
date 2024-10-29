@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import  { useState,useEffect } from 'react';
-import { Button,Form, } from 'react-bootstrap';
+import { Button,Form,Modal } from 'react-bootstrap';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -27,8 +27,6 @@ const VerPerfil = ({usuario}) => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-
-
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
 
@@ -44,29 +42,38 @@ const VerPerfil = ({usuario}) => {
   const toggleDisableFields = () => {
     setIsDisabled(!isDisabled); // Alternar el estado de habilitación
   };
-
-
-
    useEffect(() => {
 
-    
   }, []);
+
+  const handleDelete = () => {
+    // Aquí va la lógica de eliminación
+    console.log('Elemento eliminado');
+    handleClose(); // Cierra el modal después de eliminar
+  };
 
 
   function submitUpdate(e) {
+
+    const token = localStorage.getItem('accessToken');
+    
+
     e.preventDefault();
     client.put("/api/user/update",{
       email: correo,
       username: nomUsuario,
       nombre: nombre,
       apellido: apellido,
-      telefono: telefono,
-      estado: activa,
+      telefono: telefono
+    },{
+      headers:{
+        Authorization: `Bearer ${token}`,
+      },
     }
+    
   ).then(function (res) {
       setSuccess('Usuario actualizado con éxito!');
       setError(null);
-      
     })
       .catch(function (error) {
         setError('Error al actualizar el usuario.');
@@ -79,14 +86,27 @@ const VerPerfil = ({usuario}) => {
   return (
       <div style={{ marginLeft: '250px', flexGrow: 1 }}>
           <Form style={{ margin: '20px' }} onSubmit={e => submitUpdate(e)}>
-            <Button variant="secondary" onClick={toggleDisableFields} style={{ marginTop: '20px' }}>
+            <Button variant="secondary" onClick={toggleDisableFields}>
               {isDisabled ? 'Modificar Perfil' :'No modificar' }
-              
             </Button>
-            <Button variant="danger" onClick={DesactivarCuenta}>
-              Eliminar Perfil
+            <Button variant="danger" onClick={handleShow}>
+              Desactivar cuenta
             </Button>
-            
+
+            <Modal show={show} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación de Eliminación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>¿Estás seguro de que deseas eliminar este elemento?</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Cancelar
+                </Button>
+                <Button variant="danger" onClick={handleDelete}>
+                  Confirmar
+                </Button>
+              </Modal.Footer>
+            </Modal>
             
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
@@ -110,7 +130,7 @@ const VerPerfil = ({usuario}) => {
 
             <Form.Group controlId="formFechaNacimiento">
               <Form.Label>Fecha de Nacimiento</Form.Label>
-              <Form.Control type="date" disabled={isDisabled} />
+              <Form.Control type="date" disabled={isDisabled}   value={usuario.fechaNac}/>
             </Form.Group>
 
             <Form.Group controlId="formTelefono">
@@ -139,44 +159,12 @@ const VerPerfil = ({usuario}) => {
                 </Form.Group>
               </div>
             )}
-<Button variant="secondary" type='submit' style={{ marginTop: '20px' }} >  Guarda Cambios</Button>
-{success && <div className="alert alert-success mt-3">{success}</div>}
-{error && <div className="alert alert-danger mt-3">{error}</div>}
+            <Button variant="secondary" type='submit'>Guarda Cambios</Button>
+            {success && <div className="alert alert-success mt-3">{success}</div>}
+            {error && <div className="alert alert-danger mt-3">{error}</div>}
           </Form>
-      </div>
+        </div>
   );
-};
-
-//Codigo para desactivar cuenta
-const DesactivarCuenta = () => {
-  const desactivarCuenta = async () => {
-    if (window.confirm('¿Estás seguro de que deseas desactivar tu cuenta?')) {
-      try {
-        const token = localStorage.getItem('token');  // Obtener el token de autenticación
-        const response = await axios.delete('/api/desactivar-cuenta/', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.status === 200) {
-          alert('Tu cuenta ha sido desactivada. Revisa tu correo para más información.');
-          // Opcional: Redirigir al usuario a la página de inicio
-          window.location.href = '/sesion';
-        }
-      } catch (error) {
-        console.error('Error al desactivar la cuenta:', error);
-        alert('Hubo un problema al desactivar tu cuenta.');
-      }
-    }
-  };
-  
-  return (
-    <div>
-      <h1>Desactivar cuenta</h1>
-      <Button onClick={desactivarCuenta}>Desactivar mi cuenta</Button>
-    </div>
-  )
 };
 
 export default VerPerfil;

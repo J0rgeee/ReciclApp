@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
+from .serializer import DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
 from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
@@ -79,17 +79,31 @@ class UserView(APIView):
 		return Response({'user': serializer.data}, status=status.HTTP_200_OK)   
 	
 class AdminUsuarios (viewsets.ModelViewSet):
-    serializer_class = AdminUsuariosSerializer
-    queryset = Usuario.objects.all()
+	permission_classes = (permissions.AllowAny,)
+	serializer_class = AdminUsuariosSerializer
+	queryset = Usuario.objects.all()
+	
 
 
 class UpdateUsuario(generics.UpdateAPIView):
-	serializar_class = UsuarioUpdateSerializaer
-	queryset = Usuario.objects.all()
 	permission_classes = [permissions.IsAuthenticated] 
+	queryset = Usuario.objects.all()
 
-	# def get_queryset(self):
-    	# return self.queryset.filter(email=self.request.Usuario.email)
+	def get_serializer_class(self):
+		return UsuarioUpdateSerializaer
+	def get_object(self):
+		return self.request.user
+	def perform_update(self, serializer):
+		serializer.save()  
+	
+
+class DesUsuario(generics.UpdateAPIView):
+	permission_classes = [permissions.IsAuthenticated] 
+	queryset = Usuario.objects.all()
+	def get_serializer_class(self):
+		return DesactivarUserSerializaer
+	def get_object(self):
+		return self.request.user
 
 
 class PublicacionesView(viewsets.ModelViewSet):
