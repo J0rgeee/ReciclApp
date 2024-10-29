@@ -16,16 +16,15 @@ const AdminUsuarios = () => {
 
     const [todosUsuarios, setTodosUsuarios] = useState([]);
 
-    const usuAct = async() =>{
+    const TodosUsuarios = async() =>{
         const useract = await axios.get('http://localhost:8000/api/AdminUsuario/adminusuario/');
-        //console.log(useract);
         setTodosUsuarios(useract.data);
         console.log(todosUsuarios);
       }
 
 
     useEffect(() => {
-        usuAct();
+      TodosUsuarios();
     },[]);
 
   return (
@@ -42,7 +41,6 @@ const AdminUsuarios = () => {
           <th>Telefono</th>
           <th>Estado Cuenta</th>
           <th>Eliminar</th>
-
         </tr>
       </thead>
       <tbody>

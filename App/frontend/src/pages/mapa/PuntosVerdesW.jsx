@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useEffect } from "react";
 import {
   GoogleMap,
   LoadScript,
@@ -6,6 +6,16 @@ import {
   Marker,
 } from "@react-google-maps/api";
 import "./PuntosVerdesW.css";
+import axios from 'axios';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+
+const client = axios.create({
+    baseURL: "http://localhost:8000"
+});
+
 
 const initialCenter = {
   lat: -33.363579,
@@ -13,6 +23,8 @@ const initialCenter = {
 };
 
 function PuntosVerdesW() {
+
+  const [usuario, setUsuario] = useState([]);
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [searchLocation, setSearchLocation] = useState(null);
@@ -20,6 +32,23 @@ function PuntosVerdesW() {
   const [center, setCenter] = useState(initialCenter);
   const autoCompleteRef = useRef(null);
   const inputRef = useRef(null);
+
+  
+  const usuAct = async() =>{
+    const useract = await client.get('/api/user');
+    setUsuario(useract.data.user);
+    console.log(usuario);
+  }
+
+  useEffect(() => {
+    client.get("/api/user").then(function (res) {
+        setUsuarioActivo(true);
+        usuAct();
+    })
+        .catch(function (error) {
+            setUsuarioActivo(false);
+        });
+  }, []);
 
   const onLoad = (autocomplete) => {
     autoCompleteRef.current = autocomplete;
@@ -67,12 +96,24 @@ function PuntosVerdesW() {
     }
   };
 
+
+
+  if (usuario.tipoUser===2)
+    {
+        return(
+            <div>
+               
+            </div>
+        )
+    } 
+
   return (
     <LoadScript
       googleMapsApiKey="AIzaSyAKEX7Y7Xo0tSLxB5fSZGuRZwMlV4NwANY"
       libraries={["places"]}
     >
       <div className="map-container">
+        
         {/* Mapa de Google */}
         <div className="map-section">
           <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
@@ -120,7 +161,7 @@ function PuntosVerdesW() {
         </div>
       </div>
     </LoadScript>
-  );
+  )
 }
 
 export default PuntosVerdesW;

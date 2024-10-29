@@ -30,7 +30,7 @@ export function Home() {
     const [usuario, setUsuario] = useState([]);
 
     const usuAct = async() =>{
-        const useract = await axios.get('http://localhost:8000/api/user');
+        const useract = await client.get('/api/user');
         setUsuario(useract.data.user);
         console.log(usuario);
       }

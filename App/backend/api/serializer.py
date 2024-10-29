@@ -100,4 +100,10 @@ class UsuarioUpdateSerializaer(serializers.ModelSerializer):
     class Meta:
           model = UserModel
           fields = ['email','username','nombre','apellido','telefono']
+          
+
+class DesactivarUserSerializaer(serializers.ModelSerializer):
+    class Meta:
+          model = UserModel
+          fields = ['email','username','estado']
 
