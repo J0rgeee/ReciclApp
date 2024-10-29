@@ -12,10 +12,10 @@ const Contacto = () => {
                 
             
         <Row className="w-100">
-            <Col xs={6} className='justify-content-start'>
-                <img  src='/basura.jpg'></img>
+            <Col xs={12} md={6} className='justify-content-start'>
+                <img  src='/basura.jpg' className='img-fluid' ></img>
             </Col>
-            <Col xs={6}>
+            <Col xs={12} md={6}>
             <Form>
                 <Form.Group controlId="formName">
                     <Form.Label>Nombre</Form.Label>

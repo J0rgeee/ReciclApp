@@ -45,6 +45,13 @@
     border-radius: 1cap;
     box-shadow: 20%;
 }
+
+.FcGoogle{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
 /* Estilos Login */
 
 /* Estilos Resgister */
@@ -57,3 +64,14 @@
     background-color: #41B59A; 
 
   }
+
+/* Estilos BajadaNavBar */
+.bajadanav {
+    align-content: center;
+}
+
+.max {
+    max-width: max-content;
+}
+
+/* Estilos BajadaNavBar */

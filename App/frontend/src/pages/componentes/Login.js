@@ -5,11 +5,13 @@ import Stack from 'react-bootstrap/Stack';
 import Card from 'react-bootstrap/Card';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import axios from 'axios';
+import './styles.css';
 
 import Form from 'react-bootstrap/Form';
 import { Register } from './Register';
 import { auth, googleProvider } from '../../componentes/firebaseConfig';
 import { signInWithPopup } from 'firebase/auth';
+import { FcGoogle } from "react-icons/fc";
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -85,7 +87,8 @@ export function Login() {
                     </Form.Group>
                     <Stack gap={2} className="col-md-5 mx-auto">
                         <Button className='boton' type='submit' id='login'>Iniciar sesion</Button>
-                        <Button onClick={signInWithGoogle}>Sign in with Google</Button>                     
+                        <Button variant='light' onClick={signInWithGoogle} className='FcGoogle'>Continuar con Google<FcGoogle /></Button>     
+                                   
                         <Register/>
                     </Stack>
                 </Form>
