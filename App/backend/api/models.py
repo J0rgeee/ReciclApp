@@ -104,9 +104,13 @@ class Direcciones (models.Model):
 class Publicacion (models.Model):
     idPublicacion = models.AutoField(primary_key=True)
     desc = models.CharField(max_length=256)
-    img = models.CharField(max_length=50)
+    img = models.CharField(max_length=50,null=True)
+    timeCreate = models.DateTimeField(auto_now_add=True)
     emailUsuario = models.ForeignKey(Usuario,on_delete=models.CASCADE)
+    likes = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f'{self.emailUsuario.username} - {self.timeCreate}'
 
 class SugRec (models.Model):
     idSR = models.AutoField(primary_key=True)

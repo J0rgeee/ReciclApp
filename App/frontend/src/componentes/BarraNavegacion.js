@@ -156,9 +156,9 @@ export function BarraNavegacion() {
 
   return (
     <div>
-      <Navbar className='navbar-reci' expand='md'>
-           
-          <Navbar.Brand>
+      <Navbar className='navbar-reci justify-content-between' expand='md'>
+        <Container fluid>
+          <Navbar.Brand className=''>
             <img src="/logo.png" width="80" height="80" className="d-inline-block align-top logoreci" alt="logoReci" />
           </Navbar.Brand>
           <Navbar.Brand>ReciclApp</Navbar.Brand>
@@ -169,9 +169,10 @@ export function BarraNavegacion() {
             <Link to='/foro'> <Image src='/botones/b2.png'  width="70" className="d-inline-block align-top p-2 imgbr"/> </Link>
             <Link to='/tienda'> <Image src='/botones/b3.png'  width="70" className="d-inline-block align-top p-2 imgbr"/> </Link>
             <Link to='/sesion'> <Image src='/botones/b4.png'  width="70" className="d-inline-block align-top p-2 imgbr"/> </Link>
-            <Link to='/reciclaje'> <Image src='/botones/b4.png'  width="70" className="d-inline-block align-top p-2 imgbr"/> </Link>
+            <Link to='/reciclaje'> <Image src='/botones/libro.png'  width="70" className="d-inline-block align-top p-2 imgbr"/> </Link>
             <Link to='/mapa'> <Image src='/botones/botonMapa.png'  width="80" className="d-inline-block align-top p-2 imgbr"/> </Link>
           </Navbar.Collapse>
+          </Container>
       </Navbar>
 
       

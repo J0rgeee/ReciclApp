@@ -10,13 +10,13 @@ axios.defaults.withCredentials = true;
 
 const AdminPubli = () => {
 
-    const [todosPV, setTodoPV] = useState([]);
+    const [todosPubli, setTodoPubli] = useState([]);
 
     const usuActi = async() =>{
-        // const puntoverde = await axios.get('http://localhost:8000/api/Publi/publi/');
+         const publi = await axios.get('http://localhost:8000/api/Publi/publi/');
         //console.log(useract);
-        // setTodoPV(puntoverde.data);
-        // console.log(todosPV);
+         setTodoPubli(publi.data);
+         console.log(todosPubli);
       }
 
 
@@ -38,15 +38,15 @@ const AdminPubli = () => {
         </tr>
       </thead>
       <tbody>
-      {/* {todosPV.map(publi =>(
+       {todosPubli.map(publicaciones =>(
         <tr>
-            <td>{publi.desc}</td>
-            <td>{publi.img}</td>
-            <td>{publi.emailusuario}</td>
+            <td>{publicaciones.desc}</td>
+            <td>{publicaciones.img}</td>
+            <td>{publicaciones.emailUsuario}</td>
             <td><Button variant="danger"></Button></td>
 
         </tr>
-        ))} */}
+        ))} 
       </tbody>
     </Table>
     </div>
