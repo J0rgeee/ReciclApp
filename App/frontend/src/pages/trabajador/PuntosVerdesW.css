@@ -6,8 +6,8 @@
 }
 
 .map-section {
-  flex: 1; /* El mapa ocupa el espacio disponible */
-  margin-right: 56px; /* Espacio entre el mapa y la lista */
+  flex: 1;
+  margin-right: 250px;
 }
 
 .autocomplete-input {
