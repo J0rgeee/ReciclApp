@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import  { useState,useEffect } from 'react';
 import { Button,Form,Modal } from 'react-bootstrap';
+import Swal from 'sweetalert2';
+
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -15,15 +17,15 @@ const client = axios.create({
 
 const VerPerfil = ({usuario}) => {
 
+  const [formulario,setFormulario] = useState({
+    email: '',
+    username: '',
+    nombre: '',
+    apellido: '',
+    telefono: ''
+});
 
-  const [correo, setCorreo] = useState('');
-  const [clave, setClave] = useState('');
-  const [nomUsuario, setNomUsaurio] = useState('');
-  const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [nac, setNac] = useState('');
-  const [activa,setActiva] = useState(false);
+
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -53,34 +55,38 @@ const VerPerfil = ({usuario}) => {
   };
 
 
-  function submitUpdate(e) {
+  const handleChange = (e) => {
+    setFormulario({ ...formulario, [e.target.name]: e.target.value });
+  };
 
-    const token = localStorage.getItem('accessToken');
-    
-
+  const submitUpdate = async (e) => {
     e.preventDefault();
-    client.put("/api/user/update",{
-      email: correo,
-      username: nomUsuario,
-      nombre: nombre,
-      apellido: apellido,
-      telefono: telefono
-    },{
-      headers:{
-        Authorization: `Bearer ${token}`,
-      },
-    }
-    
-  ).then(function (res) {
-      setSuccess('Usuario actualizado con éxito!');
-      setError(null);
-    })
-      .catch(function (error) {
-        setError('Error al actualizar el usuario.');
-      setSuccess(null);
+    try {
+      await client.put(`/api/user/update/`, {
+        email : formulario.email,
+        username : formulario.username,
+        nombre : formulario.nombre,
+        apellido : formulario.apellido,
+        telefono : formulario.telefono
+      },{
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
-}
-
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Mensaje enviado con éxito!',
+      });
+    } catch (error) {
+      console.log({formulario})
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al crear el contacto.',
+      });
+    }  
+  };
 
 
   return (
@@ -110,32 +116,32 @@ const VerPerfil = ({usuario}) => {
             
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder={usuario.email} disabled={isDisabled} value={usuario.email}  onChange={e => setCorreo(e.target.value)}/>
+              <Form.Control type="email" placeholder={usuario.email} disabled={isDisabled} name='email' value={formulario.email} onChange={handleChange}/>
             </Form.Group>
 
             <Form.Group controlId="formUsername">
               <Form.Label>Username</Form.Label>
-              <Form.Control type="text" placeholder={usuario.username} disabled={isDisabled} value={usuario.username}  onChange={e => setNomUsaurio(e.target.value)}/>
+              <Form.Control type="text" placeholder={usuario.username} disabled={isDisabled}  name='username' value={formulario.username} onChange={handleChange}/>
             </Form.Group>
 
             <Form.Group controlId="formNombre">
               <Form.Label>Nombre</Form.Label>
-              <Form.Control type="text" placeholder={usuario.nombre} disabled={isDisabled} value={usuario.nombre}  onChange={e => setNombre(e.target.value)}/>
+              <Form.Control type="text" placeholder={usuario.nombre} disabled={isDisabled} name='nombre' value={formulario.nombre} onChange={handleChange}/>
             </Form.Group>
 
             <Form.Group controlId="formApellido">
               <Form.Label>Apellido</Form.Label>
-              <Form.Control type="text" placeholder={usuario.apellido} disabled={isDisabled} value={usuario.apellido}  onChange={e => setApellido(e.target.value)} />
+              <Form.Control type="text" placeholder={usuario.apellido} disabled={isDisabled} name='apellido' value={formulario.apellido} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group controlId="formFechaNacimiento">
               <Form.Label>Fecha de Nacimiento</Form.Label>
-              <Form.Control type="date" disabled={isDisabled}   value={usuario.fechaNac}/>
+              <Form.Control type="date" disabled={isDisabled}   value={formulario.fechaNac}/>
             </Form.Group>
 
             <Form.Group controlId="formTelefono">
               <Form.Label>Teléfono</Form.Label>
-              <Form.Control type="tel" placeholder={usuario.telefono} disabled={isDisabled}  value={usuario.telefono}  onChange={e => setTelefono(e.target.value)} />
+              <Form.Control type="tel" placeholder={usuario.telefono} disabled={isDisabled}  name='telefono' value={formulario.telfono} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group controlId="formFoto">

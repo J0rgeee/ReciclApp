@@ -28,6 +28,13 @@ router7.register(r'publi',views.PublicacionesView,'publi')
 router8 = routers.DefaultRouter()
 router8.register(r'regret',views.RetiroView,'regret')
 
+router9 = routers.DefaultRouter()
+router9.register(r'contacto',views.ContactoView,'contacto')
+
+router10 = routers.DefaultRouter()
+router10.register(r'producto',views.ProductoView,'producto')
+
+
 
 
 urlpatterns = [
@@ -39,6 +46,9 @@ urlpatterns = [
     path("AdminUsuario/", include(router6.urls)),
     path("Publi/", include(router7.urls)),
     path("Regret/", include(router8.urls)),
+    path("Contacto/", include(router9.urls)),
+    path("Producto/", include(router10.urls)),
+
 
 
 
@@ -48,7 +58,7 @@ urlpatterns = [
 	path('login', views.UserLogin.as_view(), name='login'),
 	path('logout', views.UserLogout.as_view(), name='logout'),
 	path('user', views.UserView.as_view(), name='user'),
-	path('user/update', views.UpdateUsuario.as_view(), name='user-update'),
+	path('user/update/<int:pk>', views.UpdateUsuario.as_view(), name='user-update'),
     path('user/desactivar-cuenta', views.DesUsuario.as_view(), name='desactivar-cuenta'),
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
     

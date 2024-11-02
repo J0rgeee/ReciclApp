@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
-from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro
+from .serializer import ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
+from .models import Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.core.mail import send_mail
 
 
@@ -151,3 +151,13 @@ class ReactivarCuenta(APIView):
             return Response({'mensaje': 'Tu cuenta ha sido reactivada exitosamente.'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Tu cuenta ya está activa.'}, status=status.HTTP_400_BAD_REQUEST)
+
+class ContactoView (viewsets.ModelViewSet):
+	permission_classes = [AllowAny]
+	serializer_class = SugRecSerializer
+	queryset = SugRec.objects.all()
+
+class ProductoView (viewsets.ModelViewSet):
+	permission_classes = [AllowAny]
+	serializer_class = ProductoSerializer
+	queryset = Producto.objects.all()

@@ -116,7 +116,7 @@ class SugRec (models.Model):
     idSR = models.AutoField(primary_key=True)
     asunto = models.CharField(max_length=50)
     desc = models.CharField(max_length=256)
-    emailUsuario = models.ForeignKey(Usuario,on_delete=models.CASCADE)
+    emailUsuario = models.CharField(max_length=70)
 
 class EstadoVisita (models.Model):
     idEV = models.AutoField(primary_key=True)
@@ -131,6 +131,19 @@ class RegistroRetiro (models.Model):
     estadoVisita = models.ForeignKey(EstadoVisita,on_delete=models.CASCADE) 
     desc = models.CharField(max_length=256)
     idDireccion = models.ForeignKey(Direcciones,on_delete=models.CASCADE)
+
+class Producto (models.Model):
+    idProducto = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50)
+    desc = models.CharField(max_length=256)
+    precio = models.IntegerField()
+    stock = models.IntegerField()
+    imagen = models.CharField(max_length=50)
+
+
+
+
+
 
 
 

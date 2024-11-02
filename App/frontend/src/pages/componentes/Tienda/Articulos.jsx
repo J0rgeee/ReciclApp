@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axios from 'axios'
 import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+
+const client = axios.create({
+  baseURL: "http://localhost:8000"
+});
 
 const Articulos = () => {
 
   const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeItem, setActiveItem] = useState(null);
 
-  const items = [
-    { id: 1, title: 'Artículo 1', image: 'link_a_la_imagen_1', description: 'Descripción del artículo 1' },
-    { id: 2, title: 'Artículo 2', image: 'link_a_la_imagen_2', description: 'Descripción del artículo 2' },
-    { id: 3, title: 'Artículo 3', image: 'link_a_la_imagen_3', description: 'Descripción del artículo 3' },
-    { id: 4, title: 'Artículo 4', image: 'link_a_la_imagen_4', description: 'Descripción del artículo 4' },
-    { id: 5, title: 'Artículo 4', image: 'link_a_la_imagen_4', description: 'Descripción del artículo 4' },
-    // Agrega más artículos aquí
-  ];
+  const [productos, setProductos] = useState([]);
 
   // Funciones para mostrar y cerrar el modal
   const handleShow = (item) => {
@@ -23,15 +26,37 @@ const Articulos = () => {
 
   const handleClose = () => setShow(false);
 
+
+  const fetchItems = async () => {
+    
+    try {
+      const response = await client.get('/api/Producto/producto/'); // URL de la API
+      setProductos(response.data); // Guarda los datos en el estado
+      setLoading(false); // Cambia el estado de carga
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+      setLoading(false);
+    }
+  };
+
+  // Llama a la función fetchItems cuando el componente se monta
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
   return (
     <Container>
+      <h2 className="text-center mb-4">Tienda ReciclApp</h2>
+      {loading ? (
+        <p className="text-center">Cargando...</p>
+      ) : (
       <Row className="my-4">
-        {items.map((item) => (
+        {productos.map((item) => (
           <Col key={item.id} xs={12} md={3} className="mb-4">
             <Card>
-              <Card.Img variant="top" src={item.image} alt={item.title} />
+              <Card.Img variant="top" src={item.imagen} alt={item.nombre} />
               <Card.Body>
-                <Card.Title>{item.title}</Card.Title>
+                <Card.Title>{item.nombre}</Card.Title>
                 <Button variant="primary" onClick={() => handleShow(item)}>
                   Ver descripción
                 </Button>
@@ -41,13 +66,15 @@ const Articulos = () => {
         ))}
       </Row>
 
+      )}
+
       {/* Modal para la descripción */}
       {activeItem && (
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>{activeItem.title}</Modal.Title>
           </Modal.Header>
-          <Modal.Body>{activeItem.description}</Modal.Body>
+          <Modal.Body>{activeItem.desc}</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Cerrar

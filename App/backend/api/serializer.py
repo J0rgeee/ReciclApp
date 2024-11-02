@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from .models import Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro
+from .models import Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro
 from django.contrib.auth import get_user_model,authenticate
 
 UserModel= get_user_model()
@@ -23,7 +23,7 @@ class PublicacionSerializer(serializers.ModelSerializer):
 class SugRecSerializer(serializers.ModelSerializer):
     class Meta:
         model = SugRec
-        fields = '__all__'
+        fields = ['emailUsuario','asunto','desc']
 
 class EstadoVisitaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -107,3 +107,7 @@ class DesactivarUserSerializaer(serializers.ModelSerializer):
           model = UserModel
           fields = ['email','username','estado']
 
+class ProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
+        fields   = '__all__'        
