@@ -24,6 +24,7 @@ const VerPerfil = ({usuario}) => {
     apellido: '',
     telefono: ''
 });
+  const encodedEmail = encodeURIComponent(formulario.email);
 
 
   const [error, setError] = useState(null);

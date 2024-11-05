@@ -38,7 +38,9 @@ class RegistroRetiroSerializer(serializers.ModelSerializer):
 class PuntoVerdeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PuntoVerde
-        fields = '__all__'
+        fields = ['idPv','nombre','direccion','nro','estado','nomComuna']
+
+
 
 class CiudadSerializer(serializers.ModelSerializer):
     class Meta:

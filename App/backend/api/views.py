@@ -8,7 +8,10 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
+
 
 
 # Create your views here.
@@ -16,6 +19,16 @@ class PtoVerdeView (viewsets.ModelViewSet):
 	permission_classes = (permissions.AllowAny,)
 	serializer_class = PuntoVerdeSerializer
 	queryset = PuntoVerde.objects.all()
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def crear_punto_verde(request):
+    serializer = PuntoVerdeSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CiudadView (viewsets.ModelViewSet):
     serializer_class = CiudadSerializer
@@ -91,10 +104,16 @@ class UpdateUsuario(generics.UpdateAPIView):
 
 	def get_serializer_class(self):
 		return UsuarioUpdateSerializaer
+	
 	def get_object(self):
-		return self.request.user
-	def perform_update(self, serializer):
-		serializer.save()  
+		email = self.kwargs.get('email')
+		if not email:
+			self.permission_denied(self.request, message="Email no proporcionado")
+
+		try:
+			return Usuario.objects.get(email=email)
+		except Usuario.DoesNotExist:
+			self.permission_denied(self.request, message="Usuario no encontrado")
 	
 
 class DesUsuario(generics.UpdateAPIView):

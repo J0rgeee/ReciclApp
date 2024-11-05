@@ -39,6 +39,7 @@ router10.register(r'producto',views.ProductoView,'producto')
 
 urlpatterns = [
     path("PtoVerde/", include(router.urls)),
+    path('PtoVerde/crear/', views.crear_punto_verde, name='crear_punto_verde'),
     path("TipoXPv/", include(router2.urls)),
     path("TipoRec/", include(router3.urls)),
     path("Comuna/", include(router4.urls)), 
@@ -58,7 +59,7 @@ urlpatterns = [
 	path('login', views.UserLogin.as_view(), name='login'),
 	path('logout', views.UserLogout.as_view(), name='logout'),
 	path('user', views.UserView.as_view(), name='user'),
-	path('user/update/<int:pk>', views.UpdateUsuario.as_view(), name='user-update'),
+	path('api/user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
     path('user/desactivar-cuenta', views.DesUsuario.as_view(), name='desactivar-cuenta'),
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
     

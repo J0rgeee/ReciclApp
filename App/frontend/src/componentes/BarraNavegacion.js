@@ -65,7 +65,7 @@ export function BarraNavegacion() {
           <Container>
     
             <Navbar.Brand className='titulo'>ReciclApp</Navbar.Brand>
-            <Navbar.Brand>Bienvenio señor admin: {usuario.username}</Navbar.Brand>
+            <Navbar.Brand>Bienvenido señor admin: {usuario.username}</Navbar.Brand>
 
             <Navbar.Brand><img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
@@ -101,7 +101,7 @@ export function BarraNavegacion() {
     
             <Navbar.Brand>ReciclApp</Navbar.Brand>
             <Navbar.Brand><img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
-            <Navbar.Brand>Bienvenio señor: {usuario.username}</Navbar.Brand>
+            <Navbar.Brand>Bienvenido señor: {usuario.username}</Navbar.Brand>
 
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
@@ -130,7 +130,7 @@ export function BarraNavegacion() {
           <Container>
            
             <Navbar.Brand>ReciclApp</Navbar.Brand>
-            <Navbar.Brand>Bienvenio señor trabajador: {usuario.username}</Navbar.Brand>
+            <Navbar.Brand>Bienvenido señor trabajador: {usuario.username}</Navbar.Brand>
        
             <Navbar.Brand><img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
