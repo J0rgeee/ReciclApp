@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from .models import Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro
+from .models import Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro
 from django.contrib.auth import get_user_model,authenticate
 
 UserModel= get_user_model()
@@ -10,10 +10,30 @@ class TipoUsuarioSerializer(serializers.ModelSerializer):
         model = TipoUsuario
         fields = '__all__'
 
+class ComunaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comuna
+        fields   =  ['idComuna', 'nombre']
+
 class DireccionesSerializer(serializers.ModelSerializer):
+    nomComuna = serializers.PrimaryKeyRelatedField(queryset=Comuna.objects.all())
+
     class Meta:
         model = Direcciones
-        fields = '__all__'
+        fields = ['idDireccion', 'calle', 'nro', 'nomComuna','emailUser']  # Ajusta los campos según tu modelo
+
+    def update(self, instance, validated_data):
+        # Actualizar el campo nomComuna con el ID proporcionado
+        nom_comuna_data = validated_data.pop('nomComuna', None)
+        if nom_comuna_data:
+            instance.nomComuna_id = nom_comuna_data.idComuna
+        # Actualizar otros campos
+        instance.calle = validated_data.get('calle', instance.calle)
+        instance.nro = validated_data.get('nro', instance.nro)
+        
+        # Guardar la instancia actualizada
+        instance.save()
+        return instance
 
 class PublicacionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,10 +68,6 @@ class CiudadSerializer(serializers.ModelSerializer):
         fields   = '__all__'
     
 
-class ComunaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comuna
-        fields   = '__all__'
 
 class TipoReciclajeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -113,3 +129,21 @@ class ProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producto
         fields   = '__all__'        
+
+class PuntuacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PuntuacioUsuario
+        fields = ['puntosplas', 'puntospapel', 'putnosvidrio', 'puntoscarton', 'puntoslatas']
+
+
+class ProgresoUsuarioMetaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgresoUsuarioMeta
+        fields = ['progreso', 'completado25', 'completado50', 'completado75', 'completado100']
+
+class MetasSerializer(serializers.ModelSerializer):
+    progreso = ProgresoUsuarioMetaSerializer(many=False, read_only=True)  # Progreso por usuario
+    class Meta:
+        model = Metas
+        fields = ['idMeta', 'nombre', 'desc', 'finalMeta', 'progreso']
+

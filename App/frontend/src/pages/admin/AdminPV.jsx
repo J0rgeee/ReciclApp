@@ -3,6 +3,13 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import { Button, Modal, Form } from "react-bootstrap";
 import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
+import AgregarPv from "./AgregarPv";
+import EliminarPv from "./EliminarPv";
+
+
+
+const csrftoken = Cookies.get('csrftoken');
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -60,9 +67,18 @@ const AdminPV = () => {
         e.preventDefault();
         console.log(formulario);
         try {
-            await client.put(`/api/PtoVerde/ptoverde/${formulario.idPv}/`, formulario, {
+            await client.put(`/api/PtoVerde/ptoverde/${formulario.idPv}/`, {
+                "idPv": formulario.idPv,
+                "nombre": formulario.nombre,
+                "direccion": formulario.direccion,
+                "nro": formulario.nro,
+                "estado": formulario.estado,
+                "nomComuna": formulario.nomComuna
+            }, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${localStorage.getItem('token')}`,
+                    'X-CSRFToken': csrftoken,  // Token CSRF desde la cookie
                 }
             });
             Swal.fire({
@@ -87,6 +103,7 @@ const AdminPV = () => {
     }, []);
 
     return (
+        <>
         <div style={{ marginLeft: '250px', flexGrow: 1 }}>
             <Table striped bordered hover variant="dark">
                 <thead>
@@ -110,7 +127,7 @@ const AdminPV = () => {
                             <td>{puntoVerde.direccion}</td>
                             <td>{puntoVerde.nro}</td>
                             <td><Form.Check type="checkbox" checked={puntoVerde.estado} disabled /></td>
-                            <td><Button variant="danger">Eliminar</Button></td>
+                            <td><EliminarPv campoId={puntoVerde.idPv}/></td>
                             <td><Button variant="info" onClick={() => handleShow(puntoVerde)}>Editar</Button></td>
                         </tr>
                     ))}
@@ -150,7 +167,9 @@ const AdminPV = () => {
                     </Modal.Footer>
                 </Form>
             </Modal>
+        <AgregarPv />
         </div>
+        </>
     );
 };
 

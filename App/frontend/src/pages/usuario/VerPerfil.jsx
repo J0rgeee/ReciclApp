@@ -3,6 +3,8 @@ import axios from 'axios';
 import  { useState,useEffect } from 'react';
 import { Button,Form,Modal } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
+const csrftoken = Cookies.get('csrftoken');
 
 
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -63,28 +65,31 @@ const VerPerfil = ({usuario}) => {
   const submitUpdate = async (e) => {
     e.preventDefault();
     try {
-      await client.put(`/api/user/update/`, {
-        email : formulario.email,
+      await client.put(`/api/user/update/${usuario.email}/`, {
+        email : usuario.email,
         username : formulario.username,
         nombre : formulario.nombre,
         apellido : formulario.apellido,
         telefono : formulario.telefono
       },{
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('token')}`,
+          'X-CSRFToken': csrftoken,  // Token CSRF desde la cookie
         }
       });
       Swal.fire({
         icon: 'success',
         title: 'Éxito',
-        text: 'Mensaje enviado con éxito!',
+        text: 'Usuario Actualizado con exito',
       });
     } catch (error) {
-      console.log({formulario})
+      console.log({error});
+      console.log({formulario});
       Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Error al crear el contacto.',
+          text: 'Error al Actualizar Usuario',
       });
     }  
   };
@@ -117,7 +122,7 @@ const VerPerfil = ({usuario}) => {
             
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" placeholder={usuario.email} disabled={isDisabled} name='email' value={formulario.email} onChange={handleChange}/>
+              <Form.Control type="email" disabled name='email' value={usuario.email}/>
             </Form.Group>
 
             <Form.Group controlId="formUsername">
@@ -150,25 +155,8 @@ const VerPerfil = ({usuario}) => {
               <Form.Control type="file" disabled={isDisabled} />
             </Form.Group>
 
-            <Button variant="primary" onClick={toggleChangePassword}>
-              Cambiar Contraseña
-            </Button>
-
-            {showChangePassword && (
-              <div style={{ marginTop: '20px' }}>
-                <Form.Group controlId="formNewPassword">
-                  <Form.Label>Nueva Contraseña</Form.Label>
-                  <Form.Control type="password" placeholder={usuario.password} disabled={isDisabled} />
-                </Form.Group>
-                <Form.Group controlId="formConfirmPassword">
-                  <Form.Label>Confirmar Contraseña</Form.Label>
-                  <Form.Control type="password" placeholder={usuario.password} disabled={isDisabled} />
-                </Form.Group>
-              </div>
-            )}
             <Button variant="secondary" type='submit'>Guarda Cambios</Button>
-            {success && <div className="alert alert-success mt-3">{success}</div>}
-            {error && <div className="alert alert-danger mt-3">{error}</div>}
+
           </Form>
         </div>
   );

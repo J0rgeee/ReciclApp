@@ -108,6 +108,7 @@ class Publicacion (models.Model):
     timeCreate = models.DateTimeField(auto_now_add=True)
     emailUsuario = models.ForeignKey(Usuario,on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
+    estado = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.emailUsuario.username} - {self.timeCreate}'
@@ -139,6 +140,29 @@ class Producto (models.Model):
     precio = models.IntegerField()
     stock = models.IntegerField()
     imagen = models.CharField(max_length=50)
+
+class Metas (models.Model):
+    idMeta = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=150)
+    desc = models.CharField(max_length=500)
+    finalMeta = models.IntegerField()
+
+class ProgresoUsuarioMeta (models.Model):
+    idPUM = models.AutoField(primary_key=True)
+    emailUser = models.ForeignKey(Usuario,on_delete=models.CASCADE)
+    idMeta = models.ForeignKey(Metas,on_delete=models.CASCADE)
+    progreso = models.IntegerField()
+    completado25 = models.BooleanField(default=False)
+    completado50 = models.BooleanField(default=False)
+    completado75 = models.BooleanField(default=False)
+    completado100 = models.BooleanField(default=False)
+    def __str__(self):
+        return f"Progreso de {self.emailUser} en {self.idMeta.nombre}"
+
+    class Meta:
+        unique_together = ('emailUser', 'idMeta') 
+
+
 
 
 
