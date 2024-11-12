@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import { ModalTitle } from 'react-bootstrap';
 
 const AgregarPublicacion = () => {
   const [desc, setDesc] = useState('');
   const [file, setFile] = useState('');
   const [error, setError] = useState(null);
   const [mensajeExito, setMensajeExito] = useState(null);
+  //Boton Modal
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const getCsrfToken = () => {
     const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('csrftoken='));
@@ -27,7 +34,7 @@ const AgregarPublicacion = () => {
     try {
       
       // Realizar la solicitud POST al backend
-      const response = await axios.post('/api/Publi/publi', formData, {
+      const response = await axios.post('http://localhost:8000/api/Publi/publi', formData, {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCsrfToken(),  // Incluir el token CSRF si es necesario
@@ -47,7 +54,14 @@ const AgregarPublicacion = () => {
 
   return (
     <div>
-      <h2>Agregar Publicación</h2>
+      <Button variant="light" onClick={handleShow} className='boton-fijo'>
+        Nueva Publicacion
+      </Button>
+      <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <ModalTitle>Agregar Publicación</ModalTitle>
+      </Modal.Header>
+      
       {mensajeExito && <p style={{ color: 'green' }}>{mensajeExito}</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <Form onSubmit={handleSubmit}>
@@ -69,6 +83,7 @@ const AgregarPublicacion = () => {
         </div>
         <button type="submit">Publicar</button>
       </Form>
+      </Modal>
     </div>
   );
 };

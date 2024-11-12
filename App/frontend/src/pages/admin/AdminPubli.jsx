@@ -32,7 +32,7 @@ const AdminPubli = () => {
     const usuActi = async() =>{
          const publi = await axios.get('http://localhost:8000/api/Publi/publi/');
         //console.log(useract);
-         setTodoPubli(publi.data);
+         setTodasPubli(publi.data);
       }
 
     useEffect(() => {
@@ -54,7 +54,7 @@ const AdminPubli = () => {
           </tr>
         </thead>
         <tbody>
-          {todosPubli.map(publicaciones =>(
+          {todasPubli.map(publicaciones =>(
             <tr key={publicaciones.idPublicacion}>
                 <td>{publicaciones.idPublicacion}</td>
                 <td>{publicaciones.desc}</td>

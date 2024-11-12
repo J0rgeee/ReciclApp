@@ -4,13 +4,15 @@ import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import './publi.styles.css'
-import { FcLike } from "react-icons/fc";
-import { FaComment } from "react-icons/fa";
-import Nav from 'react-bootstrap/Nav';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
+
+const getCsrfToken = () => {
+  const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('csrftoken='));
+  return cookie ? cookie.split('=')[1] : null;
+};
 
 const Post = ({ post }) => {
   const [likesCount, setLikesCount] = useState(post.likes_count);
@@ -28,8 +30,7 @@ const Post = ({ post }) => {
   
   // Cargar comentarios al montar el componente
   useEffect(() => {
-    //Get hacia la api
-    axios.get(`/api/publicaciones/${post.idPublicacion}/comments/`)
+    axios.get(`http://localhost:8000/api/publicaciones/${post.idPublicacion}/comments/`)
       .then(response => {
         setComments(response.data);
       })
@@ -40,8 +41,12 @@ const Post = ({ post }) => {
 
   // Manejar el like
   const handleLike = () => {
-    axios.post(`/api/publicaciones/${post.idPublicacion}/like/`, {}, {
-      // No usar header Authorization con sesiones
+    axios.post(`http://localhost:8000/api/publicaciones/${post.idPublicacion}/like/`, {}, {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken(),  // Incluir el token CSRF si es necesario
+      },
+      withCredentials: true,  // Permitir envío de cookies de sesión
     })
     .then(response => {
       setLikesCount(response.data.likes_count);
@@ -57,9 +62,17 @@ const Post = ({ post }) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    axios.post(`/api/publicaciones/${post.idPublicacion}/comments/`, {
-      content: newComment
-    })
+    axios.post(`http://localhost:8000/api/publicaciones/${post.idPublicacion}/comments/`, {
+        content: newComment  // Aquí es donde colocas el comentario en el cuerpo de la solicitud
+      }, 
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),  // Incluir el token CSRF si es necesario
+        },
+        withCredentials: true,  // Permitir envío de cookies de sesión
+      }
+    )
     .then(response => {
       setComments([...comments, response.data]); // Agregar el nuevo comentario al final
       setNewComment(''); // Limpiar el campo de comentario
@@ -71,16 +84,19 @@ const Post = ({ post }) => {
 
   return (
     <div className="post">
-      <Card className="m-2">
+      <Card className="m-2" >
       <Card.Header>
-      <Image src="holder.js/171x180" rounded className='m-1'/>
-      <strong>{post.username}</strong> - {formatDistanceToNow(new Date(post.timeCreate), { addSuffix: true, locale: es })}
+        <Image src="holder.js/171x180" rounded className="mx-auto"/>
+        <strong>{post.username}</strong> - <span className='span'>{formatDistanceToNow(new Date(post.timeCreate), { addSuffix: true, locale: es })}</span>
       </Card.Header>
       <Card.Body>
         <Card.Text>{post.desc}</Card.Text>
-        <Image src={post.img} fluid className='img' />
+        <div className='text-center'>
+          <Image src={post.img} fluid className='img-publi'/>
+        </div>
         
-        <div className='like-comment'>
+        
+        <div className="like-comment">
           <Button className='button-like' variant='light'>
             <span class="material-symbols-outlined" onClick={handleLike}>favorite</span>
           {hasLiked ? "" : ""} 

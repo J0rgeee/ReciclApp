@@ -108,7 +108,7 @@ class Publicacion (models.Model):
     img = models.ImageField(upload_to='images/', null=True, blank=True)
     timeCreate = models.DateTimeField(auto_now_add=True)
     emailUsuario = models.ForeignKey(Usuario,on_delete=models.CASCADE)
-    likes = models.IntegerField(default=0)
+    likes_count = models.IntegerField(default=0)
     estado = models.BooleanField(default=False)
 
     def __str__(self):

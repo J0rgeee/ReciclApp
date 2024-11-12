@@ -1,29 +1,6 @@
-.img-foro {
-    object-fit: contain;
-    max-height: 20vmax;
-  }
-  
-  .btn-foro{
-    padding: 5px;
-    .button {
-      border-radius: 80%;
-      width: 50px;
-    }
-    .button:hover {
-      background-color: rgba(255, 255, 255, 0);
-      transform:  scale(1.3);
-      opacity: 0.9;
-      pointer-events: stroke;
-    }
-  }
-  
-  .span {
-    font-size: small;
-    font-weight: 300;
-  }
-
 .divforo {
   display: flex;
   justify-content: center;
-  background-color: #5ccda7;
+  background-color: #d0fdd7;
+  position: relative;
 }
