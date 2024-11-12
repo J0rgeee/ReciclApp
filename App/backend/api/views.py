@@ -190,8 +190,8 @@ def dar_o_eliminar_like(request, publicacion_id):
         publicacion.save()
         return Response({"message": "Like añadido", "likes_count": publicacion.likes_count, "has_liked": True})
 
-@api_view(['GET', 'POST'])
-def comentarios_publicacion(request, idPublicacion):
+@api_view(['GET', 'POST','DELETE'])
+def comentarios_publicacion(request, idPublicacion, idComentario=None):
     try:
         publicacion = Publicacion.objects.get(idPublicacion=idPublicacion)
     except Publicacion.DoesNotExist:
@@ -209,6 +209,17 @@ def comentarios_publicacion(request, idPublicacion):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    elif request.method == 'DELETE':
+        try:
+            comentario = Comentario.objects.get(id=idComentario, publicacion=publicacion, usuario=request.user)
+        except Comentario.DoesNotExist:
+            return Response({"error": "Comentario no encontrado o no autorizado para eliminarlo"}, status=status.HTTP_404_NOT_FOUND)
+
+        comentario.delete()
+        return Response({"message": "Comentario eliminado con éxito"}, status=status.HTTP_200_OK)
+    # Error si `idComentario` no se proporciona en la solicitud DELETE
+    return Response({"error": "ID del comentario es necesario para eliminarlo"}, status=status.HTTP_400_BAD_REQUEST)
+    
 class RetiroView(viewsets.ModelViewSet):
     queryset = RegistroRetiro.objects.all()
     def get_serializer_class(self):

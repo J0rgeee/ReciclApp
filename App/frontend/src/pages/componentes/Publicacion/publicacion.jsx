@@ -19,6 +19,7 @@ const Post = ({ post }) => {
   const [hasLiked, setHasLiked] = useState(post.has_liked);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [currentUser, setCurrentUser] = useState([]);
 
   //Para iconos de google fonts 
   useEffect(() => {
@@ -28,11 +29,26 @@ const Post = ({ post }) => {
     document.head.appendChild(link);
   }, []);
   
+  useEffect(() => {
+    // Obtener usuario autenticado
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/user', { withCredentials: true });
+        setCurrentUser(response.data);  // Supón que response.data contiene el objeto de usuario
+        console.log(currentUser.user.email)
+      } catch (error) {
+        console.error("Error al obtener el usuario autenticado:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
   // Cargar comentarios al montar el componente
   useEffect(() => {
     axios.get(`http://localhost:8000/api/publicaciones/${post.idPublicacion}/comments/`)
       .then(response => {
         setComments(response.data);
+        console.log("Comentarios cargados:", response.data);
       })
       .catch(error => {
         console.error("Error al cargar comentarios:", error.response?.data || error.message);
@@ -63,7 +79,7 @@ const Post = ({ post }) => {
     if (!newComment.trim()) return;
 
     axios.post(`http://localhost:8000/api/publicaciones/${post.idPublicacion}/comments/`, {
-        content: newComment  // Aquí es donde colocas el comentario en el cuerpo de la solicitud
+        contenido: newComment  // Aquí es donde colocas el comentario en el cuerpo de la solicitud
       }, 
       {
         headers: {
@@ -80,6 +96,24 @@ const Post = ({ post }) => {
     .catch(error => {
       console.error("Error al enviar comentario:", error.response?.data || error.message);
     });
+  };
+  
+  const handleDeleteComment = (idComentario) => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar este comentario?")) return;
+    axios
+      .delete(`http://localhost:8000/api/publicaciones/${post.idPublicacion}/comments/${idComentario}/`, {
+        headers: {
+          "X-CSRFToken": getCsrfToken(), // Asegúrate de incluir el token CSRF si es necesario
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        setComments(comments.filter(comment => comment.id !== idComentario)); // Actualizar el estado
+        console.log("Comentario eliminado:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error al eliminar comentario:", error.response?.data || error.message);
+      });
   };
 
   return (
@@ -105,8 +139,13 @@ const Post = ({ post }) => {
         </div>
         <div className="comments-section">
         <h5 className='m-2'>Comentarios</h5>
-        {comments.map((comment, index) => (
-          <p key={index}>{comment.content}</p>
+        {comments.map((comment) => (
+          <div key={comment.id}>
+          <p><span>{comment.usuario}</span>  {comment.contenido}</p>
+          {currentUser && currentUser.email === comment.usuario_email && (
+            <Button onClick={() => handleDeleteComment(comment.id)}>Eliminar</Button>
+          )}
+          </div>
         ))}
 
         <Form onSubmit={handleCommentSubmit} className='form'>

@@ -31,7 +31,7 @@ const SidebarAdmin = () => {
     try {
         const useract = await axios.get('http://localhost:8000/api/user');
         setUsuario(useract.data.user);
-        console.log(usuario);
+        console.log(usuario.username);
     } catch (error) {
       console.error("Error al obtener el usuario:", error);
     }

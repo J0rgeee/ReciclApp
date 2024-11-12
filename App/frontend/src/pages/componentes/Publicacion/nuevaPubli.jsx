@@ -3,7 +3,7 @@ import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { ModalTitle } from 'react-bootstrap';
+import { ModalBody, ModalFooter, ModalTitle } from 'react-bootstrap';
 
 const AgregarPublicacion = () => {
   const [desc, setDesc] = useState('');
@@ -61,28 +61,31 @@ const AgregarPublicacion = () => {
       <Modal.Header closeButton>
         <ModalTitle>Agregar Publicación</ModalTitle>
       </Modal.Header>
-      
-      {mensajeExito && <p style={{ color: 'green' }}>{mensajeExito}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <Form onSubmit={handleSubmit}>
-        <div>
-          <Form.Label>Descripción:</Form.Label>
-          <input
-            type="text"
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Imagen:</label>
-          <input
-            type="file"
-            onChange={handleFileChange} required 
-          />
-        </div>
-        <button type="submit">Publicar</button>
-      </Form>
+      <ModalBody>
+        <Form onSubmit={handleSubmit}>
+          <div className='mb-2'>
+            <Form.Label>Descripción:</Form.Label>
+            <Form.Control
+              type="text"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              required
+            />
+          </div>
+          <div className='mb-2'>
+            <Form.Label>Imagen:</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={handleFileChange}
+            />
+          </div>
+          <Button type="submit" className='m-2'>Publicar</Button>
+        </Form>
+      </ModalBody>
+      <Modal.Footer>
+        {mensajeExito && <p style={{ color: 'green' }}>{mensajeExito}</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+      </Modal.Footer>
       </Modal>
     </div>
   );

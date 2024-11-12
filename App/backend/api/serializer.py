@@ -49,10 +49,13 @@ class PublicacionSerializer(serializers.ModelSerializer):
 
 class ComentarioSerializer(serializers.ModelSerializer):
     usuario = serializers.StringRelatedField()  # Para mostrar el nombre del usuario en lugar del ID
-
+    usuario_email = serializers.StringRelatedField() 
     class Meta:
         model = Comentario
-        fields = ['id', 'usuario', 'contenido', 'fecha_creacion']
+        fields = ['id', 'usuario', 'usuario_email','contenido', 'fecha_creacion']
+        
+    def get_usuario_email(self, obj):
+        return obj.usuario.email  # Acceder al email desde la relación de usuario
 
 class SugRecSerializer(serializers.ModelSerializer):
     class Meta:
