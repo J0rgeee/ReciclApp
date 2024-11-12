@@ -1,5 +1,5 @@
 .navbar-reci{
-    background-color: #41B59A;
+    background-color: #026842;
 
 }
 
@@ -24,7 +24,10 @@
 }
 
 .titulo {
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+    font-family: "Delius", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 30px;
 }
 
 .imgbr {
@@ -36,4 +39,23 @@
     opacity: 0.9;
 }
 
+.delius-regular {
+    font-family: "Delius", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+/*
+<uniquifier>: Use a unique and descriptive class name
+<weight>: Use a value from 400 to 700
+*/
+
+.dynapuff {
+  font-family: "DynaPuff", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
 

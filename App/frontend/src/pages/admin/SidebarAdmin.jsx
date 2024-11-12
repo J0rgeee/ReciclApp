@@ -1,78 +1,69 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, ListGroup, ListGroupItem, CardBody } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+import Nav from 'react-bootstrap/Nav';
 import axios from 'axios';
 import AdminUsuarios from "./AdminUsuarios";
 import AdminPV from "./AdminPV";
 import AdminPubli from "./AdminPubli";
 import AdminRetiros from "./AdminRetiros";
+import './admin.styles.css';
 
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
-
+/*
 const client = axios.create({
     baseURL: "http://localhost:8000"
 });
-
+*/
 
 const SidebarAdmin = () => {
-    const [activeDiv, setActiveDiv] = useState(null);
-    const [usuarioActivo, setUsuarioActivo] = useState();
-    const [usuario, setUsuario] = useState([]);
+  const [activeDiv, setActiveDiv] = useState(null);
+  const [usuario, setUsuario] = useState([]);
 
-    const handleButtonClick = (divNumber) => {
-      setActiveDiv(divNumber);
-    };
+  const handleButtonClick = (divNumber) => {
+    console.log("Botón clickeado:", divNumber);
+    setActiveDiv(divNumber);
+  };
 
-    const usuAct = async() =>{
+  const usuAct = async() =>{
+    try {
         const useract = await axios.get('http://localhost:8000/api/user');
         setUsuario(useract.data.user);
         console.log(usuario);
+    } catch (error) {
+      console.error("Error al obtener el usuario:", error);
     }
-    useEffect(() => {
-        usuAct();
-    }, []);
+  };
+
+  useEffect(() => {
+      usuAct();
+  }, []);
 
   return (
-      <div className="d-flex">
-      <div
-        style={{
-          width: '250px',
-          backgroundColor: '#228b22',
-          height: 'calc(100vh - 56px)', // Ajuste para que no cubra el navbar
-          position: 'fixed',
-          left: 0,
-          top: '125px' // Asegúrate de que esto coincida con la altura del navbar
-        }}
-      >
-        <Card className="text-center" style={{ margin: '20px' }}>
-          <Card.Img
-            variant="top"
-            src="path/to/your/photo.jpg" // Reemplaza con la ruta de tu imagen
-            style={{ borderRadius: '50%', width: '100px', height: '100px', margin: '20px auto' }}
-          />
-          <Card.Body>
-            <Card.Title>Menu de administrador <br/>{usuario.username}</Card.Title>
-          </Card.Body>
-        </Card>
-        <div className="d-flex flex-column align-items-center">
-          
-          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(1)}>Administrar Usuarios</Button>
-          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(2)}>Administrar Puntos Verdes</Button>
-          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(3)}>Administrar Publicaciones</Button>
-          <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(4)}>Administrar Retiros</Button>
-
-        </div>
-        
+    <div className="d-flex">
+      <Nav className="flex-column vh-100 sidebar-admin"> 
+        <img
+          variant="top"
+          src="Usuarios/perfilH.png" // Reemplaza con la ruta de tu imagen
+          className="img"
+        />
+        <h4 className="text-center m-3">Administrador <br/>{usuario.username || "Cargando..."}</h4>
+        <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(1)}>Administrar Usuarios</Button></Nav.Link>
+        <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(2)}>Administrar Puntos Verdes</Button></Nav.Link>
+        <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(3)}>Administrar Publicaciones</Button></Nav.Link>
+        <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(4)}>Administrar Retiros</Button></Nav.Link>
+      </Nav>
+      <div className="content" key={activeDiv}>
+        {activeDiv === 1 && <AdminUsuarios/>}
+        {activeDiv === 2 && <AdminPV/>}
+        {activeDiv === 3 && <AdminPubli/>}
+        {activeDiv === 4 && <AdminRetiros/>}
       </div>
-      <div>
-        {activeDiv === 1 && <div><AdminUsuarios/></div>}
-        {activeDiv === 2 && <div><AdminPV/></div>}
-        {activeDiv === 3 && <div><AdminPubli/></div>}
-        {activeDiv === 4 && <div><AdminRetiros/></div>}
-      </div>
+      
     </div>
+    
   );
 };
 

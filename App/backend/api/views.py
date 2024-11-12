@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer # type: ignore
-from .models import Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec
+from .serializer import ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer # type: ignore
+from .models import Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
@@ -16,9 +16,9 @@ from django.core.mail import send_mail
 
 # Create your views here.
 class PtoVerdeView (viewsets.ModelViewSet):
-	permission_classes = (permissions.AllowAny,)
-	serializer_class = PuntoVerdeSerializer
-	queryset = PuntoVerde.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = PuntoVerdeSerializer
+    queryset = PuntoVerde.objects.all()
 
 @csrf_exempt
 @api_view(['POST'])
@@ -39,101 +39,158 @@ class ComunaView (viewsets.ModelViewSet):
     queryset = Comuna.objects.all()
 
 class TipoReciclajeView (viewsets.ModelViewSet):
-	permission_classes = (permissions.AllowAny,)
-	serializer_class = TipoReciclajeSerializer	
-	queryset = TipoReciclaje.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = TipoReciclajeSerializer	
+    queryset = TipoReciclaje.objects.all()
 
 class TipoReciclajePvView (viewsets.ModelViewSet):
     serializer_class = TipoReciclajePveSerializer
     queryset = TipoReciclajePv.objects.all()
     
 class UserRegister(APIView):
-	permission_classes = (permissions.AllowAny,)
-	def post(self, request):
-		# clean_data = custom_validation(request.data)
-		clean_data = request.data
-		serializer = UsuarioRegistroSerializaer(data=clean_data)
-		if serializer.is_valid(raise_exception=True):
-			user = serializer.create(clean_data)
-			if user:
-				return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+    permission_classes = (permissions.AllowAny,)
+    def post(self, request):
+        # clean_data = custom_validation(request.data)
+        clean_data = request.data
+        serializer = UsuarioRegistroSerializaer(data=clean_data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.create(clean_data)
+            if user:
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLogin(APIView):
-	permission_classes = (permissions.AllowAny,)
-	authentication_classes = (SessionAuthentication,)
-	##
-	def post(self, request):
-		data = request.data
-		# assert validate_email(data)
-		# assert validate_password(data)
-		serializer = UsuarioLoginSerializer(data=data)
-		if serializer.is_valid(raise_exception=True):
-			user = serializer.check_user(data)
-			login(request, user)
-			return Response(serializer.data, status=status.HTTP_200_OK)
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
+    ##
+    def post(self, request):
+        data = request.data
+        # assert validate_email(data)
+        # assert validate_password(data)
+        serializer = UsuarioLoginSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.check_user(data)
+            login(request, user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserLogout(APIView):
-	permission_classes = (permissions.AllowAny,)
-	authentication_classes = ()
-	def post(self, request):
-		logout(request)
-		return Response(status=status.HTTP_200_OK)
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+    def post(self, request):
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
 
 
 class UserView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
-	authentication_classes = (SessionAuthentication,)
-	##
-	def get(self, request):
-		serializer = UsuarioSerializer(request.user)
-		return Response({'user': serializer.data}, status=status.HTTP_200_OK)   
-	
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    ##
+    def get(self, request):
+        serializer = UsuarioSerializer(request.user)
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK)   
+    
 class AdminUsuarios (viewsets.ModelViewSet):
-	permission_classes = (permissions.AllowAny,)
-	serializer_class = AdminUsuariosSerializer
-	queryset = Usuario.objects.all()
-	
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = AdminUsuariosSerializer
+    queryset = Usuario.objects.all()
+    
 
 
 class UpdateUsuario(generics.UpdateAPIView):
-	permission_classes = [permissions.IsAuthenticated] 
-	queryset = Usuario.objects.all()
+    permission_classes = [permissions.IsAuthenticated] 
+    queryset = Usuario.objects.all()
 
-	def get_serializer_class(self):
-		return UsuarioUpdateSerializaer
-	
-	def get_object(self):
-		email = self.kwargs.get('email')
-		if not email:
-			self.permission_denied(self.request, message="Email no proporcionado")
+    def get_serializer_class(self):
+        return UsuarioUpdateSerializaer
+    
+    def get_object(self):
+        email = self.kwargs.get('email')
+        if not email:
+            self.permission_denied(self.request, message="Email no proporcionado")
 
-		try:
-			return Usuario.objects.get(email=email)
-		except Usuario.DoesNotExist:
-			self.permission_denied(self.request, message="Usuario no encontrado")
-	
+        try:
+            return Usuario.objects.get(email=email)
+        except Usuario.DoesNotExist:
+            self.permission_denied(self.request, message="Usuario no encontrado")
+    
 
 class DesUsuario(generics.UpdateAPIView):
-	permission_classes = [permissions.IsAuthenticated] 
-	queryset = Usuario.objects.all()
-	def get_serializer_class(self):
-		return DesactivarUserSerializaer
-	def get_object(self):
-		return self.request.user
+    permission_classes = [permissions.IsAuthenticated] 
+    queryset = Usuario.objects.all()
+    def get_serializer_class(self):
+        return DesactivarUserSerializaer
+    def get_object(self):
+        return self.request.user
 
 
 class PublicacionesView(viewsets.ModelViewSet):
-	queryset = Publicacion.objects.all()
-	def get_serializer_class(self):
-		return PublicacionSerializer 
+    queryset = Publicacion.objects.all().order_by('-timeCreate')
+    serializer_class = PublicacionSerializer  # Definir el serializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        # Agregar datos adicionales antes de la validación
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            # Guarda el objeto con el usuario autenticado como `emailUsuario`
+            serializer.save(emailUsuario=request.user)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def dar_o_eliminar_like(request, publicacion_id):
+    usuario = request.user
+    print(publicacion_id)
+    try:
+        publicacion = Publicacion.objects.get(idPublicacion = publicacion_id)
+    except Publicacion.DoesNotExist:
+        return Response({"error": "Publicación no encontrada"}, status=404)
+
+    # Verificar si el usuario ya ha dado "like" a la publicación
+    like = Like.objects.filter(usuario=usuario, publicacion=publicacion).first()
+    if like:
+        # Si el like existe, se elimina (unlike)
+        like.delete()
+        publicacion.likes_count -= 1
+        publicacion.save()
+        return Response({"message": "Like eliminado", "likes_count": publicacion.likes_count, "has_liked": False})
+    else:
+        # Si no existe, se crea el like
+        Like.objects.create(usuario=usuario, publicacion=publicacion)
+        publicacion.likes_count += 1
+        publicacion.save()
+        return Response({"message": "Like añadido", "likes_count": publicacion.likes_count, "has_liked": True})
+
+@api_view(['GET', 'POST'])
+def comentarios_publicacion(request, idPublicacion):
+    try:
+        publicacion = Publicacion.objects.get(idPublicacion=idPublicacion)
+    except Publicacion.DoesNotExist:
+        return Response({"error": "Publicación no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        comentarios = Comentario.objects.filter(publicacion=publicacion).order_by('fecha_creacion')
+        serializer = ComentarioSerializer(comentarios, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = ComentarioSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(publicacion=publicacion, usuario=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class RetiroView(viewsets.ModelViewSet):
-	queryset = RegistroRetiro.objects.all()
-	def get_serializer_class(self):
-		return RegistroRetiroSerializer 
+    queryset = RegistroRetiro.objects.all()
+    def get_serializer_class(self):
+        return RegistroRetiroSerializer 
 
 
 class DesactivarCuenta(APIView):
@@ -172,11 +229,11 @@ class ReactivarCuenta(APIView):
             return Response({'mensaje': 'Tu cuenta ya está activa.'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ContactoView (viewsets.ModelViewSet):
-	permission_classes = [AllowAny]
-	serializer_class = SugRecSerializer
-	queryset = SugRec.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = SugRecSerializer
+    queryset = SugRec.objects.all()
 
 class ProductoView (viewsets.ModelViewSet):
-	permission_classes = [AllowAny]
-	serializer_class = ProductoSerializer
-	queryset = Producto.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = ProductoSerializer
+    queryset = Producto.objects.all()

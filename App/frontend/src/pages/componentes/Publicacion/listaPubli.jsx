@@ -5,7 +5,7 @@ import { Button } from "react-bootstrap";
 
 const PostList = ({ posts }) => {
   return (
-    <div style={{ marginLeft: '250px', flexGrow: 1 }}>
+    <div className='lista-post'>
     {posts.map(post => (
         <Post post={post} />
       ))}

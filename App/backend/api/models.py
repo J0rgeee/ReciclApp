@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser,BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
+from django.conf import settings
 
 class Ciudad (models.Model):
     idCiudad = models.AutoField(primary_key=True)
@@ -104,14 +105,45 @@ class Direcciones (models.Model):
 class Publicacion (models.Model):
     idPublicacion = models.AutoField(primary_key=True)
     desc = models.CharField(max_length=256)
-    img = models.CharField(max_length=50,null=True)
+    img = models.ImageField(upload_to='images/', null=True, blank=True)
     timeCreate = models.DateTimeField(auto_now_add=True)
     emailUsuario = models.ForeignKey(Usuario,on_delete=models.CASCADE)
-    likes = models.IntegerField(default=0)
+    likes_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.emailUsuario.username} - {self.timeCreate}'
 
+class Like(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='likes')
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='likes')
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'publicacion')  # Evita duplicados
+
+    def __str__(self):
+        return f"{self.usuario.email} liked {self.publicacion.desc}"
+    
+def dar_like(usuario, publicacion):
+    # Comprobar si el usuario ya ha dado "like"
+    if Like.objects.filter(usuario=usuario, publicacion=publicacion).exists():
+        return "Ya has dado like a esta publicación."
+
+    # Si no ha dado "like", se crea el registro y se actualiza el contador
+    Like.objects.create(usuario=usuario, publicacion=publicacion)
+    publicacion.likes_count += 1
+    publicacion.save()
+    return "Like añadido."
+
+class Comentario(models.Model):
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='comentarios')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    contenido = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comentario de {self.usuario} en {self.publicacion}'
+    
 class SugRec (models.Model):
     idSR = models.AutoField(primary_key=True)
     asunto = models.CharField(max_length=50)

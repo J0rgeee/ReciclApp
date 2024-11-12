@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState,useEffect } from 'react';
 import PostList from './componentes/Publicacion/listaPubli';
-import NewPostForm from './componentes/Publicacion/nuevaPubli';
+import AgregarPublicacion from './componentes/Publicacion/nuevaPubli';
 
 export function Foro() {
  
@@ -27,8 +27,8 @@ export function Foro() {
   };
 
   return (
-    <div>
-      <NewPostForm onAddPost={handleAddPost} />
+    <div className='divforo'>
+      <AgregarPublicacion />
       <PostList posts={posts} />
     </div>
   );

@@ -87,8 +87,8 @@ const AdminPV = () => {
     }, []);
 
     return (
-        <div style={{ marginLeft: '250px', flexGrow: 1 }}>
-            <Table striped bordered hover variant="dark">
+        <div>
+            <Table bordered hover>
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -111,7 +111,7 @@ const AdminPV = () => {
                             <td>{puntoVerde.nro}</td>
                             <td><Form.Check type="checkbox" checked={puntoVerde.estado} disabled /></td>
                             <td><Button variant="danger">Eliminar</Button></td>
-                            <td><Button variant="info" onClick={() => handleShow(puntoVerde)}>Editar</Button></td>
+                            <td><Button className="editar" onClick={() => handleShow(puntoVerde)}>Editar</Button></td>
                         </tr>
                     ))}
                 </tbody>

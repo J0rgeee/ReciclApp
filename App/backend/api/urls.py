@@ -62,5 +62,6 @@ urlpatterns = [
 	path('api/user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
     path('user/desactivar-cuenta', views.DesUsuario.as_view(), name='desactivar-cuenta'),
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
-    
+    path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),
+    path('publicaciones/<int:idPublicacion>/comments/', views.comentarios_publicacion, name='comentarios_publicacion'),
 ]   

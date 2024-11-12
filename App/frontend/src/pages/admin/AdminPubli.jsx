@@ -16,41 +16,43 @@ const AdminPubli = () => {
          const publi = await axios.get('http://localhost:8000/api/Publi/publi/');
         //console.log(useract);
          setTodoPubli(publi.data);
-         console.log(todosPubli);
       }
-
 
     useEffect(() => {
         usuActi();
     },[]);
 
-  return (
-    <div style={{ marginLeft: '250px', flexGrow: 1 }}>
-        
-    <Table striped bordered hover variant="dark">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Nombre</th>
-          <th>Comuna</th>
-          <th>Eliminar</th>
+    return (
+      <div>
+          
+      <Table bordered hover>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Descripcion</th>
+            <th>Fecha publicación</th>
+            <th>Ruta</th>
+            <th>Email</th>
+            <th>Usuario</th>
+          </tr>
+        </thead>
+        <tbody>
+          {todosPubli.map(publicaciones =>(
+            <tr key={publicaciones.idPublicacion}>
+                <td>{publicaciones.idPublicacion}</td>
+                <td>{publicaciones.desc}</td>
+                <td>{publicaciones.timeCreate}</td>
+                <td>{publicaciones.img}</td>
+                <td>{publicaciones.emailUsuario}</td>
+                <td>{publicaciones.username}</td>
+                <td><Button variant="danger">Eliminar</Button></td>
 
-        </tr>
-      </thead>
-      <tbody>
-       {todosPubli.map(publicaciones =>(
-        <tr>
-            <td>{publicaciones.desc}</td>
-            <td>{publicaciones.img}</td>
-            <td>{publicaciones.emailUsuario}</td>
-            <td><Button variant="danger"></Button></td>
-
-        </tr>
-        ))} 
-      </tbody>
-    </Table>
-    </div>
-  );
+            </tr>
+            ))} 
+        </tbody>
+      </Table>
+      </div>
+    );
 };
 
 export default AdminPubli;

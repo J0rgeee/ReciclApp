@@ -1,7 +1,7 @@
 import './App.css';
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route,useLocation  } from 'react-router-dom';
 import { LoadScript } from '@react-google-maps/api'; // Importa LoadScript
 
 import { BarraNavegacion } from './componentes/BarraNavegacion';
@@ -12,6 +12,7 @@ import { Sesion } from './pages/Sesion';
 import PuntosVerdesW from './pages/trabajador/PuntosVerdesW';
 import { Footer } from './componentes/Footer';
 import { Reciclaje } from './pages/Reciclaje';
+import AdminHome from './pages/admin/AdminHome';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path='mapa' element={<PuntosVerdesW />} />
           <Route path='sesion' element={<Sesion />} />
           <Route path='reciclaje' element={<Reciclaje />} />
+          <Route path='adminhome' element={<AdminHome hideFooter={true}/>} />
         </Routes>
         <Footer />
       </div>

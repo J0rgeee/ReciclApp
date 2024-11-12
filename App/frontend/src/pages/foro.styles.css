@@ -21,3 +21,9 @@
     font-size: small;
     font-weight: 300;
   }
+
+.divforo {
+  display: flex;
+  justify-content: center;
+  background-color: #5ccda7;
+}

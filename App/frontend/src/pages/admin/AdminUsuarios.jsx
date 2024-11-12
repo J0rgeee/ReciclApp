@@ -28,36 +28,35 @@ const AdminUsuarios = () => {
     },[]);
 
   return (
-    <div style={{ marginLeft: '250px', flexGrow: 1 }}>
-        
-    <Table striped bordered hover variant="dark">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Apellido</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Fecha Nacimineto</th>
-          <th>Telefono</th>
-          <th>Estado Cuenta</th>
-          <th>Eliminar</th>
-        </tr>
-      </thead>
-      <tbody>
-        {todosUsuarios.map(usuario =>(
-        <tr>
-            <td>{usuario.nombre}</td>
-            <td>{usuario.apellido}</td>
-            <td>{usuario.username}</td>
-            <td>{usuario.email}</td>
-            <td>{usuario.fechaNac}</td>
-            <td>{usuario.telefono}</td>
-            <td>{usuario.estado}</td>
-            <td><Button variant="danger">Eliminar Usuario</Button></td>
-        </tr>
-        ))}
-      </tbody>
-    </Table>
+    <div className="div">  
+      <Table bordered hover >
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Fecha Nacimineto</th>
+            <th>Telefono</th>
+            <th>Estado Cuenta</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {todosUsuarios.map(usuario =>(
+          <tr>
+              <td>{usuario.nombre}</td>
+              <td>{usuario.apellido}</td>
+              <td>{usuario.username}</td>
+              <td>{usuario.email}</td>
+              <td>{usuario.fechaNac}</td>
+              <td>{usuario.telefono}</td>
+              <td>{usuario.estado}</td>
+              <td><Button variant="danger">Eliminar Usuario</Button></td>
+          </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 };

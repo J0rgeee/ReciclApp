@@ -27,9 +27,9 @@ const AdminRetiros = () => {
     },[]);
 
   return (
-    <div style={{ marginLeft: '250px', flexGrow: 1 }}>
+    <div>
         
-    <Table striped bordered hover variant="dark">
+    <Table bordered hover>
       <thead>
         <tr>
           <th>fechavisita</th>

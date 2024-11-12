@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from .models import Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro
+from .models import Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario
 from django.contrib.auth import get_user_model,authenticate
 
 UserModel= get_user_model()
@@ -16,9 +16,23 @@ class DireccionesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PublicacionSerializer(serializers.ModelSerializer):
+    has_liked = serializers.SerializerMethodField()
+    username = serializers.CharField(source='emailUsuario.username', read_only=True)
     class Meta:
         model = Publicacion
-        fields = '__all__'
+        fields = ['idPublicacion', 'desc', 'img','timeCreate','emailUsuario', 'likes_count', 'has_liked','username']
+        read_only_fields = ['timeCreate', 'likes_count']
+        
+    def get_has_liked(self, obj):
+        user = self.context['request'].user if 'request' in self.context else None
+        return Like.objects.filter(usuario=user, publicacion=obj).exists() if user else False
+
+class ComentarioSerializer(serializers.ModelSerializer):
+    usuario = serializers.StringRelatedField()  # Para mostrar el nombre del usuario en lugar del ID
+
+    class Meta:
+        model = Comentario
+        fields = ['id', 'usuario', 'contenido', 'fecha_creacion']
 
 class SugRecSerializer(serializers.ModelSerializer):
     class Meta:
