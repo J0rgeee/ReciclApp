@@ -164,7 +164,8 @@ class PublicacionesView(viewsets.ModelViewSet):
             serializer.save(emailUsuario=request.user)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
+        # En caso de errores de validación
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def get_serializer_context(self):
         return {'request': self.request}
 

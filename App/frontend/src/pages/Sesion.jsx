@@ -19,7 +19,7 @@ export function Sesion() {
             <div className='cont-sesion'>
                 <Login/>
             </div>
-            <Footer/>
+            
         </div>
     )
 }

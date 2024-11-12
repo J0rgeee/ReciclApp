@@ -72,9 +72,11 @@ urlpatterns = [
 	path('user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
     path('user/desactivar-cuenta', views.DesUsuario.as_view(), name='desactivar-cuenta'),
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
+    #Publicacion
     path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),
     path('publicaciones/<int:idPublicacion>/comments/', views.comentarios_publicacion, name='comentarios_publicacion'),
     path('publicaciones/<int:idPublicacion>/comments/<int:idComentario>/', views.comentarios_publicacion, name='eliminar_comentario'),
+
     path('get-google-maps-api-key/', views.get_google_maps_api_key, name='get_google_maps_api_key'),
 
 ]   

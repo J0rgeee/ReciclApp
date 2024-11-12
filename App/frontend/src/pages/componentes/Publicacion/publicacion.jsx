@@ -35,7 +35,7 @@ const Post = ({ post }) => {
       try {
         const response = await axios.get('http://localhost:8000/api/user', { withCredentials: true });
         setCurrentUser(response.data);  // Supón que response.data contiene el objeto de usuario
-        console.log(currentUser.user.email)
+        console.log(currentUser.email);
       } catch (error) {
         console.error("Error al obtener el usuario autenticado:", error);
       }
