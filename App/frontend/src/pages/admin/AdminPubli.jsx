@@ -3,14 +3,31 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import { Button } from "react-bootstrap";
 
+
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
 
+const client = axios.create({
+  baseURL: "http://127.0.0.1:8000"
+});
 
 const AdminPubli = () => {
+  const [todasPubli, setTodasPubli] = useState([]);
+  
+  const traerPubli = async () => {
+    try {
+        const response = await client.get('/api/Publi/publi/');
+        setTodasPubli(response.data);
+        console.log(todasPubli)
+    } catch (error) {
+        console.error("Error al obtener datos:", error);
+    }
+  };
 
-    const [todosPubli, setTodoPubli] = useState([]);
+  useEffect(() => {
+    traerPubli();
+  }, []);
 
     const usuActi = async() =>{
          const publi = await axios.get('http://localhost:8000/api/Publi/publi/');

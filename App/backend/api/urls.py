@@ -34,6 +34,11 @@ router9.register(r'contacto',views.ContactoView,'contacto')
 router10 = routers.DefaultRouter()
 router10.register(r'producto',views.ProductoView,'producto')
 
+router11 = routers.DefaultRouter()
+router11.register(r'direcciones', views.CrearDireccionesViewSet)
+
+puntuacion_viewset = views.PuntuacionViewSet.as_view({'get': 'retrieve_puntuacion_usuario'})
+metas_viewset = views.MetasViewSet.as_view({'get': 'list_metas_usuario'})
 
 
 
@@ -49,9 +54,14 @@ urlpatterns = [
     path("Regret/", include(router8.urls)),
     path("Contacto/", include(router9.urls)),
     path("Producto/", include(router10.urls)),
+    path('Dire/', include(router11.urls)),
 
+    path('puntuacion/<str:email>/', puntuacion_viewset, name='puntuacion-usuario'), 
+    path('metas/<str:email>/', metas_viewset, name='metas-usuario'),
 
-
+    path('direcciones/<str:email>/', views.DireccionesListView.as_view(), name='direcciones-list'),
+    path('direcciones/update/<int:idDireccion>/', views.DireccionesUpdateView.as_view(), name='direcciones-update'),
+    path('comunas/', views.ComunaListView.as_view(), name='comunas-list'),
 
     path("Docs/",include_docs_urls(title="docs api")),
 
@@ -59,7 +69,7 @@ urlpatterns = [
 	path('login', views.UserLogin.as_view(), name='login'),
 	path('logout', views.UserLogout.as_view(), name='logout'),
 	path('user', views.UserView.as_view(), name='user'),
-	path('api/user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
+	path('user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
     path('user/desactivar-cuenta', views.DesUsuario.as_view(), name='desactivar-cuenta'),
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
     path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),
