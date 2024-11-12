@@ -12,6 +12,9 @@ from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.conf import settings
+from django.views.decorators.http import require_GET
 
 
 
@@ -329,3 +332,11 @@ class CrearDireccionesViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+@require_GET
+def get_google_maps_api_key(request):
+    api_key = getattr(settings, "GOOGLE_MAPS_API_KEY", None)
+    if not api_key:
+        return JsonResponse({"error": "API key not found"}, status=500)
+    return JsonResponse({"apiKey": api_key})

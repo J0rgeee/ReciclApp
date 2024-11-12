@@ -74,4 +74,6 @@ urlpatterns = [
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
     path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),
     path('publicaciones/<int:idPublicacion>/comments/', views.comentarios_publicacion, name='comentarios_publicacion'),
+    path('get-google-maps-api-key/', views.get_google_maps_api_key, name='get_google_maps_api_key'),
+
 ]   

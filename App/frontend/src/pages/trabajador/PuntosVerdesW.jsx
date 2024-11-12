@@ -1,185 +1,117 @@
-import React, { useState, useRef, useEffect } from "react";
-import { GoogleMap, Autocomplete, Marker } from "@react-google-maps/api";
+import React, { useState, useEffect } from "react";
+import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
 import axios from "axios";
+import { useMarkers } from "./MarkerContext";
 import "./PuntosVerdesW.css";
-
-// Configuración de axios
-axios.defaults.xsrfCookieName = "csrftoken";
-axios.defaults.xsrfHeaderName = "X-CSRFToken";
-axios.defaults.withCredentials = true;
 
 const client = axios.create({
   baseURL: "http://localhost:8000",
 });
 
-const initialCenter = { lat: -33.363579, lng: -70.678193 };
-
 function PuntosVerdesW() {
-  const [items, setItems] = useState([]);
+  const { markers, setMarkers } = useMarkers();
   const [map, setMap] = useState(null);
-  const [marker, setMarker] = useState(null);
-  const [searchLocation, setSearchLocation] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [center, setCenter] = useState(initialCenter);
-  const autoCompleteRef = useRef(null);
-  const inputRef = useRef(null);
+  const [center, setCenter] = useState({ lat: -33.363579, lng: -70.678193 });
+  const [comunas, setComunas] = useState([]);
+  const [selectedComuna, setSelectedComuna] = useState("");
+  const [filterVisible, setFilterVisible] = useState(false);
+  const [apiKey, setApiKey] = useState("");
 
-  const onLoad = (autocomplete) => {
-    autoCompleteRef.current = autocomplete;
-  };
-
-  const onPlaceChanged = () => {
-    const autocomplete = autoCompleteRef.current;
-    if (autocomplete && autocomplete.getPlace()) {
-      const place = autocomplete.getPlace();
-      if (place.geometry && place.geometry.location) {
-        const location = place.geometry.location;
-        setSearchLocation({
-          lat: location.lat(),
-          lng: location.lng(),
-          address: place.formatted_address || "Dirección no disponible",
-        });
+  useEffect(() => {
+    const fetchApiKey = async () => {
+      try {
+        const response = await client.get("/api/get-google-maps-api-key/");
+        setApiKey(response.data.apiKey);
+      } catch (error) {
+        console.error("Error fetching API key:", error);
       }
-    }
-  };
+    };
+    fetchApiKey();
+  }, []);
 
-  const handleAddMarker = () => {
-    if (searchLocation) {
-      setMarker(searchLocation);
-      setShowForm(true);
-    }
-  };
-
-  const getComunaId = async (comunaName) => {
+  const fetchComunas = async () => {
     try {
       const response = await client.get("/api/Comuna/comuna/");
-      const comuna = response.data.find((item) => item.nombre === comunaName);
-      return comuna ? comuna.idComuna : null;
+      setComunas(response.data);
     } catch (error) {
-      console.error("Error al obtener las comunas:", error);
-      return null; // Retorna null si hay un error
-    }
-  };
-
-  const handleConfirmAdd = async () => {
-    if (searchLocation) {
-      const comunaId = await getComunaId("Santiago"); // Cambia el nombre según sea necesario
-      const response = await client.get("/api/PtoVerde/ptoverde/");
-      const newNro =
-        response.data.length > 0
-          ? Math.max(...response.data.map((item) => item.nro)) + 1
-          : 1;
-
-      const requestData = {
-        direccion: searchLocation.address,
-        nombre: searchLocation.address,
-        nro: newNro,
-        estado: true,
-        nomComuna: comunaId,
-      };
-
-      try {
-        await client.post("/api/PtoVerde/ptoverde/", requestData);
-        const newItem = {
-          ...requestData,
-          lat: searchLocation.lat,
-          lng: searchLocation.lng,
-        };
-        setItems((prevItems) => [...prevItems, newItem]);
-
-        // Actualizar el marcador y el centro del mapa
-        setMarker({ lat: searchLocation.lat, lng: searchLocation.lng });
-        setCenter({ lat: searchLocation.lat, lng: searchLocation.lng });
-        setShowForm(false);
-      } catch (error) {
-        console.error("Error al agregar el punto verde:", error);
-      }
-    }
-  };
-
-  const handleDelete = async (idPv) => {
-    if (
-      window.confirm("¿Estás seguro de que deseas eliminar este punto verde?")
-    ) {
-      try {
-        await client.delete(`/api/PtoVerde/ptoverde/${idPv}/`);
-        setItems((prevItems) => prevItems.filter((item) => item.idPv !== idPv));
-      } catch (error) {
-        console.error("Error al eliminar el punto verde:", error);
-      }
-    }
-  };
-
-  const handleLocationClick = (location) => {
-    if (location.lat && location.lng) {
-      setCenter({ lat: location.lat, lng: location.lng });
-      setMarker({ lat: location.lat, lng: location.lng });
-      map.panTo({ lat: location.lat, lng: location.lng });
+      console.error("Error fetching comunas:", error);
     }
   };
 
   useEffect(() => {
-    const fetchItems = async () => {
+    const fetchMarkers = async () => {
       try {
         const response = await client.get("/api/PtoVerde/ptoverde/");
-        setItems(
-          response.data.map((item) => ({
-            ...item,
-            lat: item.lat || -33.363579,
-            lng: item.lng || -70.678193,
-          }))
-        );
+        setMarkers(response.data);
       } catch (error) {
-        console.error("Error al obtener los datos:", error);
+        console.error("Error fetching markers:", error);
       }
     };
-    fetchItems();
-  }, []);
+    fetchMarkers();
+    fetchComunas();
+  }, [setMarkers]);
+
+  const filteredMarkers = selectedComuna
+    ? markers.filter((item) => item.nomComuna === parseInt(selectedComuna))
+    : markers;
+
+  const handleLocationClick = (location) => {
+    if (location.lat && location.lng) {
+      setCenter({ lat: location.lat, lng: location.lng });
+      map.panTo({ lat: location.lat, lng: location.lng });
+    }
+  };
 
   return (
     <div className="map-container">
       <div className="map-section">
-        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-          <input
-            type="text"
-            ref={inputRef}
-            placeholder="Ingresa dirección"
-            className="autocomplete-input"
-          />
-        </Autocomplete>
-        <button onClick={handleAddMarker} className="add-marker-button">
-          Agregar Punto Verde
-        </button>
-
-        {showForm && (
-          <div className="confirm-form">
-            <p>¿Deseas agregar esta ubicación?</p>
-            <p>{searchLocation.address}</p>
-            <button onClick={handleConfirmAdd}>Confirmar</button>
-            <button onClick={() => setShowForm(false)}>Cancelar</button>
-          </div>
+        {apiKey ? (
+          <LoadScript googleMapsApiKey={apiKey}>
+            <GoogleMap
+              mapContainerClassName="google-map"
+              center={center}
+              zoom={12}
+              onLoad={(mapInstance) => setMap(mapInstance)}
+            >
+              {filteredMarkers.map((item) => (
+                <Marker
+                  key={item.idPv}
+                  position={{ lat: item.lat, lng: item.lng }}
+                  title={item.direccion}
+                />
+              ))}
+            </GoogleMap>
+          </LoadScript>
+        ) : (
+          <div>Loading map...</div>
         )}
-
-        <GoogleMap
-          mapContainerClassName="google-map"
-          center={center}
-          zoom={15}
-          onLoad={(mapInstance) => setMap(mapInstance)}
-        >
-          {marker && <Marker position={marker} />}
-          {items.map((item, index) => (
-            <Marker key={index} position={{ lat: item.lat, lng: item.lng }} />
-          ))}
-        </GoogleMap>
       </div>
-      {/* Lista de direcciones */}
       <div className="list-section">
         <h3>Puntos Verdes Guardados</h3>
+        <button
+          onClick={() => setFilterVisible(!filterVisible)}
+          className="toggle-filter-button"
+        >
+          {filterVisible ? "Ocultar Filtro" : "Filtrar por Comuna"}
+        </button>
+        {filterVisible && (
+          <select
+            value={selectedComuna}
+            onChange={(e) => setSelectedComuna(e.target.value)}
+            className="comuna-filter"
+          >
+            <option value="">Todas las Comunas</option>
+            {comunas.map((comuna) => (
+              <option key={comuna.idComuna} value={comuna.idComuna}>
+                {comuna.nombre}
+              </option>
+            ))}
+          </select>
+        )}
         <ul className="puntos-verdes-lista">
-          {items.map((item, index) => (
-            <li key={index} onClick={() => handleLocationClick(item)}>
+          {filteredMarkers.map((item) => (
+            <li key={item.idPv} onClick={() => handleLocationClick(item)}>
               {item.direccion}
-              <button onClick={() => handleDelete(item.idPv)}>Eliminar</button>
             </li>
           ))}
         </ul>
