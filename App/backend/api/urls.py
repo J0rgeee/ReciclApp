@@ -75,4 +75,6 @@ urlpatterns = [
     path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),
     path('publicaciones/<int:idPublicacion>/comments/', views.comentarios_publicacion, name='comentarios_publicacion'),
     path('publicaciones/<int:idPublicacion>/comments/<int:idComentario>/', views.comentarios_publicacion, name='eliminar_comentario'),
+    path('get-google-maps-api-key/', views.get_google_maps_api_key, name='get_google_maps_api_key'),
+
 ]   

@@ -1,22 +1,22 @@
 import './App.css';
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Routes, Route,useLocation  } from 'react-router-dom';
-import { LoadScript } from '@react-google-maps/api'; // Importa LoadScript
+import { Routes, Route  } from 'react-router-dom';
 
 import { BarraNavegacion } from './componentes/BarraNavegacion';
 import { Home } from './pages/Home';
 import { Foro } from './pages/Foro';
 import { Tienda } from './pages/Tienda';
 import { Sesion } from './pages/Sesion';
-import PuntosVerdesW from './pages/trabajador/PuntosVerdesW';
 import { Footer } from './componentes/Footer';
 import { Reciclaje } from './pages/Reciclaje';
 import AdminHome from './pages/admin/AdminHome';
+import { MarkerProvider } from './pages/mapa/MarkerContext';
+import PuntosVerdesW from './pages/mapa/PuntosVerdesW';
 
 function App() {
   return (
-    <LoadScript googleMapsApiKey="AIzaSyAKEX7Y7Xo0tSLxB5fSZGuRZwMlV4NwANY" libraries={["places"]}> {/* Asegúrate de agregar tu API key aquí */}
+    <MarkerProvider>
       <div>
         <BarraNavegacion />
         <Routes>
@@ -30,7 +30,7 @@ function App() {
         </Routes>
         <Footer />
       </div>
-    </LoadScript>
+    </MarkerProvider>
   );
 }
 
