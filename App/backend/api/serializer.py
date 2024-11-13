@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from .models import Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario
+from .models import TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario
 from django.contrib.auth import get_user_model,authenticate
 
 UserModel= get_user_model()
@@ -164,3 +164,7 @@ class MetasSerializer(serializers.ModelSerializer):
         model = Metas
         fields = ['idMeta', 'nombre', 'desc', 'finalMeta', 'progreso']
 
+class TransPuntosSerializer(serializers.ModelSerializer):
+     class Meta:
+          model = TransPuntos
+          fields = ['id','puntosplas', 'puntospapel', 'putnosvidrio', 'puntoscarton', 'puntoslatas','emailusuario_id']

@@ -1,7 +1,8 @@
 from django.shortcuts import render
+import serial
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer # type: ignore
-from .models import Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario
+from .serializer import TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer # type: ignore
+from .models import TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -352,3 +353,22 @@ def get_google_maps_api_key(request):
     if not api_key:
         return JsonResponse({"error": "API key not found"}, status=500)
     return JsonResponse({"apiKey": api_key})
+
+
+class ReadWeightDataView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            arduino_port = 'COM4'  # Asegúrate de reemplazar con el puerto correcto
+            baud_rate = 9600
+            ser = serial.Serial(arduino_port, baud_rate, timeout=5)
+
+            if ser.in_waiting > 0:  # Si hay datos disponibles en el puerto
+                peso = ser.readline().decode('utf-8').strip()  # Leer el peso
+                ser.close()  # Cierra la conexión al puerto serial
+
+                return Response({"peso": peso}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "No data available"}, status=status.HTTP_404_NOT_FOUND)
+
+        except serial.SerialException as e:
+            return Response({"error": f"Serial connection error: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

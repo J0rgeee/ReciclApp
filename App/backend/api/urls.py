@@ -4,6 +4,7 @@ from rest_framework.documentation import include_docs_urls # type: ignore
 from api import views
 from . import views
 
+
 router = routers.DefaultRouter()
 router.register(r'ptoverde',views.PtoVerdeView,'ptoverde')
 
@@ -55,6 +56,9 @@ urlpatterns = [
     path("Contacto/", include(router9.urls)),
     path("Producto/", include(router10.urls)),
     path('Dire/', include(router11.urls)),
+
+
+    path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
 
     path('puntuacion/<str:email>/', puntuacion_viewset, name='puntuacion-usuario'), 
     path('metas/<str:email>/', metas_viewset, name='metas-usuario'),

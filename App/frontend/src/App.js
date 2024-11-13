@@ -13,6 +13,8 @@ import { Reciclaje } from './pages/Reciclaje';
 import AdminHome from './pages/admin/AdminHome';
 import { MarkerProvider } from './pages/mapa/MarkerContext';
 import PuntosVerdesW from './pages/mapa/PuntosVerdesW';
+import { Pesa } from './pages/Pesa';
+
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
           <Route path='mapa' element={<PuntosVerdesW />} />
           <Route path='sesion' element={<Sesion />} />
           <Route path='reciclaje' element={<Reciclaje />} />
+          <Route path='pesa' element={<Pesa />} />
           <Route path='adminhome' element={<AdminHome hideFooter={true}/>} />
         </Routes>
         <Footer />
