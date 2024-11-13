@@ -28,6 +28,8 @@ class PuntoVerde(models.Model):
     nro = models.IntegerField()
     estado = models.BooleanField(default=False)
     nomComuna = models.ForeignKey(Comuna,on_delete=models.CASCADE)
+    lat = models.FloatField(null=True, blank=True)
+    lng = models.FloatField(null=True, blank=True)
 
 class TipoReciclajePv(models.Model):
     idPv = models.ForeignKey(PuntoVerde,on_delete=models.CASCADE)
