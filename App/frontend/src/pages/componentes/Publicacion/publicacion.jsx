@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Image, Card } from 'react-bootstrap';
+import { Button, Form, Image, Card, Row, Col } from 'react-bootstrap';
+import Stack from 'react-bootstrap/Stack';
+import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -20,11 +22,19 @@ const Post = ({ post }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [currentUser, setCurrentUser] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = (idComentario) => {
+    setCommentToDelete(idComentario); // Guardar el ID del comentario a eliminar
+    setShowModal(true);
+  };
 
   //Para iconos de google fonts 
   useEffect(() => {
     const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined';
+    link.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
   }, []);
@@ -34,8 +44,10 @@ const Post = ({ post }) => {
     const fetchUser = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/user', { withCredentials: true });
-        setCurrentUser(response.data);  // Supón que response.data contiene el objeto de usuario
-        console.log(currentUser.email);
+        setCurrentUser(response.data.user);  // Supón que response.data contiene el objeto de usuario
+        console.log(response.data.user.email);
+        console.log("Usuario autenticado:", currentUser);
+
       } catch (error) {
         console.error("Error al obtener el usuario autenticado:", error);
       }
@@ -65,6 +77,7 @@ const Post = ({ post }) => {
       withCredentials: true,  // Permitir envío de cookies de sesión
     })
     .then(response => {
+      
       setLikesCount(response.data.likes_count);
       setHasLiked(response.data.has_liked);
     })
@@ -98,18 +111,18 @@ const Post = ({ post }) => {
     });
   };
   
-  const handleDeleteComment = (idComentario) => {
-    if (!window.confirm("¿Estás seguro de que quieres eliminar este comentario?")) return;
+  const handleDeleteComment = () => {
     axios
-      .delete(`http://localhost:8000/api/publicaciones/${post.idPublicacion}/comments/${idComentario}/`, {
+      .delete(`http://localhost:8000/api/publicaciones/${post.idPublicacion}/comments/${commentToDelete}/`, {
         headers: {
-          "X-CSRFToken": getCsrfToken(), // Asegúrate de incluir el token CSRF si es necesario
+          "X-CSRFToken": getCsrfToken(), // Incluye el token CSRF si es necesario
         },
         withCredentials: true,
       })
       .then((response) => {
-        setComments(comments.filter(comment => comment.id !== idComentario)); // Actualizar el estado
+        setComments(comments.filter(comment => comment.id !== commentToDelete)); // Actualiza los comentarios
         console.log("Comentario eliminado:", response.data);
+        setShowModal(false); // Cierra el modal
       })
       .catch((error) => {
         console.error("Error al eliminar comentario:", error.response?.data || error.message);
@@ -132,23 +145,43 @@ const Post = ({ post }) => {
         
         <div className="like-comment">
           <Button className='button-like' variant='light'>
-            <span class="material-symbols-outlined" onClick={handleLike}>favorite</span>
-          {hasLiked ? "" : ""} 
+            <span className={`material-icons ${hasLiked ? 'liked' : ''}`} onClick={handleLike}>favorite</span>
           </Button>
           <span className='d-flex likescount m-1'>{likesCount}</span>
         </div>
-        <div className="comments-section">
-        <h5 className='m-2'>Comentarios</h5>
+        <div className="p-2">
+        <h5 className=''>Comentarios</h5>
         {comments.map((comment) => (
-          <div key={comment.id}>
-          <p><span>{comment.usuario}</span>  {comment.contenido}</p>
-          {currentUser && currentUser.email === comment.usuario_email && (
-            <Button onClick={() => handleDeleteComment(comment.id)}>Eliminar</Button>
-          )}
-          </div>
+          <Stack key={comment.id} className='comments-section' direction="horizontal" gap={3}>
+            <div className='p-1 '>{comment.usuario}</div>
+            <div className='p-1 me-auto'>{comment.contenido}</div>
+            <div className='p-1'>
+              {currentUser.email === comment.usuario_email && (
+                <Button  className='boton-delete' onClick={() => handleShowModal(comment.id) }>
+                  <img src="/botones/btn-delete.svg"></img>
+                </Button>
+              )}
+            </div>
+          </Stack>
         ))}
+        </div>
+        {/* Modal para confirmar la eliminación */}
+        <Modal show={showModal} onHide={handleCloseModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmar eliminación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>¿Estás seguro de que deseas eliminar este comentario?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleDeleteComment}>
+              Eliminar
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
-        <Form onSubmit={handleCommentSubmit} className='form'>
+        <Form onSubmit={handleCommentSubmit} className='form' fluid>
           <Form.Control
             type="text"
             placeholder="Escribe un comentario..."
@@ -157,12 +190,11 @@ const Post = ({ post }) => {
             className="m-2"
           />
           <Button type="submit" className='button-like' variant='light'>
-            <span class="material-symbols-outlined">send</span>
+            <span class="material-icons">send</span>
           </Button>
-        </Form>
-      </div>        
+        </Form> 
       </Card.Body>
-    </Card>
+      </Card>
    
     </div>
   );
