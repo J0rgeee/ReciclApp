@@ -86,6 +86,15 @@ class PuntuacioUsuario(models.Model):
     puntoscarton = models.IntegerField()
     puntoslatas = models.IntegerField()
 
+class PesoUsuario(models.Model):
+    emailusuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    pesoplas = models.IntegerField()
+    pesopal = models.IntegerField()
+    pesovid = models.IntegerField()
+    pesocar = models.IntegerField()
+    pesolat = models.IntegerField()
+
+
 class TransPuntos(models.Model):
     emailusuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     puntosplas = models.IntegerField()

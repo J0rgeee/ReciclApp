@@ -52,14 +52,16 @@ const SidebarAdmin = () => {
         <h4 className="text-center m-3">Administrador <br/>{usuario.username || "Cargando..."}</h4>
         <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(1)}>Administrar Usuarios</Button></Nav.Link>
         <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(2)}>Administrar Puntos Verdes</Button></Nav.Link>
-        <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(3)}>Administrar Publicaciones</Button></Nav.Link>
+        <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(3)}>Administrar Foro</Button></Nav.Link>
         <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(4)}>Administrar Retiros</Button></Nav.Link>
+        <Nav.Link className="p-2"><Button className="button" onClick={() => handleButtonClick(5)}>Administrar Tienda</Button></Nav.Link>
       </Nav>
       <div className="content" key={activeDiv}>
         {activeDiv === 1 && <AdminUsuarios/>}
         {activeDiv === 2 && <AdminPV/>}
         {activeDiv === 3 && <AdminPubli/>}
         {activeDiv === 4 && <AdminRetiros/>}
+        {activeDiv === 5 && <AdminRetiros/>}
       </div>
       
     </div>

@@ -7,22 +7,43 @@ import PesaVidrio from './pesas/PesaVidrio';
 import PesaCarton from './pesas/PesaCarton';
 import PesaLata from './pesas/PesaLata';
 
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
 
-export function Pesa() {
+const client = axios.create({
+    baseURL: "http://localhost:8000"
+});
+
+export function Pesa( ) {
     const [selectedContainer, setSelectedContainer] = useState(null);
+    const [usuario,setUsuario] = useState(null);
+
+    const usuAct = async() =>{
+      const useract = await client.get('/api/user');
+      setUsuario(useract.data.user);
+    }
+
+    useEffect(() => {
+      client.get("/api/user").then(function (res) {
+          usuAct();
+      })
+          .catch(function (error) {
+          });
+  }, []);
 
   const renderContainerContent = () => {
     switch (selectedContainer) {
       case 1:
-        return <PesaPlastico/>;
+        return <PesaPlastico email={usuario.email}/>;
       case 2:
-        return <PesaPapel/>;
+        return <PesaPapel email={usuario.email}/>;
       case 3:
-        return <PesaVidrio/>;
+        return <PesaVidrio email={usuario.email}/>;
       case 4:
-        return <PesaCarton/>;
+        return <PesaCarton email={usuario.email}/>;
       case 5:
-        return <PesaLata/>;
+        return <PesaLata email={usuario.email}/>;
       default:
         return <p>Selecciona un botón para ver su contenido.</p>;
     }

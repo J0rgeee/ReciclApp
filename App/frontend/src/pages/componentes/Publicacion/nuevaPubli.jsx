@@ -29,11 +29,10 @@ const AgregarPublicacion = () => {
     const formData = new FormData();
     formData.append('desc', desc);
     //formData.append('emailUsuario', userEmail);
-    formData.append('img', file);
+    formData.append('img', file.name);
+    
 
     try {
-      
-      // Realizar la solicitud POST al backend
       const response = await axios.post('http://localhost:8000/api/Publi/publi', formData, {
         headers: {
           'Content-Type': 'application/json',

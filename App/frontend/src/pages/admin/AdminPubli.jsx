@@ -8,20 +8,18 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
 
-const client = axios.create({
-  baseURL: "http://127.0.0.1:8000"
-});
 
 const AdminPubli = () => {
+
   const [todasPubli, setTodasPubli] = useState([]);
   
   const traerPubli = async () => {
     try {
-        const response = await client.get('/api/Publi/publi/');
+        const response = await axios.get('http://localhost:8000/api/Publi/publi/');
         setTodasPubli(response.data);
         console.log(todasPubli)
     } catch (error) {
-        console.error("Error al obtener datos:", error);
+        console.error("Error al obtener datos:", error.message);
     }
   };
 
@@ -29,15 +27,6 @@ const AdminPubli = () => {
     traerPubli();
   }, []);
 
-    const usuActi = async() =>{
-         const publi = await axios.get('http://localhost:8000/api/Publi/publi/');
-        //console.log(useract);
-         setTodasPubli(publi.data);
-      }
-
-    useEffect(() => {
-        usuActi();
-    },[]);
 
     return (
       <div>
@@ -51,17 +40,19 @@ const AdminPubli = () => {
             <th>Ruta</th>
             <th>Email</th>
             <th>Usuario</th>
+            <th>Likes</th>
           </tr>
         </thead>
         <tbody>
-          {todasPubli.map(publicaciones =>(
-            <tr key={publicaciones.idPublicacion}>
-                <td>{publicaciones.idPublicacion}</td>
-                <td>{publicaciones.desc}</td>
-                <td>{publicaciones.timeCreate}</td>
-                <td>{publicaciones.img}</td>
-                <td>{publicaciones.emailUsuario}</td>
-                <td>{publicaciones.username}</td>
+          {todasPubli.map(publicacion =>(
+            <tr key={publicacion.idPublicacion}>
+                <td>{publicacion.idPublicacion}</td>
+                <td>{publicacion.desc}</td>
+                <td>{publicacion.timeCreate}</td>
+                <td>{publicacion.img}</td>
+                <td>{publicacion.emailUsuario}</td>
+                <td>{publicacion.username}</td>
+                <td>{publicacion.likes_count}</td>
                 <td><Button variant="danger">Eliminar</Button></td>
 
             </tr>

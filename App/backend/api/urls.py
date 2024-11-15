@@ -58,7 +58,9 @@ urlpatterns = [
     path('Dire/', include(router11.urls)),
 
 
-    path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
+    # path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
+
+     path('read-weight/', views.read_weight_data, name='read-weight'),
 
     path('puntuacion/<str:email>/', puntuacion_viewset, name='puntuacion-usuario'), 
     path('metas/<str:email>/', metas_viewset, name='metas-usuario'),
@@ -68,6 +70,12 @@ urlpatterns = [
     path('comunas/', views.ComunaListView.as_view(), name='comunas-list'),
 
     path("Docs/",include_docs_urls(title="docs api")),
+
+    path('pesousuario-plas/<str:email>/', views.PuntosPesaPlasticoView.as_view(), name='punto-plastico-list'),
+    path('pesousuario-plas/update/<str:emailusuario>/', views.PuntosPesaPlasticoUpdateView.as_view(), name='puntos-plastico-update'),
+
+
+    # path('save-weight/', views.save_weight, name='save_weight'),
 
     path('register', views.UserRegister.as_view(), name='register'),
 	path('login', views.UserLogin.as_view(), name='login'),

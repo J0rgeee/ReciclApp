@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from .models import TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario
+from .models import PesoUsuario,TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario
 from django.contrib.auth import get_user_model,authenticate
 
 UserModel= get_user_model()
@@ -134,7 +134,7 @@ class AdminUsuariosSerializer(serializers.ModelSerializer):
 class UsuarioUpdateSerializaer(serializers.ModelSerializer):
     class Meta:
           model = UserModel
-          fields = ['email','username','nombre','apellido','telefono']
+          fields = ['email','username','nombre','apellido','telefono','foto']
           
 
 class DesactivarUserSerializaer(serializers.ModelSerializer):
@@ -168,3 +168,15 @@ class TransPuntosSerializer(serializers.ModelSerializer):
      class Meta:
           model = TransPuntos
           fields = ['id','puntosplas', 'puntospapel', 'putnosvidrio', 'puntoscarton', 'puntoslatas','emailusuario_id']
+
+class PesoUsuarioPlasticoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PesoUsuario
+        fields = ['id','pesoplas','pesopal','pesovid','pesocar','pesolat','emailusuario']
+
+    def update(self, instance, validated_data):
+        instance.emailusuario = validated_data.get('emailusuario',instance.emailusuario)
+        instance.pesoplas = validated_data.get('pesoplas',instance.pesoplas)
+        instance.save()
+        return instance
+          

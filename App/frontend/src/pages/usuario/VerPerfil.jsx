@@ -19,6 +19,13 @@ const client = axios.create({
 
 const VerPerfil = ({usuario}) => {
 
+
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
   const [formulario,setFormulario] = useState({
     email: '',
     username: '',
@@ -65,12 +72,14 @@ const VerPerfil = ({usuario}) => {
   const submitUpdate = async (e) => {
     e.preventDefault();
     try {
+      console.log(file);
       await client.put(`/api/user/update/${usuario.email}/`, {
         email : usuario.email,
         username : formulario.username,
         nombre : formulario.nombre,
         apellido : formulario.apellido,
-        telefono : formulario.telefono
+        telefono : formulario.telefono,
+        foto : file.name
       },{
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +161,7 @@ const VerPerfil = ({usuario}) => {
 
             <Form.Group controlId="formFoto">
               <Form.Label>Foto</Form.Label>
-              <Form.Control type="file" disabled={isDisabled} />
+              <Form.Control type="file" disabled={isDisabled} placeholder={formulario.foto} onChange={handleFileChange} />
             </Form.Group>
 
             <Button variant="secondary" type='submit'>Guarda Cambios</Button>

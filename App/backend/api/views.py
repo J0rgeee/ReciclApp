@@ -1,8 +1,8 @@
 from django.shortcuts import render
-import serial
+from django.http import JsonResponse
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer # type: ignore
-from .models import TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario
+from .serializer import PesoUsuarioPlasticoSerializer,TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer # type: ignore
+from .models import PesoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -16,6 +16,11 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.conf import settings
 from django.views.decorators.http import require_GET
+from django.views.decorators.csrf import csrf_exempt
+
+import json
+import serial
+
 
 
 
@@ -356,19 +361,102 @@ def get_google_maps_api_key(request):
 
 
 class ReadWeightDataView(APIView):
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         try:
-            arduino_port = 'COM4'  # Asegúrate de reemplazar con el puerto correcto
-            baud_rate = 9600
-            ser = serial.Serial(arduino_port, baud_rate, timeout=5)
-
-            if ser.in_waiting > 0:  # Si hay datos disponibles en el puerto
-                peso = ser.readline().decode('utf-8').strip()  # Leer el peso
-                ser.close()  # Cierra la conexión al puerto serial
-
-                return Response({"peso": peso}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "No data available"}, status=status.HTTP_404_NOT_FOUND)
-
+            with serial.Serial('COM3', 9600, timeout=2) as arduino:
+                if arduino.is_open:
+                    line = arduino.readline().decode('utf-8').strip()
+                    if line:
+                        weight_data = float(line)
+                        return Response({'weight': weight_data}, status=status.HTTP_200_OK)
+                else:
+                    print("Arduino no está disponible")
+            return Response({'error': 'Arduino not available'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         except serial.SerialException as e:
-            return Response({"error": f"Serial connection error: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(f"Error de conexión serial: {e}")
+            return Response({'error': 'Serial connection failed'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        except Exception as e:
+            print(f"Error inesperado: {e}")
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+
+
+def read_weight_data(request):
+    try:
+        with serial.Serial('COM3', 9600, timeout=1) as arduino:
+            if arduino.is_open:
+                weight_data_list = []  # Lista para almacenar los últimos 10 registros
+
+                while True:
+                    line = arduino.readline().decode('utf-8').strip()
+                    print(f"Datos recibidos: {line}")  # Para depuración
+                    
+                    try:
+                        # Intenta convertir el valor a float (usado para decimales)
+                        weight_data = float(line)
+                    except ValueError:
+                        try:
+                            # Si no es un float, intenta convertir a int
+                            weight_data = int(line)
+                        except ValueError:
+                            # Si no se puede convertir, ignora la línea
+                            print(f"Dato inválido ignorado: {line}")
+                            continue  # Continua leyendo más líneas
+
+                    # Si la conversión fue exitosa, guarda el valor en la lista
+                    weight_data_list.append(weight_data)
+
+                    # Si ya hay 10 registros, obtiene el valor máximo
+                    if len(weight_data_list) == 5:
+                        max_weight = max(weight_data_list)  # Obtiene el valor máximo
+                        print(f"Valor máximo calculado: {max_weight}")  # Para depuración
+
+                        # Devuelve el valor máximo y limpia la lista para los siguientes 10 registros
+                        return JsonResponse({'max_weight': max_weight}, status=200)
+
+                    # Si aún no hay 10 registros, continua capturando datos
+                    continue
+
+            else:
+                print("Arduino no está disponible en el puerto")
+                return JsonResponse({'error': 'Arduino not available'}, status=503)
+
+    except serial.SerialException as e:
+        print(f"Error de conexión serial: {e}")
+        return JsonResponse({'error': 'Serial connection failed'}, status=503)
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
+    
+
+class PuntosPesaPlasticoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, email):
+        # Filtramos las direcciones asociadas al usuario con el email proporcionado
+        puntosplas = PesoUsuario.objects.filter(emailusuario__email=email)
+        if not puntosplas:
+            return Response({"message": "No se encontraron pesos para este usuario"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = PesoUsuarioPlasticoSerializer(puntosplas, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+	
+    
+class PuntosPesaPlasticoUpdateView(APIView):
+    def patch(self, request, emailusuario):
+        try:
+            email = PesoUsuario.objects.get(emailusuario=emailusuario)
+        except PesoUsuario.DoesNotExist:
+            return Response({"message": "Dirección no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Usamos el serializador para validar y actualizar los datos
+        serializer = PesoUsuarioPlasticoSerializer(email, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	
+
+
