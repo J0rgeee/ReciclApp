@@ -1,8 +1,10 @@
 from django.urls import path ,include
 from rest_framework import routers # type: ignore
 from rest_framework.documentation import include_docs_urls # type: ignore
+from rest_framework.routers import DefaultRouter
 from api import views
 from . import views
+from .views import PublicacionesPendientesView
 
 
 router = routers.DefaultRouter()
@@ -38,6 +40,13 @@ router10.register(r'producto',views.ProductoView,'producto')
 router11 = routers.DefaultRouter()
 router11.register(r'direcciones', views.CrearDireccionesViewSet)
 
+router12 = DefaultRouter()
+router12.register(r'admin/publicaciones', PublicacionesPendientesView, basename='admin-publicaciones')
+
+router13 = DefaultRouter()
+router13.register(r'pendientes', PublicacionesPendientesView, basename='pendientes')
+
+
 puntuacion_viewset = views.PuntuacionViewSet.as_view({'get': 'retrieve_puntuacion_usuario'})
 metas_viewset = views.MetasViewSet.as_view({'get': 'list_metas_usuario'})
 
@@ -56,7 +65,8 @@ urlpatterns = [
     path("Contacto/", include(router9.urls)),
     path("Producto/", include(router10.urls)),
     path('Dire/', include(router11.urls)),
-
+    path('admin-publicaciones/', include(router12.urls)),
+    path('', include(router13.urls)),
 
     # path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
 

@@ -7,9 +7,10 @@ from .models import PesoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Meta
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated,AllowAny,IsAuthenticatedOrReadOnly
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAuthenticatedOrReadOnly,IsAdminUser
+from rest_framework.decorators import api_view, permission_classes, action
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -21,6 +22,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import serial
 
+from .permissions import IsAprobador
 
 
 
@@ -156,10 +158,17 @@ class DesUsuario(generics.UpdateAPIView):
         return self.request.user
 
 
+##################### Publicaciones ######################################################
 class PublicacionesView(viewsets.ModelViewSet):
     queryset = Publicacion.objects.all().order_by('-timeCreate')
     serializer_class = PublicacionSerializer  # Definir el serializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        # Solo mostrar publicaciones aprobadas para usuarios no administradores
+        if not self.request.user.is_staff:
+            return Publicacion.objects.filter(estado=True).order_by('-timeCreate')
+        return super().get_queryset()  # Administradores pueden ver todas
 
     def create(self, request, *args, **kwargs):
         # Agregar datos adicionales antes de la validación
@@ -172,6 +181,19 @@ class PublicacionesView(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         # En caso de errores de validación
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def partial_update(self, request, *args, **kwargs):
+        # Permitir que un administrador apruebe una publicación
+        instance = self.get_object()
+        if not request.user.is_staff:
+            return Response({"detail": "No tienes permisos para aprobar publicaciones."},
+                            status=status.HTTP_403_FORBIDDEN)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     def get_serializer_context(self):
         return {'request': self.request}
 
@@ -229,7 +251,60 @@ def comentarios_publicacion(request, idPublicacion, idComentario=None):
         return Response({"message": "Comentario eliminado con éxito"}, status=status.HTTP_200_OK)
     # Error si `idComentario` no se proporciona en la solicitud DELETE
     return Response({"error": "ID del comentario es necesario para eliminarlo"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+class AdminPublicacionesView(viewsets.ModelViewSet):
+    queryset = Publicacion.objects.all().order_by('-timeCreate')
+    serializer_class = PublicacionSerializer
+    permission_classes = [IsAdminUser]
+
+    @action(detail=True, methods=['patch'])
+    def aprobar(self, request, pk=None):
+        publicacion = self.get_object()
+        publicacion.estado = True
+        publicacion.save()
+        return Response({"message": "Publicación aprobada exitosamente."})
+
+class PublicacionesPendientesView(ModelViewSet):
+    queryset = Publicacion.objects.filter(estado=False).order_by('-timeCreate')  # Solo publicaciones no aprobadas
+    serializer_class = PublicacionSerializer
+    permission_classes = [IsAuthenticated, IsAprobador]
+
+    @action(detail=True, methods=['patch'], url_path='aprobar')
+    def aprobar(self, request, pk=None):
+        try:
+            publicacion = self.get_object()  # Obtiene la publicación según `pk`
+            publicacion.estado = True  # Cambia el estado a aprobado
+            publicacion.save()
+            return Response({"message": "Publicación aprobada con éxito."})
+        except Publicacion.DoesNotExist:
+            return Response({"error": "Publicación no encontrada."}, status=404)
+        
+    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated, IsAprobador])
+    def desaprobar(self, request, pk=None):
+        """
+        Acción para desaprobar una publicación.
+        """
+        try:
+            publicacion = Publicacion.objects.get(pk=pk, estado=True)
+            publicacion.estado = False
+            publicacion.save()
+            return Response({"message": "Publicación desaprobada con éxito."})
+        except Publicacion.DoesNotExist:
+            return Response({"error": "Publicación no encontrada o ya desaprobada."}, status=404)
+
+    @action(detail=True, methods=['delete'], permission_classes=[IsAuthenticated, IsAprobador])
+    def eliminar(self, request, pk=None):
+        """
+        Acción para eliminar una publicación.
+        """
+        try:
+            publicacion = Publicacion.objects.get(pk=pk)
+            publicacion.delete()
+            return Response({"message": "Publicación eliminada con éxito."})
+        except Publicacion.DoesNotExist:
+            return Response({"error": "Publicación no encontrada."}, status=404)
+##################### Publicaciones ######################################################
+
 class RetiroView(viewsets.ModelViewSet):
     queryset = RegistroRetiro.objects.all()
     def get_serializer_class(self):

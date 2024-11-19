@@ -51,15 +51,17 @@ class UsuarioManager(BaseUserManager):
         user.set_password(password)
         user.save()
         return user
-    def create_superuser(self,email,password=None):
+    def create_superuser(self, email, password=None):
         if not email:
-            raise ValueError('Se requiere un email valido.')
+            raise ValueError('Se requiere un email válido.')
         if not password:
             raise ValueError('Se requiere una contraseña.')
-        user = self.create_user(email,password)
+        user = self.create_user(email, password)
+        user.is_staff = True
         user.is_superuser = True
-        user.save()
+        user.save(using=self._db)
         return user
+
     
 class Usuario (AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(max_length=70,unique=True,primary_key=True)
@@ -68,12 +70,14 @@ class Usuario (AbstractBaseUser,PermissionsMixin):
     apellido = models.CharField(max_length=50,null=True)
     fechaNac = models.DateField(null=True)
     estado = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)  # Necesario para distinguir administradores
+    is_superuser = models.BooleanField(default=False) # Permite distinguir superusuarios
     tipoUser = models.ForeignKey(TipoUsuario,on_delete=models.CASCADE,null=True)
     telefono = models.CharField(max_length=50,null=True)
     foto = models.CharField(max_length=50,null=True)
     fechaReg = models.DateField(auto_now_add=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FILEDS = ['username']
+    REQUIRED_FILEDS = []
     objects = UsuarioManager()
     def __str__(self):
         return self.username

@@ -1,30 +1,21 @@
-import axios from 'axios';
-import React, { useState,useEffect } from 'react';
+import React from 'react';
+import usePosts from '../hooks/usePosts'
 import PostList from './componentes/Publicacion/listaPubli';
 import AgregarPublicacion from './componentes/Publicacion/nuevaPubli';
 import './foro.styles.css'
 
 export function Foro() {
  
-  const [posts, setPosts] = useState([]);
+  const { posts, setPosts, error } = usePosts();
   
-  const usuActi = async() =>{
-    const publi = await axios.get('http://localhost:8000/api/Publi/publi/');
-   //console.log(useract);
-    setPosts(publi.data);
-    console.log(posts);
-  }
-
-  useEffect(() => {
-    usuActi()
-      .then(response => setPosts(response.data))
-      .catch(error => console.error("Error al cargar publicaciones", error));
-  },[]);
-
   return (
     <div className='divforo'>
-      <AgregarPublicacion />
+      <AgregarPublicacion setPosts={setPosts}/>
+      {error ? (
+        <p>Error al cargar publicaciones: {error.message}</p>
+      ) : (
       <PostList posts={posts} />
+      )}
     </div>
   );
 };

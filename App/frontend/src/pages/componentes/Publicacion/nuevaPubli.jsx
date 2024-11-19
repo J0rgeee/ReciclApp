@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -8,6 +8,7 @@ import { ModalBody, ModalFooter, ModalTitle } from 'react-bootstrap';
 const AgregarPublicacion = () => {
   const [desc, setDesc] = useState('');
   const [file, setFile] = useState('');
+  const [currentUser, setCurrentUser] = useState('');
   const [error, setError] = useState(null);
   const [mensajeExito, setMensajeExito] = useState(null);
   //Boton Modal
@@ -24,18 +25,34 @@ const AgregarPublicacion = () => {
     setFile(e.target.files[0]);
   };
 
+  useEffect(() => {
+    // Obtener usuario autenticado
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/user', { withCredentials: true });
+        setCurrentUser(response.data.user);  // Supón que response.data contiene el objeto de usuario
+        console.log(response.data.user.email);
+        console.log("Usuario autenticado:", currentUser.email);
+
+      } catch (error) {
+        console.error("Error al obtener el usuario autenticado:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const handleSubmit = async (e) => {
      e.preventDefault();
     const formData = new FormData();
     formData.append('desc', desc);
-    //formData.append('emailUsuario', userEmail);
-    formData.append('img', file.name);
-    
+    formData.append('emailUsuario', currentUser.email);
+    formData.append('img', file);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/Publi/publi', formData, {
+      
+      // Realizar la solicitud POST al backend
+      const response = await axios.post('http://localhost:8000/api/Publi/publi/', formData, {
         headers: {
-          'Content-Type': 'application/json',
           'X-CSRFToken': getCsrfToken(),  // Incluir el token CSRF si es necesario
         },
         withCredentials: true,  // Permitir envío de cookies de sesión
