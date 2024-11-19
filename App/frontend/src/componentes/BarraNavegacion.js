@@ -159,7 +159,7 @@ export function BarraNavegacion() {
           <Navbar.Brand className=''>
             <img src="/logo.png" width="80" height="80" className="d-inline-block align-top logoreci" alt="logoReci" />
           </Navbar.Brand>
-          <Navbar.Brand>ReciclApp</Navbar.Brand>
+          <Navbar.Brand>RecyBear</Navbar.Brand>
   
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">

@@ -37,7 +37,10 @@ function PesaPlastico({email}) {
   //sube el peso a la bbdd
   const subirPeso = async (e) => {
     e.preventDefault();
-    setformData({pesoplas:156454,emailusuario:"jorge@test.cl"});
+    setformData(
+        {pesoplas:weight,
+        emailusuario:email}
+    );
     try {
         client.patch(`/api/pesousuario-plas/update/${email}/`,formData,
             { headers: {"X-XSRFToken":csrftoken}}

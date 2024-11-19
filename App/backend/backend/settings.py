@@ -27,8 +27,6 @@ DEBUG = True
 
 GOOGLE_MAPS_API_KEY = "AIzaSyAKEX7Y7Xo0tSLxB5fSZGuRZwMlV4NwANY"
 
-CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
-CORS_ALLOW_HEADERS = ["content-type", "authorization", "x-csrf-token", "*"]
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",

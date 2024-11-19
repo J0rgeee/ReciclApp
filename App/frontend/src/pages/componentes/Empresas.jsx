@@ -9,7 +9,7 @@ const Empresas = () => {
   return (
     <div  >
         <Container fluid className="text-center bg-light py-5">
-      <h2 className="mb-5">Empresas que colaboran con ReciclApp</h2>
+      <h2 className="mb-5">Empresas que colaboran con RecyBear</h2>
 
       <Row className="justify-content-center">
         {[...Array(2)].map((_, rowIndex) => (

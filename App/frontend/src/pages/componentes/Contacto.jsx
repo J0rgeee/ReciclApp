@@ -85,7 +85,7 @@ const Contacto = () => {
             
         <Row className="w-100">
             <Col xs={12} md={6} className='justify-content-start'>
-                <img  src='/basura.jpg' className='img-fluid' ></img>
+                <img  src='/contactoRecybear.jpg' className='img-fluid' ></img>
             </Col>
             <Col xs={12} md={6}>
             <Form onSubmit={handleSubmit}>

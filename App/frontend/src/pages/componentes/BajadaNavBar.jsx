@@ -18,11 +18,11 @@ const BajadaNavBar = () => {
                     <Row >
                         <Col className='bajadanav' xs={12} md={6}>
                             <h1>UNETE, RECICLA y GANA</h1> 
-                            <h3>Con Reciclapp encontraras una guia de como reciclar ademas de informacion de los puntos de reciclaje en tu ciudad</h3>
+                            <h3>Con RecyBear encontraras una guia de como reciclar ademas de informacion de los puntos de reciclaje en tu ciudad</h3>
                             <h5>*Por ahora solo en Santiago</h5>
                         </Col>
                         <Col className='justify-content-end' xs={12} md={6}>
-                            <img src="/home.png" className='img-fluid'/>
+                            <img src="/inicioRecybear.jpg" className='img-fluid imagen-baja-nav'/>
                         </Col>
                     </Row>
                 

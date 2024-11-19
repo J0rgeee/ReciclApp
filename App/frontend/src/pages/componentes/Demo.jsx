@@ -19,7 +19,7 @@ const Demo = () => {
   return (
     <div  style={{ backgroundColor: "#41B59A"}}>
         <Container className="d-flex flex-column justify-content-center align-items-center">
-            <h1>La nueva forma de Recicalar esta aca, diviertete y recicla con ReciclApp</h1>
+            <h1>La nueva forma de Recicalar esta aca, diviertete y recicla con RecyBear</h1>
             <h5>Descargala ya, empieza a ganar tus puntos para canjearlos por premios exclusivos</h5>
       <Row className="mt-4">
         <Col >

@@ -101,13 +101,20 @@ class PesoUsuario(models.Model):
 
 class TransPuntos(models.Model):
     emailusuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    puntosplas = models.IntegerField()
-    puntospapel = models.IntegerField()
-    putnosvidrio = models.IntegerField()
-    puntoscarton = models.IntegerField()
-    puntoslatas = models.IntegerField()
+    cantidadpuntos = models.IntegerField()
+    cantidadpeso = models.IntegerField()
     fechatrans = models.DateField(auto_now_add=True)
     estado = models.BooleanField(default=True)
+    tiporec= models.ForeignKey(TipoReciclaje,on_delete=models.CASCADE,default=True)
+
+
+class TransPeso(models.Model):
+    emailusuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    cantidadpeso = models.IntegerField()
+    fechatrans = models.DateField(auto_now_add=True)
+    estado = models.BooleanField(default=True)
+    tiporec= models.ForeignKey(TipoReciclaje,on_delete=models.CASCADE,default=True)
+
 
 
 class Direcciones (models.Model):

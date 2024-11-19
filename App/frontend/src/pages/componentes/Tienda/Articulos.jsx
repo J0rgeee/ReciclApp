@@ -55,7 +55,7 @@ const Articulos = () => {
 
   return (
     <Container>
-      <h2 className="text-center mb-4">Tienda ReciclApp</h2>
+      <h2 className="text-center mb-4">Tienda Recybear</h2>
       {loading ? (
         <p className="text-center">Cargando...</p>
       ) : (

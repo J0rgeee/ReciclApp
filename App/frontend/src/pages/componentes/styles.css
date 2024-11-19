@@ -4,6 +4,12 @@
     object-fit: cover; /* Mantiene la proporción y recorta la imagen si es necesario */
 }
 
+.imagen-baja-nav{
+    width: 75%;  /* Ajusta el ancho como desees */
+    height: 100%; /* Ajusta la altura como desees */
+    object-fit: cover; 
+
+}
 
 .contenedor {
     display: flex;
