@@ -15,6 +15,8 @@ const Articulos = () => {
   const [loading, setLoading] = useState(true);
   const [activeItem, setActiveItem] = useState(null);
   const [productos, setProductos] = useState([]);
+  const [carrito, setCarrito] = useState([]);
+  const [showCart, setShowCart] = useState(false);
 
   // Funciones para mostrar y cerrar el modal
   const handleShow = (item) => {
