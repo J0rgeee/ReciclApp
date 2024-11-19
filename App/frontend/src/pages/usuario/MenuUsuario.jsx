@@ -8,7 +8,7 @@ import './sidebar.style.css';
 import Puntuacion from "./Puntuacion";
 import Metas from "./Metas";
 import Direcciones from "./Direcciones";
-
+import Nav from 'react-bootstrap/Nav';
 
 
 
@@ -20,7 +20,7 @@ axios.defaults.withCredentials = true;
 
 
 const MenuUsuario = () => {
-    const [activeDiv, setActiveDiv] = useState(null);
+    const [activeDiv, setActiveDiv] = useState("1");
     const [usuario, setUsuario] = useState([]);
 
     const handleButtonClick = (divNumber) => {
@@ -46,9 +46,30 @@ const MenuUsuario = () => {
               <Card.Text> sadasdsa</Card.Text>
             </Card.Body>
           </Card>
+          <Nav justify variant="underline" className="navuser" activeKey={activeDiv} onSelect={(selectedKey) => setActiveDiv(selectedKey)}>
+            <Nav.Item>
+              <Nav.Link eventKey="1">Perfil</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="5">Puntuación</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="2">Retiros</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="4">Metas</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="3">Direcciones</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Link to='/mapa' className="nav-link">Ver Puntos Verdes</Link>
+            </Nav.Item>
+          </Nav>
+          {/*
           <div className="d-flex flex-column align-items-center">
             <ButtonGroup aria-label="Basic example">
-              <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(1)}>Perfil</Button>
+              <Button variant="primary" className="mb-2 button" onClick={() => handleButtonClick(1)}>Perfil</Button>
               <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(5)}>Direcciones</Button>
               <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(2)}>Puntos</Button>
               <Button variant="primary" className="mb-2" style={{ width: '80%' }} onClick={() => handleButtonClick(4)}>Metas y Recompensa</Button>
@@ -59,14 +80,14 @@ const MenuUsuario = () => {
               </Link>
             </ButtonGroup>
           </div>
-          
+          */}
         </div>
         <div>
-          {activeDiv === 1 && <div><VerPerfil usuario={usuario}/></div>}
-          {activeDiv === 2 && <div><Puntuacion  usuario={usuario}/></div>}
-          {activeDiv === 3 && <div><Retiros/></div>}
-          {activeDiv === 4 && <div><Metas email={usuario.email}/></div>}
-          {activeDiv === 5 && <div><Direcciones email={usuario.email} /></div>}
+          {activeDiv === "1" && <VerPerfil usuario={usuario}/>}
+          {activeDiv === "2" && <Puntuacion  usuario={usuario}/>}
+          {activeDiv === "3" && <div><Retiros/></div>}
+          {activeDiv === "4" && <div><Metas email={usuario.email}/></div>}
+          {activeDiv === "5" && <Direcciones email={usuario.email} />}
         </div>
       </div>
   );

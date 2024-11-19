@@ -19,8 +19,8 @@ export function Footer() {
           </Col>
           <Col md={4}>
             <h5>Contáctanos</h5>
-            <p>Email: info@tuempresa.com</p>
-            <p>Teléfono: +1 234 567 890</p>
+            <p>Email: recibear@gmail.com</p>
+            <p>Teléfono: +569 2345 7890</p>
           </Col>
         </Row>
         <Row className="text-center mt-3">

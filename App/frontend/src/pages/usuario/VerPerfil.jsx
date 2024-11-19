@@ -1,9 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 import  { useState,useEffect } from 'react';
-import { Button,Form,Modal } from 'react-bootstrap';
+import { Button,Form,Modal,Row,Stack,Col } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
+import './sidebar.style.css';
 const csrftoken = Cookies.get('csrftoken');
 
 
@@ -105,65 +106,72 @@ const VerPerfil = ({usuario}) => {
 
 
   return (
-      <div style={{ marginLeft: '250px', flexGrow: 1 }}>
-          <Form style={{ margin: '20px' }} onSubmit={e => submitUpdate(e)}>
-            <Button variant="secondary" onClick={toggleDisableFields}>
-              {isDisabled ? 'Modificar Perfil' :'No modificar' }
+      <div className='div-perfil'>
+          
+        <Stack direction='horizontal' gap={2} className='p-3 justify-content-center'>
+          <Button variant="secondary" onClick={toggleDisableFields}>
+            {isDisabled ? 'Modificar Perfil' :'No modificar' }
+          </Button>
+          <Button variant="danger" onClick={handleShow}>
+            Desactivar cuenta
+          </Button>
+        </Stack>
+
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación de Eliminación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>¿Estás seguro de que deseas eliminar este elemento?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancelar
             </Button>
-            <Button variant="danger" onClick={handleShow}>
-              Desactivar cuenta
+            <Button variant="danger" onClick={handleDelete}>
+              Confirmar
             </Button>
+          </Modal.Footer>
+        </Modal>
+          <Form className='m-3' onSubmit={e => submitUpdate(e)}>
+            <Row className='mb-3'>
+              <Form.Group as={Col} controlId="formEmail">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="email" disabled name='email' value={usuario.email}/>
+              </Form.Group>
 
-            <Modal show={show} onHide={handleClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Confirmación de Eliminación</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>¿Estás seguro de que deseas eliminar este elemento?</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                  Cancelar
-                </Button>
-                <Button variant="danger" onClick={handleDelete}>
-                  Confirmar
-                </Button>
-              </Modal.Footer>
-            </Modal>
-            
-            <Form.Group controlId="formEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" disabled name='email' value={usuario.email}/>
-            </Form.Group>
-
-            <Form.Group controlId="formUsername">
-              <Form.Label>Username</Form.Label>
-              <Form.Control type="text" placeholder={usuario.username} disabled={isDisabled}  name='username' value={formulario.username} onChange={handleChange}/>
-            </Form.Group>
-
-            <Form.Group controlId="formNombre">
+              <Form.Group as={Col} controlId="formUsername">
+                <Form.Label>Username</Form.Label>
+                <Form.Control type="text" placeholder={usuario.username} disabled={isDisabled}  name='username' value={formulario.username} onChange={handleChange}/>
+              </Form.Group>
+            </Row>
+            <Row className='mb-3'>
+            <Form.Group as={Col} controlId="formNombre">
               <Form.Label>Nombre</Form.Label>
               <Form.Control type="text" placeholder={usuario.nombre} disabled={isDisabled} name='nombre' value={formulario.nombre} onChange={handleChange}/>
             </Form.Group>
 
-            <Form.Group controlId="formApellido">
+            <Form.Group as={Col} controlId="formApellido">
               <Form.Label>Apellido</Form.Label>
               <Form.Control type="text" placeholder={usuario.apellido} disabled={isDisabled} name='apellido' value={formulario.apellido} onChange={handleChange} />
             </Form.Group>
-
-            <Form.Group controlId="formFechaNacimiento">
-              <Form.Label>Fecha de Nacimiento</Form.Label>
-              <Form.Control type="date" disabled={isDisabled}   value={formulario.fechaNac}/>
-            </Form.Group>
-
-            <Form.Group controlId="formTelefono">
-              <Form.Label>Teléfono</Form.Label>
-              <Form.Control type="tel" placeholder={usuario.telefono} disabled={isDisabled}  name='telefono' value={formulario.telfono} onChange={handleChange} />
-            </Form.Group>
-
-            <Form.Group controlId="formFoto">
-              <Form.Label>Foto</Form.Label>
-              <Form.Control type="file" disabled={isDisabled} placeholder={formulario.foto} onChange={handleFileChange} />
-            </Form.Group>
-
+            </Row>
+            <Row className='mb-3'>
+              <Form.Group as={Col} controlId="formFechaNacimiento">
+                <Form.Label>Fecha de Nacimiento</Form.Label>
+                <Form.Control type="date" disabled={isDisabled}   value={formulario.fechaNac}/>
+              </Form.Group>
+            </Row>
+            <Row className='mb-3'>
+              <Form.Group as={Col} controlId="formTelefono">
+                <Form.Label>Teléfono</Form.Label>
+                <Form.Control type="tel" placeholder={usuario.telefono} disabled={isDisabled}  name='telefono' value={formulario.telfono} onChange={handleChange} />
+              </Form.Group>
+            </Row>
+            <Row lg={2} className='mb-3'>
+              <Form.Group as={Col} controlId="formFoto">
+                <Form.Label>Foto</Form.Label>
+                <Form.Control type="file" disabled={isDisabled} placeholder={formulario.foto} onChange={handleFileChange} />
+              </Form.Group>
+              </Row>
             <Button variant="secondary" type='submit'>Guarda Cambios</Button>
 
           </Form>

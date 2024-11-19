@@ -65,7 +65,7 @@ export function BarraNavegacion() {
           <Navbar className='navbar-reci' expand="lg">
             <Container>
               <Navbar.Brand><img src="/logo.png" width="80" height="80" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
-              <Navbar.Brand className='titulo'>ReciclApp</Navbar.Brand>
+              <Navbar.Brand className='titulo'>RecyBear</Navbar.Brand>
               <Navbar.Brand>Bienvenido: {usuario.username} </Navbar.Brand>
 
               <Navbar.Toggle />
@@ -97,7 +97,7 @@ export function BarraNavegacion() {
         <Navbar className='navbar-reci' expand="lg">
           <Container>
     
-            <Navbar.Brand>ReciclApp</Navbar.Brand>
+            <Navbar.Brand>RecyBear</Navbar.Brand>
             <Navbar.Brand><img src="/logo.png" width="80" height="80" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Brand>Bienvenido señor: {usuario.username}</Navbar.Brand>
 
@@ -127,7 +127,7 @@ export function BarraNavegacion() {
         <Navbar className='navbar-reci' expand="lg">
           <Container>
            
-            <Navbar.Brand>ReciclApp</Navbar.Brand>
+            <Navbar.Brand>RecyBear</Navbar.Brand>
             <Navbar.Brand>Bienvenido señor trabajador: {usuario.username}</Navbar.Brand>
        
             <Navbar.Brand><img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>

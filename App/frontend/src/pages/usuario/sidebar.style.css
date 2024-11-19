@@ -7,3 +7,36 @@
     left: 0;
     top: '125px';
 }
+
+.button{
+    
+    border:transparent;
+    width: 100%;
+    --bs-btn-active-bg: #007f56 !important;
+}
+
+.nav-link.active {
+    background-color: #009d71  ;
+    color: black 
+}
+
+.nav-link:hover{
+    color: black;
+}
+
+.nav-link {
+    color: white;
+    
+}
+
+.navuser {
+    background-color: #00775d !important;
+    color: black;
+    border-radius: 5px 5px 0 0;
+}
+
+.div-perfil {
+    background-color: #6aa5b1;
+    padding: 5px;
+    border-radius: 5px;
+}
