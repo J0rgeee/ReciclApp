@@ -4,7 +4,7 @@ from rest_framework.documentation import include_docs_urls # type: ignore
 from rest_framework.routers import DefaultRouter
 from api import views
 from . import views
-from .views import PublicacionesPendientesView
+from .views import AdminPublicacionesView, PublicacionesPendientesView
 
 
 router = routers.DefaultRouter()
@@ -41,7 +41,7 @@ router11 = routers.DefaultRouter()
 router11.register(r'direcciones', views.CrearDireccionesViewSet)
 
 router12 = DefaultRouter()
-router12.register(r'admin/publicaciones', PublicacionesPendientesView, basename='admin-publicaciones')
+router12.register(r'admin/publicaciones', AdminPublicacionesView, basename='admin-publicaciones')
 
 router13 = DefaultRouter()
 router13.register(r'pendientes', PublicacionesPendientesView, basename='pendientes')
@@ -66,7 +66,7 @@ urlpatterns = [
     path("Producto/", include(router10.urls)),
     path('Dire/', include(router11.urls)),
     path('admin-publicaciones/', include(router12.urls)),
-    path('', include(router13.urls)),
+    path('publicaciones/', include(router13.urls)),
 
     # path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
 
