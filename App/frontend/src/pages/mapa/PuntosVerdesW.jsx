@@ -29,14 +29,17 @@ function PuntosVerdesW() {
     fetchApiKey();
   }, []);
 
-  const fetchComunas = async () => {
-    try {
-      const response = await client.get("/api/Comuna/comuna/");
-      setComunas(response.data);
-    } catch (error) {
-      console.error("Error fetching comunas:", error);
-    }
-  };
+  useEffect(() => {
+    const fetchComunas = async () => {
+      try {
+        const response = await client.get("/api/Comuna/comuna/");
+        setComunas(response.data);
+      } catch (error) {
+        console.error("Error fetching comunas:", error);
+      }
+    };
+    fetchComunas();
+  }, []);
 
   useEffect(() => {
     const fetchMarkers = async () => {
@@ -48,7 +51,6 @@ function PuntosVerdesW() {
       }
     };
     fetchMarkers();
-    fetchComunas();
   }, [setMarkers]);
 
   const filteredMarkers = selectedComuna
@@ -57,8 +59,16 @@ function PuntosVerdesW() {
 
   const handleLocationClick = (location) => {
     if (location.lat && location.lng) {
-      setCenter({ lat: location.lat, lng: location.lng });
-      map.panTo({ lat: location.lat, lng: location.lng });
+      setCenter({
+        lat: parseFloat(location.lat),
+        lng: parseFloat(location.lng),
+      });
+      map.panTo({
+        lat: parseFloat(location.lat),
+        lng: parseFloat(location.lng),
+      });
+    } else {
+      console.error("Latitud o longitud inválida:", location);
     }
   };
 
@@ -73,13 +83,26 @@ function PuntosVerdesW() {
               zoom={12}
               onLoad={(mapInstance) => setMap(mapInstance)}
             >
-              {filteredMarkers.map((item) => (
-                <Marker
-                  key={item.idPv}
-                  position={{ lat: item.lat, lng: item.lng }}
-                  title={item.direccion}
-                />
-              ))}
+              {filteredMarkers.map((item) => {
+                if (
+                  !item.lat ||
+                  !item.lng ||
+                  isNaN(parseFloat(item.lat)) ||
+                  isNaN(parseFloat(item.lng))
+                ) {
+                  return null;
+                }
+                return (
+                  <Marker
+                    key={item.idPv}
+                    position={{
+                      lat: parseFloat(item.lat),
+                      lng: parseFloat(item.lng),
+                    }}
+                    title={item.direccion}
+                  />
+                );
+              })}
             </GoogleMap>
           </LoadScript>
         ) : (

@@ -11,16 +11,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='puntoverde',
-            name='lat',
-            field=models.FloatField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='puntoverde',
-            name='lng',
-            field=models.FloatField(blank=True, null=True),
-        ),
-        migrations.AddField(
             model_name='usuario',
             name='is_staff',
             field=models.BooleanField(default=False),

@@ -75,7 +75,7 @@ class RegistroRetiroSerializer(serializers.ModelSerializer):
 class PuntoVerdeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PuntoVerde
-        fields = ['idPv','nombre','direccion','nro','estado','nomComuna']
+        fields = ['idPv','nombre','direccion','nro','estado','nomComuna', 'lat', 'lng']
 
 
 
