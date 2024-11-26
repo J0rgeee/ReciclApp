@@ -23,7 +23,7 @@ router5 = routers.DefaultRouter()
 router5.register(r'ciudad',views.CiudadView,'ciudad')
 
 router6 = routers.DefaultRouter()
-router6.register(r'adminusuario',views.AdminUsuarios,'adminusuario')
+router6.register(r'adminusuario',views.AdminUsuarios, basename='adminusuario')
 
 router7 = routers.DefaultRouter()
 router7.register(r'publi',views.PublicacionesView,'publi')
@@ -44,7 +44,7 @@ router12 = DefaultRouter()
 router12.register(r'admin/publicaciones', AdminPublicacionesView, basename='admin-publicaciones')
 
 router13 = DefaultRouter()
-router13.register(r'pendientes', PublicacionesPendientesView, basename='pendientes')
+router13.register(r'', PublicacionesPendientesView, basename='pendientes')
 
 
 puntuacion_viewset = views.PuntuacionViewSet.as_view({'get': 'retrieve_puntuacion_usuario'})
@@ -66,7 +66,7 @@ urlpatterns = [
     path("Producto/", include(router10.urls)),
     path('Dire/', include(router11.urls)),
     path('admin-publicaciones/', include(router12.urls)),
-    path('publicaciones/', include(router13.urls)),
+    path('pendientes/', include(router13.urls)),
 
     # path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
 
@@ -92,7 +92,7 @@ urlpatterns = [
 	path('logout', views.UserLogout.as_view(), name='logout'),
 	path('user', views.UserView.as_view(), name='user'),
 	path('user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
-    path('user/desactivar-cuenta', views.DesUsuario.as_view(), name='desactivar-cuenta'),
+    path('user/desactivar-cuenta/<str:email>', views.DesUsuario.as_view(), name='desactivar-cuenta'),
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
     #Publicacion
     path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),

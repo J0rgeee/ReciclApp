@@ -1,15 +1,41 @@
+.geo-regular {
+    font-family: "Geo", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.geo-regular-italic {
+    font-family: "Geo", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.nerko-one-regular {
+    font-family: "Nerko One", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+
+
+.tituloTabla {
+    font-family: "Geo", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
 .navadmin {
     background-color: #008f6f;
 }
 
-.button{
-    background-color:transparent;
-    border:transparent;
+.button {
+    background-color: transparent;
+    border: transparent;
     width: 100%;
     --bs-btn-active-bg: #00775d;
 }
 
-.button:hover{
+.button:hover {
     background-color: #00775d;
 }
 
@@ -23,13 +49,20 @@
 
 Table {
     background-color: #8d4925;
-    
+    border-radius: 5px;
+
     th {
-        background-color: #8d4925 !important;
-        color: white !important
+        background-color: #8d4925;
+        color: white
     }
+
     td {
-        background-color: #c57d56 !important;
+        background-color: #c57d56;
+    }
+
+    .tr {
+        display: flex;
+        justify-content: space-around;
     }
 }
 
@@ -39,7 +72,7 @@ Table {
 
 .editar {
     background-color: #2f2c79;
-    border:transparent;
+    border: transparent;
     width: 100%;
     --bs-btn-active-bg: #171a4a;
 }
@@ -47,3 +80,92 @@ Table {
 .editar:hover {
     background-color: #171a4a;
 }
+
+
+
+
+
+
+/* admin publi */
+.imgTabla {
+    width: 30px;
+    border-radius: 5px;
+}
+
+.aprove {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    margin: 0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #000000;
+    font-size: 25px;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    padding: 1.25rem 1rem;
+}
+
+.close-btn:active {
+    --bs-btn-active-bg: red;
+}
+
+.close-btn:hover {
+    transform: scale(1.2);
+    transition: 0.2s;
+    background: none;
+    color: #000000;
+}
+
+.popupImg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.imgdesplegada {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 10px;
+}
+
+.fondoimg {
+    position: relative;
+    background: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.btnpopup {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    background-color: transparent;
+    border: none;
+    --bs-btn-active-bg: none;
+}
+
+.btnpopup:hover {
+    background-color: transparent;
+    border: none;
+    transform: scale(5.1);
+    transition: transform 0.4s ease, font-size 0.3s ease;
+}
+
+/* admin publi */

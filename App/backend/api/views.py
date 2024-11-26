@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework import viewsets,permissions, status,generics
 from .serializer import PesoUsuarioPlasticoSerializer,TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer # type: ignore
-from .models import PesoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario
+from .models import PesoUsuario, TipoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -18,6 +18,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.views.decorators.http import require_GET
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password  # Para encriptar contraseñas
 
 import json
 import serial
@@ -96,14 +97,31 @@ class UserRegister(APIView):
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
-    ##
+
     def post(self, request):
         data = request.data
-        # assert validate_email(data)
-        # assert validate_password(data)
         serializer = UsuarioLoginSerializer(data=data)
+        
+        # Verificamos si el serializer es válido
         if serializer.is_valid(raise_exception=True):
+            # Verificamos el usuario
             user = serializer.check_user(data)
+
+            # Verificamos si el usuario existe
+            if not user:
+                return Response(
+                    {"mensaje": "Usuario no encontrado. Verifica tus credenciales."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Verificar si la cuenta está activa
+            if not user.estado:
+                return Response(
+                    {"mensaje": "Tu cuenta está desactivada. Por favor, contacta al administrador."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            # Realizar el login si todo es correcto
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -122,27 +140,96 @@ class UserView(APIView):
     ##
     def get(self, request):
         serializer = UsuarioSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)   
+        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+
+##########################################################################################################
+##################################### Administrar Usuarios ###############################################   
     
-class AdminUsuarios (viewsets.ModelViewSet):
-    permission_classes = (permissions.AllowAny,)
+class AdminUsuarios(viewsets.ViewSet):
+    permission_classes = [IsAprobador]
     serializer_class = AdminUsuariosSerializer
     queryset = Usuario.objects.all()
+
+     # Método para listar usuarios
+    def list(self, request):
+        usuarios = Usuario.objects.all()
+        serializer = self.serializer_class(usuarios, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['delete'], url_path='delete-by-email')
+    def delete_by_email(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({"error": "Se requiere un email"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            usuario = Usuario.objects.get(email=email)
+            # Verificar que no sea administrador
+            if getattr(usuario, 'tipoUser', None) == 1:
+                return Response({"error": "No puedes eliminar a otro administrador"}, status=status.HTTP_403_FORBIDDEN)
+            
+            usuario.delete()
+            return Response({"message": f"Usuario con email {email} eliminado con éxito"}, status=status.HTTP_204_NO_CONTENT)
+        
+        except Usuario.DoesNotExist:
+            return Response({"error": f"No se encontró un usuario con el email {email}"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    # Método para agregar un nuevo usuario
+    @action(detail=False, methods=['post'], url_path='create-user')
+    def create_user(self, request):
+        data = request.data
+        try:
+            # Validar entrada
+            if not data.get("email") or not data.get("password") or not data.get("tipoUser"):
+                return Response(
+                    {"error": "Faltan campos requeridos: email, password o tipoUser"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Buscar la instancia de TipoUsuario usando idTR
+            try:
+                tipo_usuario = TipoUsuario.objects.get(idTR=data['tipoUser'])
+            except TipoUsuario.DoesNotExist:
+                return Response(
+                    {"error": f"No se encontró un tipo de usuario con idTR {data['tipoUser']}"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Crear el usuario
+            nuevo_usuario = Usuario.objects.create(
+                email=data['email'],
+                password=make_password(data['password']),  # Encripta la contraseña
+                tipoUser=tipo_usuario
+            )
+
+            return Response(
+                {"message": f"Usuario {nuevo_usuario.email} creado exitosamente"},
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"Error al crear el usuario: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        
+    @action(detail=False, methods=['get'], url_path='list-tipo-user')
+    def list_tipo_user(self, request):
+        tipos = TipoUsuario.objects.all().values('idTR', 'desc')  # Ajusta el nombre del campo si es necesario
+        return Response(tipos, status=status.HTTP_200_OK)
+
     
-
-
 class UpdateUsuario(generics.UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated] 
+    permission_classes = [permissions.IsAuthenticated, IsAprobador]
     queryset = Usuario.objects.all()
+    serializer_class = UsuarioUpdateSerializaer
 
-    def get_serializer_class(self):
-        return UsuarioUpdateSerializaer
-    
     def get_object(self):
         email = self.kwargs.get('email')
         if not email:
             self.permission_denied(self.request, message="Email no proporcionado")
-
         try:
             return Usuario.objects.get(email=email)
         except Usuario.DoesNotExist:
@@ -150,15 +237,62 @@ class UpdateUsuario(generics.UpdateAPIView):
     
 
 class DesUsuario(generics.UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated] 
+    #Desactivar o activar usuario (por el administrador)
+    permission_classes = [permissions.IsAuthenticated, IsAprobador]
     queryset = Usuario.objects.all()
-    def get_serializer_class(self):
-        return DesactivarUserSerializaer
-    def get_object(self):
-        return self.request.user
+    serializer_class = DesactivarUserSerializaer
+    lookup_field = 'email'
+
+    def update(self, request, *args, **kwargs):
+        usuario = self.get_object()
+        usuario.estado = not usuario.estado  # Cambiamos el estado
+        usuario.save()
+        estado = "activado" if usuario.estado else "desactivado"
+        return Response({'mensaje': f'El usuario ha sido {estado}.'}, status=status.HTTP_200_OK)
+    
+class DesactivarCuenta(APIView):
+    permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
+
+    def delete(self, request):
+        usuario = request.user
+        usuario.estado = False  # Desactivamos la cuenta
+        usuario.save()
+
+        # Enviar notificación por correo electrónico
+        enviar_notificacion_correo(usuario)
+
+        return Response({'mensaje': 'Tu cuenta ha sido desactivada. Si deseas reactivarla, contacta al administrador.'}, status=status.HTTP_200_OK)
+
+class ReactivarCuenta(APIView):
+    permission_classes = [permissions.IsAuthenticated]  # Aseguramos que el usuario esté autenticado
+
+    def post(self, request):
+        usuario = request.user
+        if not usuario.estado:
+            usuario.estado = True  # Reactivamos la cuenta
+            usuario.save()
+            return Response({'mensaje': 'Tu cuenta ha sido reactivada exitosamente.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Tu cuenta ya está activa.'}, status=status.HTTP_400_BAD_REQUEST)
+
+def enviar_notificacion_correo(usuario):
+    """Envía un correo electrónico notificando el cambio de estado de la cuenta."""
+    asunto = 'Cambio en el estado de tu cuenta'
+    mensaje = (
+        f'Hola {usuario.username}, tu cuenta ha sido actualizada. '
+        f'Estado actual: {"activa" if usuario.estado else "desactivada"}.'
+    )
+    remitente = 'fe.curin@duocuc.cl'
+    destinatario = [usuario.email]
+    send_mail(asunto, mensaje, remitente, destinatario)
+
+##################################### Administrar Usuarios ###############################################
+##########################################################################################################
 
 
-##################### Publicaciones ######################################################
+##########################################################################################################
+##################################### Publicaciones ######################################################
+
 class PublicacionesView(viewsets.ModelViewSet):
     queryset = Publicacion.objects.all().order_by('-timeCreate')
     serializer_class = PublicacionSerializer  # Definir el serializer
@@ -303,48 +437,13 @@ class PublicacionesPendientesView(ModelViewSet):
             return Response({"message": "Publicación eliminada con éxito."})
         except Publicacion.DoesNotExist:
             return Response({"error": "Publicación no encontrada."}, status=404)
-##################### Publicaciones ######################################################
 
+##################################### Publicaciones ######################################################
+##########################################################################################################
 class RetiroView(viewsets.ModelViewSet):
     queryset = RegistroRetiro.objects.all()
     def get_serializer_class(self):
         return RegistroRetiroSerializer 
-
-
-class DesactivarCuenta(APIView):
-    permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
-
-    def delete(self, request):
-        usuario = request.user
-        usuario.estado = False  # Desactivamos la cuenta
-        usuario.save()
-
-        # Enviar notificación por correo electrónico
-        enviar_notificacion_correo(usuario)
-
-        return Response({'mensaje': 'Tu cuenta ha sido desactivada. Si deseas reactivarla, contacta al administrador.'}, status=status.HTTP_200_OK)
-
-
-def enviar_notificacion_correo(usuario):
-    """Envía un correo electrónico notificando que la cuenta ha sido desactivada"""
-    asunto = 'Tu cuenta ha sido desactivada'
-    mensaje = f'Hola {usuario.username}, tu cuenta ha sido desactivada. Si no fuiste tú quien solicitó esto, por favor contáctanos.'
-    remitente = 'soporte@tusitio.com'
-    destinatario = [usuario.email]
-
-    send_mail(asunto, mensaje, remitente, destinatario)
-
-class ReactivarCuenta(APIView):
-    permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
-
-    def post(self, request):
-        usuario = request.user
-        if not usuario.is_active:
-            usuario.is_active = True  # Reactivamos la cuenta
-            usuario.save()
-            return Response({'mensaje': 'Tu cuenta ha sido reactivada exitosamente.'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje': 'Tu cuenta ya está activa.'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ContactoView (viewsets.ModelViewSet):
     permission_classes = [AllowAny]

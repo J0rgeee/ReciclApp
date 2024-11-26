@@ -133,8 +133,8 @@ const Post = ({ post }) => {
     <div className="post">
       <Card className="m-2" >
       <Card.Header>
-        <Image src="holder.js/171x180" rounded className="mx-auto"/>
-        <strong>{post.username}</strong> - <span className='span'>{formatDistanceToNow(new Date(post.timeCreate), { addSuffix: true, locale: es })}</span>
+        <Image src="holder.js/171x180" rounded className="m-2"/>
+        <strong>{post.username && post.username.charAt(0).toUpperCase() + post.username.slice(1)}</strong> - <span className='span'>{formatDistanceToNow(new Date(post.timeCreate), { addSuffix: true, locale: es })}</span>
       </Card.Header>
       <Card.Body>
         <Card.Text>{post.desc}</Card.Text>
@@ -153,7 +153,7 @@ const Post = ({ post }) => {
         <h5 className=''>Comentarios</h5>
         {comments.map((comment) => (
           <Stack key={comment.id} className='comments-section' direction="horizontal" gap={3}>
-            <div className='p-1 '>{comment.usuario}</div>
+            <div className='p-1 user'>{comment.usuario && comment.usuario.charAt(0).toUpperCase() + comment.usuario.slice(1)}</div>
             <div className='p-1 me-auto'>{comment.contenido}</div>
             <div className='p-1'>
               {currentUser.email === comment.usuario_email && (

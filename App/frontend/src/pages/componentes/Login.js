@@ -26,19 +26,39 @@ export function Login() {
     const [, setUsuarioActivo] = useState();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-    function submitLogin(e) {
+    async function submitLogin(e) {
         e.preventDefault();
-        client.post(
-            "/api/login",
-            {
+        setErrorMessage('');  // Reseteamos cualquier mensaje de error previo
+        try {
+            const response = await client.post("/api/login", {
                 email: email,
                 password: password
-            }
-        ).then(function (res) {
+            });
+
+            // Si la respuesta es exitosa, redirigimos al usuario
             setUsuarioActivo(true);
-            window.location.replace('/'); 
-        });
+            window.location.replace('/');
+
+        } catch (error) {
+            if (error.response) {
+                // Si la respuesta del servidor contiene un mensaje
+                if (error.response.status === 403) {
+                    // La cuenta está desactivada
+                    setErrorMessage('Tu cuenta está desactivada. Por favor, contacta al administrador.');
+                } else if (error.response.status === 404) {
+                    // El usuario no existe
+                    setErrorMessage('El correo o la contraseña son incorrectos.');
+                } else {
+                    // Otro error genérico
+                    setErrorMessage('Hubo un problema al iniciar sesión. Inténtalo nuevamente.');
+                }
+            } else {
+                // Si no hay respuesta (por ejemplo, error de red)
+                setErrorMessage('Error al conectar con el servidor. Inténtalo nuevamente.');
+            }
+        }
     }
 
     
@@ -92,7 +112,11 @@ export function Login() {
                         <Register/>
                     </Stack>
                 </Form>
-                    
+                {errorMessage && (
+                    <div className="error-message" style={{ color: 'red', marginTop: '20px' }}>
+                        {errorMessage}
+                    </div>
+                )}   
             </Card>
         </div>
         

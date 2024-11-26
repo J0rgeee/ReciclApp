@@ -27,6 +27,8 @@ DEBUG = True
 
 GOOGLE_MAPS_API_KEY = "AIzaSyAKEX7Y7Xo0tSLxB5fSZGuRZwMlV4NwANY"
 
+CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
+CORS_ALLOW_HEADERS = ["content-type", "authorization", "x-csrf-token", "*", 'x-csrftoken', ]
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'coreapi',
     'api'
@@ -157,6 +160,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
 }
 # CORS_ALLOWED_ORIGINS = []
