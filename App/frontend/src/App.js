@@ -14,6 +14,7 @@ import AdminHome from './pages/admin/AdminHome';
 import { MarkerProvider } from './pages/mapa/MarkerContext';
 import PuntosVerdesW from './pages/mapa/PuntosVerdesW';
 import { Pesa } from './pages/Pesa';
+import { CheckoutTienda } from './pages/componentes/Tienda/checkout';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='foro' element={<Foro />} />
           <Route path='tienda' element={<Tienda />} />
+          <Route path='checkout' element={<CheckoutTienda/>} />
           <Route path='mapa' element={<PuntosVerdesW />} />
           <Route path='sesion' element={<Sesion />} />
           <Route path='reciclaje' element={<Reciclaje />} />

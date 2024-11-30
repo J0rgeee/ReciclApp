@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from .models import PesoUsuario,TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario
+from .models import PesoUsuario,TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario,Pedido
 from django.contrib.auth import get_user_model,authenticate
 
 UserModel= get_user_model()
@@ -179,4 +179,11 @@ class PesoUsuarioPlasticoSerializer(serializers.ModelSerializer):
         instance.pesoplas = validated_data.get('pesoplas',instance.pesoplas)
         instance.save()
         return instance
-          
+
+class PedidoSerializer(serializers.ModelSerializer):
+    productos = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all(), many=True)
+    direccion = serializers.PrimaryKeyRelatedField(queryset=Direcciones.objects.all())
+
+    class Meta:
+        model = Pedido
+        fields = ['idPedido', 'direccion', 'productos', 'puntos_utilizados', 'fecha']

@@ -216,9 +216,15 @@ class ProgresoUsuarioMeta (models.Model):
     class Meta:
         unique_together = ('emailUser', 'idMeta') 
 
+class Pedido(models.Model):
+    idPedido = models.AutoField(primary_key=True)
+    direccion = models.ForeignKey(Direcciones, on_delete=models.CASCADE)
+    productos = models.ManyToManyField(Producto)
+    puntos_utilizados = models.IntegerField()
+    fecha = models.DateTimeField(auto_now_add=True) 
 
-
-
+    def __str__(self):
+        return f"Pedido #{self.idPedido} con dirección {self.direccion}"
 
 
 

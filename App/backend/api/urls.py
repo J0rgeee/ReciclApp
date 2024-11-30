@@ -67,6 +67,8 @@ urlpatterns = [
     path('Dire/', include(router11.urls)),
     path('admin-publicaciones/', include(router12.urls)),
     path('pendientes/', include(router13.urls)),
+    path('api/pedido/', views.crear_pedido, name='crear_pedido'),
+    path('api/pedidos/', views.listar_pedidos, name='listar_pedidos'),
 
     # path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
 

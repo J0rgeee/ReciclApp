@@ -9,7 +9,7 @@ import Puntuacion from "./Puntuacion";
 import Metas from "./Metas";
 import Direcciones from "./Direcciones";
 import Nav from 'react-bootstrap/Nav';
-
+import HistorialCompras from "./HistorialCompras";
 
 
 
@@ -63,6 +63,9 @@ const MenuUsuario = () => {
               <Nav.Link eventKey="3">Direcciones</Nav.Link>
             </Nav.Item>
             <Nav.Item>
+              <Nav.Link eventKey="6">Historial de compra</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
               <Link to='/mapa' className="nav-link">Ver Puntos Verdes</Link>
             </Nav.Item>
           </Nav>
@@ -88,6 +91,7 @@ const MenuUsuario = () => {
           {activeDiv === "3" && <div><Retiros/></div>}
           {activeDiv === "4" && <div><Metas email={usuario.email}/></div>}
           {activeDiv === "5" && <Direcciones email={usuario.email} />}
+          {activeDiv === "6" && <HistorialCompras />}
         </div>
       </div>
   );

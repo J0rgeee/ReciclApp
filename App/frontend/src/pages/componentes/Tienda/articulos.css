@@ -1,0 +1,147 @@
+/* Tienda.css */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  h2 {
+    font-family: 'Roboto', sans-serif;
+    color: #007BFF;
+    margin-bottom: 30px;
+  }
+  
+  h4 {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  h5 {
+    font-family: 'Arial', sans-serif;
+    color: #666;
+  }
+  
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-img {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .button-primary,
+  .button-success {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+  }
+  
+  .button-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  .button-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+  }
+  
+  .button-success:hover {
+    background-color: #218838;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-footer {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .button-info {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #17a2b8;
+    color: white;
+    font-size: 1.1rem;
+    padding: 15px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button-info:hover {
+    background-color: #138496;
+  }
+  
+  ul {
+    padding-left: 20px;
+  }
+  
+  ul li {
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+  
+  ul li button {
+    margin-left: 10px;
+  }
+  
+  .alert-warning {
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+  }
+  
+  h1, h2, h3, h4, h5 {
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .card {
+      margin-bottom: 20px;
+    }
+    .container {
+      padding: 10px;
+    }
+    .button-info {
+      font-size: 1rem;
+      padding: 12px;
+      bottom: 10px;
+      right: 10px;
+    }
+  }
+  

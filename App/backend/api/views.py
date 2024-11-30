@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import PesoUsuarioPlasticoSerializer,TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer # type: ignore
-from .models import PesoUsuario, TipoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario
+from .serializer import PesoUsuarioPlasticoSerializer,TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer,PedidoSerializer # type: ignore
+from .models import PesoUsuario, TipoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario,Pedido
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -632,5 +632,65 @@ class PuntosPesaPlasticoUpdateView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	
+# Canje de puntos en tienda
+@api_view(['POST'])
+def crear_pedido(request):
+    if request.method == 'POST':
+        usuario = request.user
+
+        direccion_id = request.data.get('direccion_id')
+        productos_ids = request.data.get('productos_ids')
+        puntos_utilizados = request.data.get('puntos_utilizados')
+        tipo_puntos = request.data.get('tipo_puntos')
+
+        try:
+            # Verificar si la dirección existe
+            direccion = Direcciones.objects.get(idDireccion=direccion_id)
+        except Direcciones.DoesNotExist:
+            return Response({"error": "Dirección no encontrada"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Obtener los productos
+        productos = Producto.objects.filter(id__in=productos_ids)
+
+        try:
+            # carga los puntos del usuario
+            puntuacion_usuario = PuntuacioUsuario.objects.get(emailusuario=usuario)
+
+            # verifica puntos del usuarioo
+            if tipo_puntos == 'plas' and puntuacion_usuario.puntosplas >= puntos_utilizados:
+                puntuacion_usuario.puntosplas -= puntos_utilizados
+            elif tipo_puntos == 'papel' and puntuacion_usuario.puntospapel >= puntos_utilizados:
+                puntuacion_usuario.puntospapel -= puntos_utilizados
+            elif tipo_puntos == 'vidrio' and puntuacion_usuario.putnosvidrio >= puntos_utilizados:
+                puntuacion_usuario.putnosvidrio -= puntos_utilizados
+            elif tipo_puntos == 'carton' and puntuacion_usuario.puntoscarton >= puntos_utilizados:
+                puntuacion_usuario.puntoscarton -= puntos_utilizados
+            elif tipo_puntos == 'latas' and puntuacion_usuario.puntoslatas >= puntos_utilizados:
+                puntuacion_usuario.puntoslatas -= puntos_utilizados
+            else:
+                return Response({"error": f"No tienes suficientes puntos de tipo {tipo_puntos}."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # guardar los cambios de puntos
+            puntuacion_usuario.save()
+
+            # crear el pedido
+            pedido = Pedido.objects.create(
+                direccion=direccion,
+                puntos_utilizados=puntos_utilizados
+            )
+            pedido.productos.set(productos)
+            serializer = PedidoSerializer(pedido)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except PuntuacioUsuario.DoesNotExist:
+            return Response({"error": "No se encontraron puntos"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+@api_view(['GET'])
+def listar_pedidos(request):
+    if request.method == 'GET':
+        # Filtrar los pedidos por el usuario autenticado
+        pedidos = Pedido.objects.filter(usuario=request.user)
+        serializer = PedidoSerializer(pedidos, many=True)
+        return Response(serializer.data)

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Container, Row, Col, Card, Button, Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import './articulos.css';
+ 
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -18,7 +21,8 @@ const Articulos = () => {
   const [carrito, setCarrito] = useState([]);
   const [showCart, setShowCart] = useState(false);
 
-  // Funciones para mostrar y cerrar el modal
+  const navigate = useNavigate();
+
   const handleShow = (item) => {
     setActiveItem(item);
     setShow(true);
@@ -30,9 +34,9 @@ const Articulos = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await client.get("/api/Producto/producto/"); // URL de la API
-      setProductos(response.data); // Guarda los datos en el estado
-      setLoading(false); // Cambia el estado de carga
+      const response = await client.get("/api/Producto/producto/");
+      setProductos(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error al obtener los datos:", error);
       setLoading(false);
@@ -47,15 +51,21 @@ const Articulos = () => {
     setCarrito(carrito.filter((item) => item.id !== productoId));
   };
 
+  const handleCompra = () => {
+    if (carrito.length > 0) {
+      navigate("/checkout", { state: { carrito } });
+    } else {
+      alert("El carrito está vacío.");
+    }
+  };
 
-  // Llama a la función fetchItems cuando el componente se monta
   useEffect(() => {
     fetchItems();
   }, []);
 
   return (
     <Container>
-      <h2 className="text-center mb-4">Tienda Recybear</h2>
+      <h2 className="text-center mb-4">Tienda Puntos Recybear</h2>
       {loading ? (
         <p className="text-center">Cargando...</p>
       ) : (
@@ -63,7 +73,7 @@ const Articulos = () => {
           {productos.map((item) => (
             <Col key={item.id} xs={12} md={3} className="mb-4">
               <Card>
-                <Card.Img variant="top" src={item.imagen} alt={item.nombre} />
+                <Card.Img variant="top" className="card-img" src={item.imagen} alt={item.nombre} />
                 <Card.Body>
                   <Card.Title>{item.nombre}</Card.Title>
                   <Button variant="primary" onClick={() => handleShow(item)}>
@@ -79,7 +89,6 @@ const Articulos = () => {
         </Row>
       )}
 
-      {/* Modal para la descripción */}
       {activeItem && (
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
@@ -94,7 +103,6 @@ const Articulos = () => {
         </Modal>
       )}
 
-      {/* Modal del carrito */}
       <Modal show={showCart} onHide={handleCloseCart}>
         <Modal.Header closeButton>
           <Modal.Title>Carrito de compras</Modal.Title>
@@ -119,13 +127,12 @@ const Articulos = () => {
           <Button variant="secondary" onClick={handleCloseCart}>
             Cerrar
           </Button>
-          <Button variant="primary">
+          <Button variant="primary" onClick={handleCompra}>
             Comprar
           </Button>
         </Modal.Footer>
       </Modal>
 
-      {/* Botón para abrir el carrito */}
       <Button variant="info" onClick={handleShowCart} style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
         Ver carrito ({carrito.length})
       </Button>
