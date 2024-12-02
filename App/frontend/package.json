@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@mui/material": "^6.1.8",
     "@react-google-maps/api": "^2.20.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -23,6 +26,7 @@
     "react-responsive-sidebar": "^0.1.16",
     "react-router-dom": "^6.28.0",
     "react-scripts": "^5.0.1",
+    "react-virtuoso": "^4.12.2",
     "sweetalert2": "^11.14.5",
     "sweetalert2-react-content": "^5.0.7",
     "web-vitals": "^2.1.4"

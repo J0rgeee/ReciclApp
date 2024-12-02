@@ -43,7 +43,7 @@ const SidebarAdmin = () => {
 
   return (
     <div className="d-flex">
-      <Nav className="flex-column vh-100 sidebar-admin navadmin"> 
+      <Nav className="flex-column sidebar-admin navadmin"> 
         <img
           variant="top"
           src="Usuarios/perfilH.png" // Reemplaza con la ruta de tu imagen

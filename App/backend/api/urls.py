@@ -4,7 +4,7 @@ from rest_framework.documentation import include_docs_urls # type: ignore
 from rest_framework.routers import DefaultRouter
 from api import views
 from . import views
-from .views import AdminPublicacionesView, PublicacionesPendientesView
+from .views import  PublicacionesPendientesView
 
 
 router = routers.DefaultRouter()
@@ -40,8 +40,7 @@ router10.register(r'producto',views.ProductoView,'producto')
 router11 = routers.DefaultRouter()
 router11.register(r'direcciones', views.CrearDireccionesViewSet)
 
-router12 = DefaultRouter()
-router12.register(r'admin/publicaciones', AdminPublicacionesView, basename='admin-publicaciones')
+
 
 router13 = DefaultRouter()
 router13.register(r'', PublicacionesPendientesView, basename='pendientes')
@@ -65,7 +64,7 @@ urlpatterns = [
     path("Contacto/", include(router9.urls)),
     path("Producto/", include(router10.urls)),
     path('Dire/', include(router11.urls)),
-    path('admin-publicaciones/', include(router12.urls)),
+
     path('pendientes/', include(router13.urls)),
     path('api/pedido/', views.crear_pedido, name='crear_pedido'),
     path('api/pedidos/', views.listar_pedidos, name='listar_pedidos'),
@@ -92,11 +91,13 @@ urlpatterns = [
     path('register', views.UserRegister.as_view(), name='register'),
 	path('login', views.UserLogin.as_view(), name='login'),
 	path('logout', views.UserLogout.as_view(), name='logout'),
+    
 	path('user', views.UserView.as_view(), name='user'),
 	path('user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
     path('user/desactivar-cuenta/<str:email>', views.DesUsuario.as_view(), name='desactivar-cuenta'),
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
     #Publicacion
+    path('publicaciones/<int:idPublicacion>/', views.ActualizarEstado.as_view(), name='actualizar_estado'),
     path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),
     path('publicaciones/<int:idPublicacion>/comments/', views.comentarios_publicacion, name='comentarios_publicacion'),
     path('publicaciones/<int:idPublicacion>/comments/<int:idComentario>/', views.comentarios_publicacion, name='eliminar_comentario'),

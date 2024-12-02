@@ -386,17 +386,39 @@ def comentarios_publicacion(request, idPublicacion, idComentario=None):
     # Error si `idComentario` no se proporciona en la solicitud DELETE
     return Response({"error": "ID del comentario es necesario para eliminarlo"}, status=status.HTTP_400_BAD_REQUEST)
 
-class AdminPublicacionesView(viewsets.ModelViewSet):
-    queryset = Publicacion.objects.all().order_by('-timeCreate')
-    serializer_class = PublicacionSerializer
-    permission_classes = [IsAdminUser]
+class ActualizarEstado(APIView):
+    permission_classes = [IsAuthenticated, IsAprobador]
+    def patch(self, request, idPublicacion):
+        try:
+            publicacion = get_object_or_404(Publicacion, idPublicacion=idPublicacion)
 
-    @action(detail=True, methods=['patch'])
-    def aprobar(self, request, pk=None):
-        publicacion = self.get_object()
-        publicacion.estado = True
-        publicacion.save()
-        return Response({"message": "Publicación aprobada exitosamente."})
+            # Extraer y validar el campo estado
+            nuevo_estado = request.data.get("estado")
+            if nuevo_estado is None:
+                return Response(
+                    {"error": "El campo 'estado' es requerido."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+             # Actualizar estado usando el serializador
+            serializer = PublicacionSerializer(
+                publicacion, 
+                data={"estado": nuevo_estado}, 
+                partial=True  # Permite actualizar solo algunos campos
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {"message": "Estado actualizado correctamente.", "estado": serializer.data['estado']},
+                    status=status.HTTP_200_OK
+                )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {"error": f"Ocurrió un error: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class PublicacionesPendientesView(ModelViewSet):
     queryset = Publicacion.objects.filter(estado=False).order_by('-timeCreate')  # Solo publicaciones no aprobadas

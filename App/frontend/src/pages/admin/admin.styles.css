@@ -1,7 +1,7 @@
 .geo-regular {
     font-family: "Geo", sans-serif;
     font-weight: 400;
-    font-style: italic;
+    
 }
 
 .geo-regular-italic {
@@ -14,9 +14,14 @@
     font-family: "Nerko One", cursive;
     font-weight: 400;
     font-style: normal;
-  }
-  
+}
 
+.alert {
+    position: fixed;
+    display: flex;
+    bottom: 0;
+    right: 2vh;
+}   
 
 .tituloTabla {
     font-family: "Geo", sans-serif;
@@ -47,27 +52,22 @@
     background-color: aliceblue;
 }
 
-Table {
-    background-color: #8d4925;
-    border-radius: 5px;
-
-    th {
-        background-color: #8d4925;
-        color: white
-    }
-
-    td {
-        background-color: #c57d56;
-    }
-
-    .tr {
-        display: flex;
-        justify-content: space-around;
-    }
-}
-
 .content {
     flex-grow: 1;
+}
+
+.scroll {
+    overflow: auto;
+    max-height: 300px;
+}
+
+.thead {
+    background-color: #386fc9 !important;
+}
+
+.tabla-usuarios tbody td Button {
+    top: 9px;
+    position: relative;
 }
 
 .editar {
@@ -80,11 +80,6 @@ Table {
 .editar:hover {
     background-color: #171a4a;
 }
-
-
-
-
-
 
 /* admin publi */
 .imgTabla {
@@ -104,30 +99,6 @@ Table {
     font-family: Arial, sans-serif;
 }
 
-.close-btn {
-    background: none;
-    border: none;
-    color: #000000;
-    font-size: 25px;
-    font-weight: bold;
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 2;
-    padding: 1.25rem 1rem;
-}
-
-.close-btn:active {
-    --bs-btn-active-bg: red;
-}
-
-.close-btn:hover {
-    transform: scale(1.2);
-    transition: 0.2s;
-    background: none;
-    color: #000000;
-}
-
 .popupImg {
     position: fixed;
     top: 0;
@@ -142,16 +113,31 @@ Table {
 }
 
 .imgdesplegada {
-    max-width: 100%;
     max-height: 80vh;
-    border-radius: 10px;
 }
 
 .fondoimg {
     position: relative;
     background: #fff;
-    padding: 10px;
-    border-radius: 5px;
+    .close-btn {
+        background: none;
+        border: none;
+        color: #000000;
+        font-size: 25px;
+        font-weight: bold;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 2;
+        padding: 1rem 1rem ;
+    }
+
+    .close-btn:hover {
+        transform: scale(1.3);
+        transition: 0.2s;
+        background: none;
+        color: #000000;
+    }
 }
 
 .btnpopup {

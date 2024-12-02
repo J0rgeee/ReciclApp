@@ -236,7 +236,7 @@ const AdminPubli = () => {
           </tbody>
         </Table>
 
-        <h1 className="ms-3 text-center text-warning geo-regular-italic">🌟 Publicaciones Pendientes 🌟</h1>
+        <h1 className="ms-3 text-center text-warning geo-regular-italic">Publicaciones Pendientes</h1>
         <Table bordered hover className="table-light shadow">
           <thead className="table-warning">
             <tr>

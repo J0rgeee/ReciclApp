@@ -22,7 +22,7 @@ const client = axios.create({
 });
 
 export function Login() {
-    
+
     const [, setUsuarioActivo] = useState();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -61,64 +61,87 @@ export function Login() {
         }
     }
 
-    
+
+    function generateRandomPassword(length) {
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
+        }
+        return password;
+    }
     const signInWithGoogle = async () => {
         try {
-          const result = await signInWithPopup(auth, googleProvider);
-          const user = result.user;
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
 
-          const userData = {
-            displayName: user.displayName,
-            email: user.email,
-          };
-          
-          setUsuarioActivo(true);
-          window.location.replace('/');
+            const userData = {
+                displayName: user.displayName,
+                email: user.email,
+                password: generateRandomPassword(12) // Genera una contraseña aleatoria
+            };
+
+            // Verificar si el usuario ya está registrado
+            const response = await client.post("/api/check-user", { email: user.email });
+
+            if (response.data.exists) {
+                // Si el usuario ya está registrado, simplemente inicia sesión
+                setUsuarioActivo(true);
+                window.location.replace('/');
+            } else {
+                // Si el usuario no está registrado, regístralo
+                userData.password = generateRandomPassword(12); // Genera una contraseña aleatoria
+                await client.post("/api/register", userData);
+
+                setUsuarioActivo(true);
+                window.location.replace('/');
+            }
         } catch (error) {
-          console.error("Error signing in: ", error);
+            console.error("Error signing in: ", error);
         }
-      };
+    };
 
     return (
-        
+
         <div className='container centrar'>
             <Card className='cont-login text-center'>
                 <Card.Title className='card-title'>Inicia sesión con tu cuenta</Card.Title>
-                
+
                 <Form onSubmit={e => submitLogin(e)}>
                     <Form.Group controlId="formPlaintextEmail" className='mb-3'>
-                        <FloatingLabel 
-                        controlId="userinput" 
-                        label="Usuario"
-                        className='mb-3'
+                        <FloatingLabel
+                            controlId="userinput"
+                            label="Usuario"
+                            className='mb-3'
                         >
-                        <Form.Control className='control' placeholder="" value={email} onChange={e => setEmail(e.target.value)} />
+                            <Form.Control className='control' placeholder="" value={email} onChange={e => setEmail(e.target.value)} />
                         </FloatingLabel>
                     </Form.Group>
-                
+
                     <Form.Group controlId="formPlaintextPassword" className="mb-3">
-                        <FloatingLabel 
-                        controlId="passinput" 
-                        label="Contraseña"
-                        className='mb-3'
+                        <FloatingLabel
+                            controlId="passinput"
+                            label="Contraseña"
+                            className='mb-3'
                         >
-                        <Form.Control className='control' type="password" placeholder="" value={password} onChange={e => setPassword(e.target.value)} />
+                            <Form.Control className='control' type="password" placeholder="" value={password} onChange={e => setPassword(e.target.value)} />
                         </FloatingLabel>
                     </Form.Group>
                     <Stack gap={2} className="col-md-5 mx-auto">
                         <Button className='boton' type='submit' id='login'>Iniciar sesion</Button>
-                        <Button variant='light' onClick={signInWithGoogle} className='FcGoogle'>Continuar con Google<FcGoogle /></Button>     
-                                   
-                        <Register/>
+                        <Button variant='light' onClick={signInWithGoogle} className='FcGoogle'>Continuar con Google<FcGoogle /></Button>
+
+                        <Register />
                     </Stack>
                 </Form>
                 {errorMessage && (
                     <div className="error-message" style={{ color: 'red', marginTop: '20px' }}>
                         {errorMessage}
                     </div>
-                )}   
+                )}
             </Card>
         </div>
-        
+
     )
 }

@@ -40,7 +40,7 @@ class PublicacionSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='emailUsuario.username', read_only=True)
     class Meta:
         model = Publicacion
-        fields = ['idPublicacion', 'desc', 'img','timeCreate','emailUsuario', 'likes_count', 'has_liked','username']
+        fields = ['idPublicacion', 'desc', 'img','timeCreate','emailUsuario', 'likes_count', 'has_liked','username','estado']
         read_only_fields = ['timeCreate', 'likes_count']
         
     def get_has_liked(self, obj):
