@@ -110,4 +110,6 @@ urlpatterns = [
 
     path('get-google-maps-api-key/', views.get_google_maps_api_key, name='get_google_maps_api_key'),
 
+    path('api/admin/stats/', views.admin_stats, name='admin-stats'),
+
 ]   

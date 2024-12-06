@@ -14,18 +14,16 @@ const BajadaNavBar = () => {
     <div style={{ backgroundColor: "#41B59A"}}>
         <Container className='max'>
             <Card className="mb-3" style={{ backgroundColor: "#41B59A",border:"none"}}>
-                
-                    <Row >
+                    <Row className='justify-content-end'>
                         <Col className='bajadanav' xs={12} md={6}>
                             <h1>UNETE, RECICLA y GANA</h1> 
                             <h3>Con RecyBear encontraras una guia de como reciclar ademas de informacion de los puntos de reciclaje en tu ciudad</h3>
                             <h5>*Por ahora solo en Santiago</h5>
                         </Col>
-                        <Col className='justify-content-end' xs={12} md={6}>
+                        <Col className='justify-content-end' xs={12} md={4}>
                             <img src="/inicioRecybear.jpg" className='img-fluid imagen-baja-nav'/>
                         </Col>
                     </Row>
-                
             </Card>
         </Container>
     </div>

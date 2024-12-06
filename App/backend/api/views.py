@@ -61,37 +61,86 @@ class TipoReciclajePvView (viewsets.ModelViewSet):
     queryset = TipoReciclajePv.objects.all()
     
 class UserRegister(APIView):
-	permission_classes = (permissions.AllowAny,)
-	def post(self, request):
-		# clean_data = custom_validation(request.data)
-		clean_data = request.data
-		serializer = UsuarioRegistroSerializaer(data=clean_data)
-		if serializer.is_valid(raise_exception=True):
-			user = serializer.create(clean_data)
-			if user:
-				metas = Metas.objects.all()
-				for meta in metas:
-					ProgresoUsuarioMeta.objects.create(
-						emailUser=user, 
-                		idMeta=meta,
-                		progreso=0, 
-                		completado25=False,
-                		completado50=False,
-                		completado75=False,
-                		completado100=False,
-					)
-				PuntuacioUsuario.objects.create(
-					emailusuario=user,
-					puntosplas=0,
-					puntospapel=0,
-					putnosvidrio=0,
-					puntoscarton=0,
-					puntoslatas=0,
-				)
+    permission_classes = (permissions.AllowAny,)
+    def post(self, request):
+        try:
+            data = request.data
+            print("Datos recibidos:", data)  # Debug log
+            
+            # Validar que todos los campos requeridos estén presentes
+            required_fields = ['email', 'username', 'password']
+            for field in required_fields:
+                if not data.get(field):
+                    return Response(
+                        {"error": f"El campo {field} es requerido"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
-				
-				return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response({"mensaje": "Error el correo ya existe."},status=status.HTTP_200_OK)
+            # Verificar si el email ya existe
+            if Usuario.objects.filter(email=data['email']).exists():
+                return Response(
+                    {"mensaje": "El correo ya está registrado"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            print("Validando serializer con datos:", data)  # Debug log
+            serializer = UsuarioRegistroSerializaer(data=data)
+            
+            if not serializer.is_valid():
+                print("Errores del serializer:", serializer.errors)  # Debug log
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            try:
+                # Usar validated_data del serializer
+                user = serializer.save()
+                if not user:
+                    return Response(
+                        {"error": "Error al crear el usuario"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                # Crear registros relacionados
+                metas = Metas.objects.all()
+                for meta in metas:
+                    ProgresoUsuarioMeta.objects.create(
+                        emailUser=user, 
+                        idMeta=meta,
+                        progreso=0, 
+                        completado25=False,
+                        completado50=False,
+                        completado75=False,
+                        completado100=False,
+                    )
+                
+                PuntuacioUsuario.objects.create(
+                    emailusuario=user,
+                    puntosplas=0,
+                    puntospapel=0,
+                    putnosvidrio=0,
+                    puntoscarton=0,
+                    puntoslatas=0,
+                )
+
+                return Response(
+                    {"mensaje": "Usuario registrado exitosamente"},
+                    status=status.HTTP_201_CREATED
+                )
+            except Exception as create_error:
+                print("Error al crear usuario:", str(create_error))  # Debug log
+                return Response(
+                    {"error": f"Error al crear el usuario: {str(create_error)}"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        except Exception as e:
+            print("Error general:", str(e))  # Debug log
+            return Response(
+                {"error": f"Error en el servidor: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class UserLogin(APIView):
@@ -770,3 +819,17 @@ def listar_pedidos(request):
         pedidos = Pedido.objects.filter(usuario=request.user)
         serializer = PedidoSerializer(pedidos, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def admin_stats(request):
+    try:
+        stats = {
+            'totalUsuarios': Usuario.objects.count(),
+            'usuariosActivos': Usuario.objects.filter(estado=True).count(),
+            'totalPuntosVerdes': PuntoVerde.objects.count(),
+            'totalPublicaciones': Publicacion.objects.count()
+        }
+        return Response(stats)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)

@@ -8,6 +8,7 @@ import AdminPV from "./AdminPV";
 import AdminPubli from "./AdminPubli";
 import AdminRetiros from "./AdminRetiros";
 import './admin.styles.css';
+import AdminStats from "./AdminStats";
 
 
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -19,11 +20,11 @@ const client = axios.create({
 });
 */
 
-const SidebarAdmin = ({ onInicioCLick, isVisible}) => {
-  const [activeDiv, setActiveDiv] = useState(null);
+const SidebarAdmin = ({  isVisible }) => {
+  const [activeDiv, setActiveDiv] = useState(0);
   const [usuario, setUsuario] = useState([]);
   const [showTransition, setShowTransition] = useState(false);
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState("0");
 
   const handleButtonClick = (divNumber) => {
     console.log("Botón clickeado:", divNumber);
@@ -76,6 +77,14 @@ const SidebarAdmin = ({ onInicioCLick, isVisible}) => {
         Administrador <br />
         {usuario.username || "Cargando..."}
       </h4>
+      <Nav.Link eventKey="0" className="p-2">
+        <Button
+          className={`button ${activeKey === "0" ? "active" : ""}`}
+          onClick={() => handleButtonClick(0)}
+        >
+          Panel de control
+        </Button>
+      </Nav.Link>
       <Nav.Link eventKey="1" className="p-2">
         <Button
           className={`button ${activeKey === "1" ? "active" : ""}`}
@@ -123,6 +132,7 @@ const SidebarAdmin = ({ onInicioCLick, isVisible}) => {
             <div className="loading-animation">Cargando...</div>
           </div>
         )}
+        {activeDiv === 0 && <AdminStats />}
         {activeDiv === 1 && <AdminUsuarios />}
         {activeDiv === 2 && <AdminPV />}
         {activeDiv === 3 && <AdminPubli />}

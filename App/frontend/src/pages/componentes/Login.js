@@ -37,30 +37,35 @@ export function Login() {
         e.preventDefault();
         setErrorMessage('');  // Reseteamos cualquier mensaje de error previo
         try {
-            await axios.post("http://localhost:8000/api/login/", {
+            const response = await axios.post("http://localhost:8000/api/login", {
                 email: email,
                 password: password
             });
 
-            // Si la respuesta es exitosa, redirigimos al usuario
+            // Si la respuesta es exitosa, verificamos el tipo de usuario
             setUsuarioActivo(true);
-            window.location.replace('/');
+            
+            // Obtener información del usuario
+            const userResponse = await axios.get("http://localhost:8000/api/user");
+            const userType = userResponse.data.user.tipoUser;
+
+            // Redirigir según el tipo de usuario
+            if (userType === 1) {  // Si es administrador
+                window.location.replace('adminhome');
+            } else {
+                window.location.replace('/');
+            }
 
         } catch (error) {
             if (error.response) {
-                // Si la respuesta del servidor contiene un mensaje
                 if (error.response.status === 403) {
-                    // La cuenta está desactivada
                     setErrorMessage('Tu cuenta está desactivada. Por favor, contacta al administrador.');
                 } else if (error.response.status === 404) {
-                    // El usuario no existe
                     setErrorMessage('El correo o la contraseña son incorrectos.');
                 } else {
-                    // Otro error genérico
                     setErrorMessage('Hubo un problema al iniciar sesión. Inténtalo nuevamente.');
                 }
             } else {
-                // Si no hay respuesta (por ejemplo, error de red)
                 setErrorMessage('Error al conectar con el servidor. Inténtalo nuevamente.');
             }
         }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SidebarAdmin from './SidebarAdmin';
 import axios from 'axios';
 import { Alert } from 'react-bootstrap';
+import { Footer } from '../../componentes/Footer';
 
 // Configuración global para Axios
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -115,19 +116,16 @@ const AdminHome = () => {
   const [showSidebar, setShowSidebar] = useState(true);
 
   const handleInicioClick = () => {
-    setShowSidebar(false); // Oculta el Sidebar
+    setShowSidebar(false);
   };
 
   return (
     <div>
-      <SidebarAdmin className={`sidebar-admin ${showSidebar ? "" : "hidden"}`}
-        onInicioClick={handleInicioClick} isVisible={showSidebar} />
-      {!showSidebar && (
-        <div className="inicio-content">
-          <h1>Bienvenido al Inicio</h1>
-          <button onClick={() => setShowSidebar(true)}>Volver al Panel</button>
-        </div>
-      )}
+      <SidebarAdmin 
+        className={`sidebar-admin ${showSidebar ? "" : "hidden"}`}
+        onInicioClick={handleInicioClick} 
+        isVisible={true} 
+      />
     </div>
   )
 }

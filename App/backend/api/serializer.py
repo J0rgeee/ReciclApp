@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from .models import PesoUsuario, TransPeso,TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario,Pedido,Notificacion
+from .models import PesoUsuario, TransPeso,TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario,Pedido,Notificacion, Usuario
 from django.contrib.auth import get_user_model,authenticate
 
 UserModel= get_user_model()
@@ -105,15 +105,27 @@ class TipoReciclajePveSerializer(serializers.ModelSerializer):
 
 class UsuarioRegistroSerializaer(serializers.ModelSerializer):
     class Meta:
-        model  = UserModel
-        fields ='__all__'  
-    def create(self, clean_data):
-        user_obj = UserModel.objects.create_user(email=clean_data['email'], password=clean_data['password'])
-        user_obj.username = clean_data['username']
-        user_obj.tipoUser_id = 2
-        user_obj.save()
-        return user_obj
-    
+        model = Usuario
+        fields = ['email', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        try:
+            # Extraemos el username del validated_data
+            username = validated_data.pop('username', None)
+            # Creamos el usuario con email y password
+            user = Usuario.objects.create_user(
+                email=validated_data['email'],
+                password=validated_data['password']
+            )
+            # Asignamos el username después de crear el usuario
+            if username:
+                user.username = username
+                user.save()
+            return user
+        except Exception as e:
+            print(f"Error en create del serializer: {str(e)}")
+            raise
 
 class UsuarioLoginSerializer(serializers.Serializer):
 	email = serializers.EmailField()

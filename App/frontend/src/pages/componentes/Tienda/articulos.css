@@ -22,7 +22,7 @@
     color: #666;
   }
   
-  .card {
+  .card-art {
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -30,21 +30,21 @@
     transition: transform 0.3s;
   }
   
-  .card:hover {
+  .card-art:hover {
     transform: translateY(-5px);
   }
   
-  .card-img {
+  .card-art-img {
     height: 200px;
     object-fit: cover;
     transition: transform 0.3s ease-in-out;
   }
   
-  .card-body {
+  .card-art-body {
     padding: 20px;
   }
   
-  .card-title {
+  .card-art-title {
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 10px;

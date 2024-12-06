@@ -30,36 +30,68 @@ export function Register() {
     async function submitRegister(e) {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8000/api/register", {
+            // Validaciones básicas
+            if (!email || !username || !password) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Todos los campos son obligatorios',
+                });
+                return;
+            }
+
+            // Log de los datos que se envían
+            console.log('Datos a enviar:', {
+                email,
+                username,
+                password
+            });
+
+            const response = await client.post("/api/register", {
                 email: email,
                 username: username,
                 password: password,
-                
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             });
-    
-            if (response.status === 201) {
-                // Registro exitoso
 
+            console.log('Respuesta del servidor:', response);
+
+            if (response.status === 201) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
                     text: 'Usuario registrado con éxito',
                 });
-                // Redirigir a la página de login
-                navigate('/login');
-            } else if (response.status === 200) {
-                // El correo ya existe
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Correo ya existe',
-                });
+                handleClose();
+                navigate('/sesion');
             }
         } catch (error) {
-            // Manejar otros errores
-            alert('Error al realizar el registro. Por favor, intente nuevamente.');
-            console.error('Error:', error);
+            console.log('Error completo:', error);
+            console.log('Respuesta del error:', error.response);
+            
+            let errorMessage = 'Error al realizar el registro. Por favor, intente nuevamente.';
+            
+            if (error.response) {
+                if (error.response.data) {
+                    console.log('Datos del error:', error.response.data);
+                    if (typeof error.response.data === 'string') {
+                        errorMessage = error.response.data;
+                    } else if (error.response.data.mensaje) {
+                        errorMessage = error.response.data.mensaje;
+                    } else if (error.response.data.detail) {
+                        errorMessage = error.response.data.detail;
+                    }
+                }
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+            });
         }
     }
 

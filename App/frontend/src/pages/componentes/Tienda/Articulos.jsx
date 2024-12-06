@@ -72,10 +72,10 @@ const Articulos = () => {
         <Row className="my-4">
           {productos.map((item) => (
             <Col key={item.id} xs={12} md={3} className="mb-4">
-              <Card>
-                <Card.Img variant="top" className="card-img" src={item.imagen} alt={item.nombre} />
+              <Card className="card-art">
+                <Card.Img variant="top" className="card-art-img" src={item.imagen} alt={item.nombre} />
                 <Card.Body>
-                  <Card.Title>{item.nombre}</Card.Title>
+                  <Card.Title className="card-art-title">{item.nombre}</Card.Title>
                   <Button variant="primary" onClick={() => handleShow(item)}>
                     Ver descripción
                   </Button>

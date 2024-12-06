@@ -15,12 +15,13 @@ import { MarkerProvider } from './pages/mapa/MarkerContext';
 import PuntosVerdesW from './pages/mapa/PuntosVerdesW';
 import { Pesa } from './pages/Pesa';
 import CheckoutTienda from './pages/componentes/Tienda/checkout';
+import AdminStats from './pages/admin/AdminStats';
 
 function App() {
   const location = useLocation(); // Obtén la ruta activa
 
   // Determina si la ruta activa requiere ocultar el footer
-  const hideFooter = location.pathname === '/AdminHome';
+  const hideFooter = location.pathname === '/adminhome';
   return (
     <MarkerProvider>
       <div>
