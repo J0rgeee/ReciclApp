@@ -165,3 +165,5 @@ REST_FRAMEWORK = {
 }
 # CORS_ALLOWED_ORIGINS = []
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+

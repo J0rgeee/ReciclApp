@@ -1,15 +1,15 @@
 import React from 'react';
 import axios from 'axios';
 import { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { Card } from 'react-bootstrap';
-
+import Swal from "sweetalert2";
 
 export function Register() {
-
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
@@ -27,20 +27,42 @@ export function Register() {
     });
 
 
-    function submitRegister(e) {
+    async function submitRegister(e) {
         e.preventDefault();
-        client.post(
-            "/api/register",
-            {
+        try {
+            const response = await axios.post("http://localhost:8000/api/register", {
                 email: email,
                 username: username,
                 password: password,
-                tipoUser: '2',
+                
+            });
+    
+            if (response.status === 201) {
+                // Registro exitoso
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Usuario registrado con éxito',
+                });
+                // Redirigir a la página de login
+                navigate('/login');
+            } else if (response.status === 200) {
+                // El correo ya existe
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Correo ya existe',
+                });
             }
-        ).then(function (res){
-            window.location.reload();
-        })
+        } catch (error) {
+            // Manejar otros errores
+            alert('Error al realizar el registro. Por favor, intente nuevamente.');
+            console.error('Error:', error);
+        }
     }
+
     return (
         <div className='reg'>
             <Button onClick={handleShow} className='pd-2 boton'> Crear cuenta </Button>

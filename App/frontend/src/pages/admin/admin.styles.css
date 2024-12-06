@@ -1,7 +1,7 @@
 .geo-regular {
     font-family: "Geo", sans-serif;
     font-weight: 400;
-    
+
 }
 
 .geo-regular-italic {
@@ -16,36 +16,45 @@
     font-style: normal;
 }
 
+.admin-usuarios .nav-link {
+    color: black;
+    font-size: 16px;
+}
+
+.admin-usuarios .nav-link.active {
+    background-color: #cfe2ff;
+}
+
+.tab-pane {
+    border-radius: 10px;
+}
+
 .alert {
     position: fixed;
     display: flex;
     bottom: 0;
     right: 2vh;
-}   
-
-.tituloTabla {
-    font-family: "Geo", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-.navadmin {
-    background-color: #008f6f;
+    z-index: 100;
 }
 
 .button {
     background-color: transparent;
     border: transparent;
     width: 100%;
-    --bs-btn-active-bg: #00775d;
+    --bs-btn-active-bg: #8FBC8F;
 }
 
 .button:hover {
-    background-color: #00775d;
+    background-color: #7da87d;
+}
+
+.button:active {
+    background-color: #7da87d;
 }
 
 .img {
     border-radius: 20%;
+    max-width: 100%;
     width: 50px;
     border-color: aliceblue;
     margin: 5% auto 5% auto;
@@ -54,11 +63,45 @@
 
 .content {
     flex-grow: 1;
+    position: relative;
+    padding: 1rem;
 }
 
 .scroll {
     overflow: auto;
-    max-height: 300px;
+    max-height: 500px;
+}
+
+.transition-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo semitransparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+    z-index: 2000;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.loading-animation {
+    font-size: 2rem;
+    color: white;
+    text-align: center;
 }
 
 .thead {
@@ -95,7 +138,7 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-wrap: wrap;
-    z-index: 1000;
+    z-index: 2;
     font-family: Arial, sans-serif;
 }
 
@@ -119,6 +162,7 @@
 .fondoimg {
     position: relative;
     background: #fff;
+
     .close-btn {
         background: none;
         border: none;
@@ -129,7 +173,7 @@
         top: 0;
         right: 0;
         z-index: 2;
-        padding: 1rem 1rem ;
+        padding: 1rem 1rem;
     }
 
     .close-btn:hover {
@@ -155,3 +199,115 @@
 }
 
 /* admin publi */
+
+.sidebar-admin {
+    height: calc(100vh - 134.5px);
+    display: flex;
+    background-color: #8FBC8F;
+}
+
+html,
+body {
+    height: 100%;
+    flex-direction: column;
+    /* Asegura que el body ocupe toda la altura */
+    margin: 0;
+    /* Elimina márgenes por defecto */
+}
+
+#root {
+    height: 100%;
+    /* Si usas React con un div #root */
+}
+
+/* Estilos para la pestaña */
+.tab {
+    background-color: #f8f9fa;
+    /* Fondo claro */
+    color: #343a40;
+    /* Texto oscuro */
+    padding: 20px;
+    /* Espaciado interno */
+}
+
+/* Encabezado de Notificaciones */
+.tab h3 {
+    color: #006400;
+    /* Verde oscuro para destacar */
+    margin-bottom: 20px;
+    /* Espaciado inferior */
+}
+
+/* Lista de Notificaciones */
+.tab ul {
+    list-style-type: none;
+    /* Quitar los puntos de lista */
+    padding: 0;
+}
+
+.tab ul li {
+    background-color: #ffffff;
+    /* Fondo blanco */
+    border: 1px solid #dcdcdc;
+    /* Bordes sutiles */
+    padding: 10px;
+    /* Espaciado interno */
+    margin-bottom: 10px;
+    /* Espaciado entre elementos */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tab ul li p {
+    margin: 0;
+    /* Quitar márgenes */
+}
+
+.tab ul li p strong {
+    color: #343a40;
+    /* Color oscuro para el correo electrónico */
+}
+
+.tab ul li p+p {
+    color: #6c757d;
+    /* Color gris para la fecha */
+    font-size: 0.9em;
+    /* Fuente ligeramente más pequeña */
+}
+
+.boton-delete-noti {
+    color: black;
+    background: none;
+    border: none;
+    --bs-btn-active-bg: none;
+}
+
+.boton-delete-noti:hover {
+    background: none;
+    color: inherit;
+    transform: scale(1.1);
+}
+
+.btn-noti {
+    color: black;
+    background: none;
+    border: none;
+    --bs-btn-active-bg: none;
+}
+
+.btn-noti:hover {
+    background: none;
+    color: inherit;
+    transform: scale(1.1);
+}
+
+.sidebar-admin {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-admin.hidden {
+    transform: translateX(-100%);
+}

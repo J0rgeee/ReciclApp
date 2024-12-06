@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
-import { Alert, Button, Fade, Tab } from "react-bootstrap";
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
+import { Button } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
+import { Alerta } from './AdminHome';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -16,38 +19,10 @@ const getCsrfToken = () => {
 const AdminPubli = () => {
   const [publicaciones, setPublicaciones] = useState({ aprobadas: [], pendientes: [] });
   const [loading, setLoading] = useState(true);
-
   const [alerta, setAlerta] = useState({ tipo: '', mensaje: '' });
-
-  const [show, setShow] = useState(false);
-
-  //------------------------------------------Popup mensajes de alerta---------------------------------------------------------------------//
-  const Popup = ({ type, message, onClose }) => {
-    // Determinar el estilo del popup según el tipo
-    const popupClass = type === 'success' ? 'popup success' : 'popup error';
-
-    return (
-      <div className={popupClass}>
-        <span>{message}</span>
-        <button className="close-btn" onClick={onClose}>
-          &times;
-        </button>
-      </div>
-    );
-  };
-
-  const [popup, setPopup] = useState({ visible: false, message: '', type: '' });
-
-  const showPopup = (message, type) => {
-    setPopup({ visible: true, message, type });
-    setTimeout(() => {
-      setPopup({ visible: false, message: '', type: '' });
-    }, 3000); // El popup desaparecerá después de 3 segundos
-  };
-  //------------------------------------------Popup mensajes de alerta---------------------------------------------------------------------//
+  const [key, setKey] = useState('publi-a');
 
   //------------------------------------------Popup imagen---------------------------------------------------------------------//
-
   const [popupimg, setPopupimg] = useState({ visible: false, imgSrc: '' });
 
   const openPopup = (imgSrc) => {
@@ -57,9 +32,7 @@ const AdminPubli = () => {
   const closePopup = () => {
     setPopupimg({ visible: false, imgSrc: '' });
   };
-
   //------------------------------------------Popup imagen---------------------------------------------------------------------//
-
   const formatDate = (isoDate) => {
     const date = new Date(isoDate);
     const day = String(date.getDate()).padStart(2, '0');
@@ -68,7 +41,6 @@ const AdminPubli = () => {
 
     return `${day}/${month}/${year}`;
   };
-
 
   useEffect(() => {
     const fetchPublicaciones = async () => {
@@ -132,7 +104,6 @@ const AdminPubli = () => {
           pendientes: [...prev.pendientes, postDesaprobado],
         };
       });
-
       setAlerta({ tipo: 'success', mensaje: "Publicacion pendiente" });
     } catch (error) {
       console.error('Error al desaprobar la publicación:', error);
@@ -148,7 +119,6 @@ const AdminPubli = () => {
         },
         withCredentials: true,
       });
-
       setPublicaciones((prev) => ({
         ...prev,
         pendientes: prev.pendientes.filter((post) => post.idPublicacion !== postId),
@@ -165,168 +135,133 @@ const AdminPubli = () => {
 
   return (
     <div className="m-2">
-      
-
-      {/* Mostrar la alerta si existe */}
-      {alerta.mensaje && (
-        <Alert variant={alerta.tipo} onClose={() => setAlerta({ tipo: '', mensaje: '' })} dismissible>
-          {alerta.mensaje}
-        </Alert>
-      )}
-
+      <Alerta alerta={alerta} setAlerta={setAlerta} />
       {/* popup imagen */}
       {popupimg.visible && (
         <div className="popupImg" onClick={closePopup}>
-          <div className="fondoimg"
+          <div className="fondoimg p-3 rounded shadow"
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={popupimg.imgSrc}
               alt="Imagen"
-              className="imgdesplegada"
+              className="imgdesplegada img-fluid rounded"
             />
             <Button className="close-btn" onClick={closePopup}>
               &times;
             </Button>
+
           </div>
         </div>
       )}
-
-      <div className="m-4">
-        <h1 className="m-3 text-center nerko-one-regular"> Publicaciones Aprobadas </h1>
-        <Table bordered hover className="table-light shadow">
-          <thead className="table-primary">
-            <tr>
-              <th>Id</th>
-              <th>Descripción</th>
-              <th>Fecha Publicación</th>
-              <th>Imagen</th>
-              <th>Email</th>
-              <th>Usuario</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {publicaciones.aprobadas.map((post) => (
-              <tr key={post.idPublicacion}>
-                <td className="text-center">{post.idPublicacion}</td>
-                <td>{post.desc}</td>
-                <td>{formatDate(post.timeCreate)}</td>
-                <td className="text-center">
-                  <Button
-                    onClick={() => openPopup(post.img)}
-                    className="btnpopup btn btn-outline-info"
-                  >
-                    <img src={post.img} className="img-fluid imgTabla rounded-circle" alt="Miniatura" />
-                  </Button>
-                </td>
-                <td>{post.emailUsuario}</td>
-                <td>{post.username}</td>
-                <td className="text-center">
-                  <Form.Check
-                    type="switch"
-                    id={`custom-switch-${post.idPublicacion}`}
-                    checked
-                    label=""
-                    onClick={() => desaprobarPost(post.idPublicacion)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-
-        <h1 className="ms-3 text-center text-warning geo-regular-italic">Publicaciones Pendientes</h1>
-        <Table bordered hover className="table-light shadow">
-          <thead className="table-warning">
-            <tr>
-              <th>Id</th>
-              <th>Descripción</th>
-              <th>Fecha Publicación</th>
-              <th>Imagen</th>
-              <th>Email</th>
-              <th>Usuario</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {publicaciones.pendientes.map((post) => (
-              <tr key={post.idPublicacion}>
-                <td className="text-center">{post.idPublicacion}</td>
-                <td>{post.desc}</td>
-                <td>{formatDate(post.timeCreate)}</td>
-                <td className="text-center">
-                  <Button
-                    onClick={() => openPopup(post.img)}
-                    className="btnpopup btn btn-outline-warning"
-                  >
-                    <img src={post.img} className="img-fluid imgTabla rounded-circle" alt="Miniatura" />
-                  </Button>
-                </td>
-                <td>{post.emailUsuario}</td>
-                <td>{post.username}</td>
-                <td className="text-center">
-                  <Form.Check
-                    type="switch"
-                    id={`custom-switch-${post.idPublicacion}`}
-                    label=""
-                    onClick={() => aprobarPost(post.idPublicacion)}
-                  />
-                </td>
-                <td className="text-center">
-                  <Button
-                    variant="danger"
-                    className="btn-sm rounded-pill"
-                    onClick={() => eliminarPost(post.idPublicacion)}
-                  >
-                    ❌ Eliminar
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-
-        {/* Alerta */}
-        {alerta.mensaje && (
-          <Alert
-            variant={alerta.tipo}
-            onClose={() => setAlerta({ tipo: '', mensaje: '' })}
-            dismissible
-            className="text-center fw-bold"
-          >
-            {alerta.mensaje}
-          </Alert>
-        )}
-
-        {/* Popup Imagen */}
-        {popupimg.visible && (
-          <div className="popupImg" onClick={closePopup}>
-            <div
-              className="fondoimg p-3 rounded shadow"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={popupimg.imgSrc}
-                alt="Imagen"
-                className="imgdesplegada img-fluid rounded"
-              />
-              <Button
-                className="close-btn btn-danger btn-sm mt-3 rounded-pill"
-                onClick={closePopup}
-              >
-                ✖ Cerrar
-              </Button>
-            </div>
+      <Tabs
+        id="tab"
+        activeKey={key}
+        onSelect={(k) => setKey(k)}
+        className="mb-2"
+        justify
+      >
+        <Tab eventKey="publi-a" title="Publicaciones Aprobadas">
+          <div className="scroll">
+            <Table bordered hover className="table-light shadow">
+              <thead className="table-primary">
+                <tr>
+                  <th>Id</th>
+                  <th>Descripción</th>
+                  <th>Fecha Publicación</th>
+                  <th>Imagen</th>
+                  <th>Email</th>
+                  <th>Usuario</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {publicaciones.aprobadas.map((post) => (
+                  <tr key={post.idPublicacion}>
+                    <td className="text-center">{post.idPublicacion}</td>
+                    <td>{post.desc}</td>
+                    <td>{formatDate(post.timeCreate)}</td>
+                    <td className="text-center">
+                      <Button
+                        onClick={() => openPopup(post.img)}
+                        className="btnpopup btn btn-outline-info"
+                      >
+                        <img src={post.img} className="img-fluid imgTabla rounded-circle" alt="Miniatura" />
+                      </Button>
+                    </td>
+                    <td>{post.emailUsuario}</td>
+                    <td>{post.username}</td>
+                    <td className="text-center">
+                      <Form.Check
+                        type="switch"
+                        id={`custom-switch-${post.idPublicacion}`}
+                        checked
+                        label=""
+                        onClick={() => desaprobarPost(post.idPublicacion)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           </div>
-        )}
-      </div>
-
-        
-
+        </Tab>
+        <Tab eventKey="publi-p" title="Publicaciones Pendientes">
+          <div className="scroll">
+          <Table bordered hover className="table-light shadow">
+            <thead className="table-warning">
+              <tr>
+                <th>Id</th>
+                <th>Descripción</th>
+                <th>Fecha Publicación</th>
+                <th>Imagen</th>
+                <th>Email</th>
+                <th>Usuario</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {publicaciones.pendientes.map((post) => (
+                <tr key={post.idPublicacion}>
+                  <td className="text-center">{post.idPublicacion}</td>
+                  <td>{post.desc}</td>
+                  <td>{formatDate(post.timeCreate)}</td>
+                  <td className="text-center">
+                    <Button
+                      onClick={() => openPopup(post.img)}
+                      className="btnpopup btn btn-outline-warning"
+                    >
+                      <img src={post.img} className="img-fluid imgTabla rounded-circle" alt="Miniatura" />
+                    </Button>
+                  </td>
+                  <td>{post.emailUsuario}</td>
+                  <td>{post.username}</td>
+                  <td className="text-center">
+                    <Form.Check
+                      type="switch"
+                      id={`custom-switch-${post.idPublicacion}`}
+                      label=""
+                      onClick={() => aprobarPost(post.idPublicacion)}
+                    />
+                  </td>
+                  <td className="text-center">
+                    <Button
+                      variant="danger"
+                      className="btn-sm rounded-pill"
+                      onClick={() => eliminarPost(post.idPublicacion)}
+                    >
+                      ❌ Eliminar
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          </div>
+        </Tab>
+      </Tabs>
     </div>
-    
   );
 };
 

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework import viewsets,permissions, status,generics
-from .serializer import PesoUsuarioPlasticoSerializer,TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer,PedidoSerializer # type: ignore
-from .models import PesoUsuario, TipoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario,Pedido
+from .serializer import PesoUsuarioPlasticoSerializer, TransPesoSerializer,TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer,PedidoSerializer, NotificacionSerializer # type: ignore
+from .models import PesoUsuario, TipoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario,Pedido,Notificacion
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -91,7 +91,7 @@ class UserRegister(APIView):
 
 				
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+		return Response({"mensaje": "Error el correo ya existe."},status=status.HTTP_200_OK)
 
 
 class UserLogin(APIView):
@@ -276,15 +276,58 @@ class ReactivarCuenta(APIView):
             return Response({'mensaje': 'Tu cuenta ya está activa.'}, status=status.HTTP_400_BAD_REQUEST)
 
 def enviar_notificacion_correo(usuario):
-    """Envía un correo electrónico notificando el cambio de estado de la cuenta."""
-    asunto = 'Cambio en el estado de tu cuenta'
-    mensaje = (
-        f'Hola {usuario.username}, tu cuenta ha sido actualizada. '
-        f'Estado actual: {"activa" if usuario.estado else "desactivada"}.'
-    )
-    remitente = 'fe.curin@duocuc.cl'
-    destinatario = [usuario.email]
-    send_mail(asunto, mensaje, remitente, destinatario)
+    try:
+        """Envía un correo electrónico notificando el cambio de estado de la cuenta."""
+        asunto = 'Cambio en el estado de tu cuenta'
+        mensaje = (
+            f'Hola {usuario.username}, tu cuenta ha sido actualizada. '
+            f'Estado actual: {"activa" if usuario.estado else "desactivada"}.'
+        )
+        remitente = 'fe.curin@duocuc.cl'
+        destinatario = [usuario.email]
+        send_mail(asunto, mensaje, remitente, destinatario)
+    except Exception as e:
+        print(f"Error al enviar correo: {str(e)}")
+
+class CrearNotificacion(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        mensaje = request.data.get('mensaje')
+
+        try:
+            usuario = Usuario.objects.get(email=email)
+            if not usuario.estado:  # Solo permite notificaciones de cuentas desactivadas
+                Notificacion.objects.create(usuario=usuario, mensaje=mensaje)
+                return Response({'mensaje': 'Notificación enviada correctamente.'}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'error': 'Solo las cuentas desactivadas pueden enviar notificaciones.'}, status=status.HTTP_400_BAD_REQUEST)
+        except Usuario.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+class EliminarNotificacion(APIView):
+    def delete(self, request, id): 
+        try: 
+            notificacion = Notificacion.objects.get(id=id) 
+            notificacion.delete() 
+            return Response({'mensaje': 'Notificación eliminada correctamente.'}, status=status.HTTP_204_NO_CONTENT) 
+        except Notificacion.DoesNotExist: 
+            return Response({'error': 'Notificación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+
+class ActualizarEstadoNotificacion(APIView):
+    def patch(self, request, id):
+        try:
+            notificacion = Notificacion.objects.get(id=id)
+            notificacion.leido =  not notificacion.leido
+            notificacion.save()
+            return Response({'mensaje': 'Notificación marcada como.','leido': notificacion.leido}, status=status.HTTP_200_OK)
+        except Notificacion.DoesNotExist:
+            return Response({'error': 'Notificación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
+
+class ListarNotificacionesAdmin(viewsets.ModelViewSet):
+    permission_classes = [IsAprobador]
+    queryset = Notificacion.objects.all().order_by('-fecha_envio')
+    serializer_class = NotificacionSerializer
+
 
 ##################################### Administrar Usuarios ###############################################
 ##########################################################################################################
@@ -625,7 +668,18 @@ def read_weight_data(request):
         print(f"Error inesperado: {e}")
         return JsonResponse({'error': str(e)}, status=500)
     
-
+class TransPesoCreateAPIView(APIView):
+    def post(self, request):
+        # Serializa los datos entrantes
+        serializer = TransPesoSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()  # Guarda el registro si es válido
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        # Si no es válido, regresa un error
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class PuntosPesaPlasticoView(APIView):
     permission_classes = [IsAuthenticated]
 

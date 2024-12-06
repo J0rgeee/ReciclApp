@@ -1,38 +1,37 @@
-.div-sidebar-usuario
-{
-    width: '250px';
-    background-color: '#228b22';
-    height: 'calc(100vh - 56px)';
-    position: 'fixed';
-    left: 0;
-    top: '125px';
-}
-
-.button{
-    
-    border:transparent;
+.button {
+    border: transparent;
     width: 100%;
-    --bs-btn-active-bg: #007f56 !important;
+    --bs-btn-active-bg: #7da87d;
 }
 
-.nav-link.active {
-    background-color: #009d71  ;
-    color: black 
-}
-
-.nav-link:hover{
-    color: black;
-}
-
-.nav-link {
+.button.active {
+    background-color: #7da87d;
     color: white;
-    
+    border: none;
+}
+
+.button:not(.active):hover {
+    background-color: #e9ecef;
+    color: black;
 }
 
 .navuser {
     background-color: #00775d !important;
     color: black;
     border-radius: 5px 5px 0 0;
+
+    .nav-link.active {
+        background-color: #009d71;
+        color: black
+    }
+
+    .nav-link:hover {
+        color: black;
+    }
+
+    .nav-link {
+        color: white;
+    }
 }
 
 .div-perfil {

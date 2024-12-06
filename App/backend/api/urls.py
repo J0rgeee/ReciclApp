@@ -4,7 +4,7 @@ from rest_framework.documentation import include_docs_urls # type: ignore
 from rest_framework.routers import DefaultRouter
 from api import views
 from . import views
-from .views import  PublicacionesPendientesView
+from .views import  PublicacionesPendientesView, TransPesoCreateAPIView
 
 
 router = routers.DefaultRouter()
@@ -40,7 +40,8 @@ router10.register(r'producto',views.ProductoView,'producto')
 router11 = routers.DefaultRouter()
 router11.register(r'direcciones', views.CrearDireccionesViewSet)
 
-
+router12 = routers.DefaultRouter()
+router12.register(r'',views.ListarNotificacionesAdmin)
 
 router13 = DefaultRouter()
 router13.register(r'', PublicacionesPendientesView, basename='pendientes')
@@ -64,7 +65,7 @@ urlpatterns = [
     path("Contacto/", include(router9.urls)),
     path("Producto/", include(router10.urls)),
     path('Dire/', include(router11.urls)),
-
+    path('listNotificaciones/', include(router12.urls)),
     path('pendientes/', include(router13.urls)),
     path('api/pedido/', views.crear_pedido, name='crear_pedido'),
     path('api/pedidos/', views.listar_pedidos, name='listar_pedidos'),
@@ -84,7 +85,7 @@ urlpatterns = [
 
     path('pesousuario-plas/<str:email>/', views.PuntosPesaPlasticoView.as_view(), name='punto-plastico-list'),
     path('pesousuario-plas/update/<str:emailusuario>/', views.PuntosPesaPlasticoUpdateView.as_view(), name='puntos-plastico-update'),
-
+    path('transpeso/', TransPesoCreateAPIView.as_view(), name='create-transpeso'),
 
     # path('save-weight/', views.save_weight, name='save_weight'),
 
@@ -95,7 +96,12 @@ urlpatterns = [
 	path('user', views.UserView.as_view(), name='user'),
 	path('user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
     path('user/desactivar-cuenta/<str:email>', views.DesUsuario.as_view(), name='desactivar-cuenta'),
+    path('user/delete/', views.DesactivarCuenta.as_view(), name='user-delete'),
     path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
+
+    path('notificaciones/', views.CrearNotificacion.as_view(), name='crear-noti'),
+    path('notificaciones/delete/<int:id>/', views.EliminarNotificacion.as_view(), name='borrar-noti'),
+    path('notificaciones/estado/<int:id>/', views.ActualizarEstadoNotificacion.as_view(), name='marcar-leido'),
     #Publicacion
     path('publicaciones/<int:idPublicacion>/', views.ActualizarEstado.as_view(), name='actualizar_estado'),
     path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),

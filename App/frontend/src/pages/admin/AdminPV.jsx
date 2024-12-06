@@ -103,8 +103,8 @@ const AdminPV = () => {
     }, []);
 
     return (
-        <div>
-            <Table bordered hover>
+        <div className="m-2">
+            <Table bordered hover className="table-light shadow">
                 <thead>
                     <tr>
                         <th>Id</th>

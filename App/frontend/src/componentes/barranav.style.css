@@ -1,5 +1,5 @@
 .navbar-reci{
-    background-color: #026842;
+    background-color: #006400;
 
 }
 
@@ -20,7 +20,8 @@
 
 .logoreci {
     border-radius: 20%;
-
+    width: 80px;
+    height: 80px;
 }
 
 .titulo {

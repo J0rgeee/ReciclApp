@@ -81,6 +81,15 @@ class Usuario (AbstractBaseUser,PermissionsMixin):
     objects = UsuarioManager()
     def __str__(self):
         return self.username
+
+class Notificacion(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    mensaje = models.TextField()
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+    leido = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notificación de {self.usuario.email} - {'Leído' if self.leido else 'No leído'}"
     
 class PuntuacioUsuario(models.Model):
     emailusuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
@@ -114,7 +123,6 @@ class TransPeso(models.Model):
     fechatrans = models.DateField(auto_now_add=True)
     estado = models.BooleanField(default=True)
     tiporec= models.ForeignKey(TipoReciclaje,on_delete=models.CASCADE,default=True)
-
 
 
 class Direcciones (models.Model):

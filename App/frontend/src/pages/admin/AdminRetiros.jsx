@@ -29,7 +29,7 @@ const AdminRetiros = () => {
   return (
     <div>
         
-    <Table bordered hover>
+    <Table bordered hover className="table-light shadow">
       <thead>
         <tr>
           <th>fechavisita</th>

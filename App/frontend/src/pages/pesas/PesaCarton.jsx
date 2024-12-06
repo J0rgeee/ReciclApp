@@ -20,6 +20,23 @@ function PesaCarton({email}) {
   const [error, setError] = useState(null);
   const [formData, setformData] = useState(null);
   const [lastPeso,setLastPeso] = useState(null);
+  const [currentUser, setCurrentUser] = useState([]);
+
+  useEffect(() => {
+    // Obtener usuario autenticado
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/user', { withCredentials: true });
+        setCurrentUser(response.data.user);  // Supón que response.data contiene el objeto de usuario
+        console.log(response.data.user.email);
+        console.log("Usuario autenticado:", currentUser.email);
+
+      } catch (error) {
+        console.error("Error al obtener el usuario autenticado:", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
 
   const fetchWeight = async () => {
@@ -32,18 +49,33 @@ function PesaCarton({email}) {
       }
   };
 
-//   const subirPeso = async (e) => {
-//     e.preventDefault();
-//     setformData({pesoplas:156454,emailusuario:"jorge@test.cl"});
-//     try {
-//         client.patch(`/api/pesousuario-plas/update/${email}/`,formData,
-//             { headers: {"X-XSRFToken":csrftoken}}
-//         )
-//     } catch (error) {
-//         console.log(error);
-//         setError("Error al editar la dirección");
-//     }
-//     };
+  // Función para subir el peso calculado
+  const subirPeso = async () => {
+    if (!weight) {
+      setError("No hay un peso calculado para guardar.");
+      return;
+    }
+
+    try {
+      const payload = {
+        emailusuario: currentUser.id, // ID del usuario autenticado
+        cantidadpeso: weight,        // Peso calculado
+        estado: false,                // Estado por defecto
+        tiporec: 2,  // Usa el email del usuario autenticado
+      };
+
+      const response = await client.patch(
+        `http://localhost:8000/api/transpeso/`,
+        payload,
+        { headers: { "X-CSRFToken": csrftoken } }
+      );
+      console.log("Peso guardado:", response.data);
+      setError(null);
+    } catch (error) {
+      console.error("Error al guardar el peso:", error);
+      setError("No se pudo guardar el peso.");
+    }
+  };
 
 useEffect(() => {
     console.log(email);
@@ -61,9 +93,6 @@ useEffect(() => {
 }, []);
 
     
-
-
-
   return (
       <Container>
           <Row className="justify-content-center">
@@ -78,7 +107,7 @@ useEffect(() => {
                   <Button variant="primary" onClick={fetchWeight}>
                       Calcular mi peso 
                   </Button>
-                  <Button variant="primary" >
+                  <Button variant="primary" onClick={subirPeso}>
                       Subir mi Peso 
                   </Button>
                   <p></p>

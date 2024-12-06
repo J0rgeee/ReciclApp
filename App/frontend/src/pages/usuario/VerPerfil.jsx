@@ -5,6 +5,7 @@ import { Button,Form,Modal,Row,Stack,Col } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import './sidebar.style.css';
+import { Navigate } from 'react-router-dom';
 const csrftoken = Cookies.get('csrftoken');
 
 
@@ -16,6 +17,11 @@ const client = axios.create({
   baseURL: "http://localhost:8000"
 });
 
+// Función para obtener el token CSRF
+const getCsrfToken = () => {
+  const cookie = document.cookie.split(";").find((cookie) => cookie.trim().startsWith("csrftoken="));
+  return cookie ? cookie.split("=")[1] : null;
+};
 
 
 const VerPerfil = ({usuario}) => {
@@ -59,10 +65,20 @@ const VerPerfil = ({usuario}) => {
 
   }, []);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     // Aquí va la lógica de eliminación
-    console.log('Elemento eliminado');
-    handleClose(); // Cierra el modal después de eliminar
+    try {
+      await client.delete(`api/user/delete/`, {
+        headers: { "X-CSRFToken": getCsrfToken() },
+        }
+      );
+      console.log('Elemento eliminado');
+      Swal.fire("Éxito", "Su cuenta ha sido desactivada", "success");
+      Navigate("/Sesion");
+    } catch(error) {
+      console.log("Error al desactivar la cuenta:", error.response)
+      Swal.fire("Error", "Su cuenta no ha podido ser desctivada", "error");
+    }
   };
 
 

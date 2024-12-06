@@ -1,6 +1,6 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from .models import PesoUsuario,TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario,Pedido
+from .models import PesoUsuario, TransPeso,TransPuntos,Metas,ProgresoUsuarioMeta,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,TipoUsuario,Direcciones,Publicacion,SugRec,EstadoVisita,RegistroRetiro,Like,Comentario,Pedido,Notificacion
 from django.contrib.auth import get_user_model,authenticate
 
 UserModel= get_user_model()
@@ -34,6 +34,12 @@ class DireccionesSerializer(serializers.ModelSerializer):
         # Guardar la instancia actualizada
         instance.save()
         return instance
+    
+class NotificacionSerializer(serializers.ModelSerializer):
+    usuario_email = serializers.EmailField(source='usuario.email', read_only=True)
+    class Meta:
+        model = Notificacion
+        fields = ['id', 'usuario', 'mensaje', 'fecha_envio', 'leido', 'usuario_email']
 
 class PublicacionSerializer(serializers.ModelSerializer):
     has_liked = serializers.SerializerMethodField()
@@ -169,6 +175,11 @@ class TransPuntosSerializer(serializers.ModelSerializer):
           model = TransPuntos
           fields = ['id','puntosplas', 'puntospapel', 'putnosvidrio', 'puntoscarton', 'puntoslatas','emailusuario_id']
 
+class TransPesoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TransPeso
+        fields = ['emailusuario', 'cantidadpeso', 'fechatrans', 'estado', 'tiporec']
+        
 class PesoUsuarioPlasticoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PesoUsuario

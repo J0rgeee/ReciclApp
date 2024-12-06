@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Container, Row, Col, Button, Form, Alert } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import './checkout.css';
 
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -20,7 +20,7 @@ const CheckoutTienda = ({ carrito }) => {
   const [loadingPuntos, setLoadingPuntos] = useState(true);
   const [tipoPuntos, setTipoPuntos] = useState("plas");
   const location = useLocation();
-  const carrito = location.state ? location.state.carrito : [];
+
 
   const fetchDirecciones = async () => {
     try {
@@ -105,7 +105,7 @@ const CheckoutTienda = ({ carrito }) => {
           [tipoPuntos]: puntosRestantes, // Actualizar solo la categoría de puntos utilizada
         });
         alert("Compra realizada con éxito");
-        history.push("/tienda");
+        Navigate("/tienda");
       }
     } catch (error) {
       console.error("Error al realizar la compra:", error);

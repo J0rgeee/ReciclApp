@@ -38,7 +38,7 @@ const MenuUsuario = () => {
 
   return (
       <div>
-        <div>
+        <div className="navbar-perfil">
           <Card className="text-center" style={{ margin: '20px' }}>
             <Card.Img variant="top" src={usuario.foto} style={{ borderRadius: '50%', width: '100px', height: '100px', margin: '20px auto' }} />
             <Card.Body>

@@ -12,6 +12,8 @@ import { Register } from './Register';
 import { auth, googleProvider } from '../../componentes/firebaseConfig';
 import { signInWithPopup } from 'firebase/auth';
 import { FcGoogle } from "react-icons/fc";
+import Swal from "sweetalert2";
+import Modal from 'react-bootstrap/Modal';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -27,12 +29,15 @@ export function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     async function submitLogin(e) {
         e.preventDefault();
         setErrorMessage('');  // Reseteamos cualquier mensaje de error previo
         try {
-            const response = await client.post("/api/login", {
+            await axios.post("http://localhost:8000/api/login/", {
                 email: email,
                 password: password
             });
@@ -102,6 +107,62 @@ export function Login() {
         }
     };
 
+    const EnviarNotificacion = () => {
+        const [email, setEmail] = useState('');
+        const [mensaje, setMensaje] = useState('');
+      
+        const enviarNotificacion = async () => {
+          try {
+            await axios.post('http://localhost:8000/api/notificaciones/', {
+              email,
+              mensaje,
+            });
+            Swal.fire('Éxito', 'Notificación enviada al administrador.', 'success');
+          } catch (error) {
+            Swal.fire('Error', 'No se pudo enviar la notificación.', 'error');
+          }
+        };
+      
+        return (
+          <div>
+            <a onClick={handleShow} className='m-2'>Reactivar cuenta</a>
+            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} >
+                <Form onSubmit={e => enviarNotificacion(e)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Solicitud de activacion de cuenta</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form.Group className="mb-3" controlId="email" >
+                            <Form.Label>Ingrese su email</Form.Label>
+                            <Form.Control 
+                            type="email" 
+                            placeholder="name@ejemplo.com" 
+                            value={email} onChange={e => setEmail(e.target.value)} 
+                            required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="usuario">
+                            <Form.Label>Mensaje</Form.Label>
+                            <Form.Control 
+                            type="text" 
+                            placeholder="Nombre de usuario" 
+                            value={mensaje} onChange={e => setMensaje(e.target.value)} 
+                            required
+                            />
+                        </Form.Group>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                        <Button variant="primary" type="submit" id='register'>Enviar</Button>
+                    </Modal.Footer>
+                </Form>
+            </Modal>
+          </div>
+        );
+      };
+
     return (
 
         <div className='container centrar'>
@@ -131,7 +192,6 @@ export function Login() {
                     <Stack gap={2} className="col-md-5 mx-auto">
                         <Button className='boton' type='submit' id='login'>Iniciar sesion</Button>
                         <Button variant='light' onClick={signInWithGoogle} className='FcGoogle'>Continuar con Google<FcGoogle /></Button>
-
                         <Register />
                     </Stack>
                 </Form>
@@ -140,6 +200,7 @@ export function Login() {
                         {errorMessage}
                     </div>
                 )}
+                <EnviarNotificacion/>
             </Card>
         </div>
 
