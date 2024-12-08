@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Button, Modal, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
+import { Table, Button, Modal, Form, OverlayTrigger, Tooltip, Tab, Tabs } from "react-bootstrap";
 import Swal from "sweetalert2";
 import './admin.styles.css';
 import { fetchNotificaciones, crearUsuario, actualizarUsuario, eliminarUsuario, cambiarEstadoUsuario, Alerta } from './AdminHome';
+import notificacionService from "../../hooks/notificacionService";
 
 // Configuración global para Axios
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -36,12 +35,6 @@ const AdminUsuarios = () => {
     tipoUsuario: "",
   });
 
-  //Obtener notificaciones
-  const obtenerNotificaciones = async () => {
-    const data = await fetchNotificaciones();
-    setNotificaciones(data);
-  };
-
   // Obtener lista de usuarios
   const fetchUsuarios = async () => {
     try {
@@ -52,42 +45,35 @@ const AdminUsuarios = () => {
     }
   };
 
-  //Eliminar notificacion
-  const eliminarNotificaciones = async (id) => {
+  const obtenerNotificaciones = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/notificaciones/delete/${id}/`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        setNotificaciones(notificaciones.filter(notificacion => notificacion.id !== id));
-      } else {
-        console.error("Error al eliminar la notificacion: ", await response.json())
-      }
+      const data = await notificacionService.listar();
+      setNotificaciones(data);
     } catch (error) {
-      console.error("Error al conectar con el servidor", error)
+      Swal.fire('Error', 'No se pudieron cargar las notificaciones', 'error');
     }
   };
 
-  //Leido
+  const eliminarNotificaciones = async (id) => {
+    try {
+      await notificacionService.eliminar(id);
+      setNotificaciones(notificaciones.filter(n => n.id !== id));
+      Swal.fire('Éxito', 'Notificación eliminada correctamente', 'success');
+    } catch (error) {
+      Swal.fire('Error', 'No se pudo eliminar la notificación', 'error');
+    }
+  };
+
   const marcarComoLeida = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/notificaciones/estado/${id}/`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setNotificaciones(notificaciones.map((notificacion) =>
-          notificacion.id === id ? { ...notificacion, leido: data.leido } : notificacion
-        ));
-      } else {
-        console.error("Error al marcar como leido:", await response.json())
-      }
+      const response = await notificacionService.toggleLeido(id);
+      setNotificaciones(notificaciones.map((n) =>
+        n.id === id ? { ...n, leido: response.leido } : n
+      ));
     } catch (error) {
-      console.error("Error al conectar con el servidor:", error)
+      Swal.fire('Error', 'No se pudo actualizar el estado de la notificación', 'error');
     }
-  }
-
+  };
 
   // Obtener lista de tipos de usuario
   const fetchTiposUsuario = async () => {

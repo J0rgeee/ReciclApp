@@ -5,7 +5,7 @@ import { Button,Form,Modal,Row,Stack,Col } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import './sidebar.style.css';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 const csrftoken = Cookies.get('csrftoken');
 
 
@@ -26,7 +26,7 @@ const getCsrfToken = () => {
 
 const VerPerfil = ({usuario}) => {
 
-
+  const navigate = useNavigate(); 
   const [file, setFile] = useState(null);
 
   const handleFileChange = (event) => {
@@ -40,11 +40,6 @@ const VerPerfil = ({usuario}) => {
     apellido: '',
     telefono: ''
 });
-  const encodedEmail = encodeURIComponent(formulario.email);
-
-
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
 
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -66,18 +61,19 @@ const VerPerfil = ({usuario}) => {
   }, []);
 
   const handleDelete = async () => {
-    // Aquí va la lógica de eliminación
     try {
       await client.delete(`api/user/delete/`, {
         headers: { "X-CSRFToken": getCsrfToken() },
-        }
-      );
+      });
       console.log('Elemento eliminado');
+      await client.post("/api/logout", { withCredentials: true });
+      // Limpiar el localStorage
+      localStorage.clear();
       Swal.fire("Éxito", "Su cuenta ha sido desactivada", "success");
-      Navigate("/Sesion");
+      navigate("/Sesion");  // Usar navigate en lugar de Navigate
     } catch(error) {
       console.log("Error al desactivar la cuenta:", error.response)
-      Swal.fire("Error", "Su cuenta no ha podido ser desctivada", "error");
+      Swal.fire("Error", "Su cuenta no ha podido ser desactivada", "error");
     }
   };
 
@@ -135,9 +131,9 @@ const VerPerfil = ({usuario}) => {
 
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Confirmación de Eliminación</Modal.Title>
+            <Modal.Title>Confirmación de Desactivacion</Modal.Title>
           </Modal.Header>
-          <Modal.Body>¿Estás seguro de que deseas eliminar este elemento?</Modal.Body>
+          <Modal.Body>¿Estás seguro de que deseas desactivar tu cuenta?</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Cancelar

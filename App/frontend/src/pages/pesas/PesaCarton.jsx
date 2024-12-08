@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button, Row, Col,Form } from 'react-bootstrap';
+import { Container, Button, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
 import Cookies from "js-cookie";
@@ -61,7 +61,7 @@ function PesaCarton({email}) {
         emailusuario: currentUser.email, // ID del usuario autenticado
         cantidadpeso: weight,        // Peso calculado
         estado: false,                // Estado por defecto
-        tiporec: 2,  // Usa el email del usuario autenticado
+        tiporec: 2,  
       };
 
       const response = await client.post(

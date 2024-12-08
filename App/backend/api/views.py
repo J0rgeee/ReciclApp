@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework import viewsets,permissions, status,generics
 from .serializer import PesoUsuarioPlasticoSerializer, TransPesoSerializer,TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer,PedidoSerializer, NotificacionSerializer # type: ignore
-from .models import PesoUsuario, TipoUsuario,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario,Pedido,Notificacion
+from .models import PesoUsuario, TipoUsuario, TransPeso,TransPuntos,Direcciones,ProgresoUsuarioMeta,Metas,PuntuacioUsuario,Producto,Ciudad,Comuna,PuntoVerde,TipoReciclaje,TipoReciclajePv,Usuario,Publicacion,RegistroRetiro,SugRec,Like,Comentario,Pedido,Notificacion
 # from .validations import custom_validation, validate_email, validate_password
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
@@ -19,6 +19,7 @@ from django.conf import settings
 from django.views.decorators.http import require_GET
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password  # Para encriptar contraseñas
+from django.db.models import Sum
 
 import json
 import serial
@@ -142,7 +143,6 @@ class UserRegister(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
@@ -173,7 +173,6 @@ class UserLogin(APIView):
             # Realizar el login si todo es correcto
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class UserLogout(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -263,13 +262,11 @@ class AdminUsuarios(viewsets.ViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        
     @action(detail=False, methods=['get'], url_path='list-tipo-user')
     def list_tipo_user(self, request):
         tipos = TipoUsuario.objects.all().values('idTR', 'desc')  # Ajusta el nombre del campo si es necesario
         return Response(tipos, status=status.HTTP_200_OK)
 
-    
 class UpdateUsuario(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated, IsAprobador]
     queryset = Usuario.objects.all()
@@ -284,7 +281,6 @@ class UpdateUsuario(generics.UpdateAPIView):
         except Usuario.DoesNotExist:
             self.permission_denied(self.request, message="Usuario no encontrado")
     
-
 class DesUsuario(generics.UpdateAPIView):
     #Desactivar o activar usuario (por el administrador)
     permission_classes = [permissions.IsAuthenticated, IsAprobador]
@@ -299,7 +295,7 @@ class DesUsuario(generics.UpdateAPIView):
         estado = "activado" if usuario.estado else "desactivado"
         return Response({'mensaje': f'El usuario ha sido {estado}.'}, status=status.HTTP_200_OK)
     
-class DesactivarCuenta(APIView):
+class DesactivarCuenta(APIView): #Descactivacion desde usuario
     permission_classes = [IsAuthenticated]  # Aseguramos que el usuario esté autenticado
 
     def delete(self, request):
@@ -312,17 +308,6 @@ class DesactivarCuenta(APIView):
 
         return Response({'mensaje': 'Tu cuenta ha sido desactivada. Si deseas reactivarla, contacta al administrador.'}, status=status.HTTP_200_OK)
 
-class ReactivarCuenta(APIView):
-    permission_classes = [permissions.IsAuthenticated]  # Aseguramos que el usuario esté autenticado
-
-    def post(self, request):
-        usuario = request.user
-        if not usuario.estado:
-            usuario.estado = True  # Reactivamos la cuenta
-            usuario.save()
-            return Response({'mensaje': 'Tu cuenta ha sido reactivada exitosamente.'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje': 'Tu cuenta ya está activa.'}, status=status.HTTP_400_BAD_REQUEST)
 
 def enviar_notificacion_correo(usuario):
     try:
@@ -338,45 +323,69 @@ def enviar_notificacion_correo(usuario):
     except Exception as e:
         print(f"Error al enviar correo: {str(e)}")
 
-class CrearNotificacion(APIView):
-    def post(self, request):
+class NotificacionViewSet(viewsets.ModelViewSet):
+    queryset = Notificacion.objects.all().order_by('-fecha_envio')
+    serializer_class = NotificacionSerializer
+
+    def get_permissions(self):
+        """
+        Personaliza los permisos según la acción:
+        - create: AllowAny (usuarios desactivados pueden crear notificaciones)
+        - list, update, delete, toggle_leido: IsAprobador
+        """
+        if self.action == 'create':
+            permission_classes = [AllowAny]
+        elif self.action in ['toggle_leido', 'list', 'destroy', 'update', 'partial_update']:
+            permission_classes = [IsAuthenticated, IsAprobador]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
+    def create(self, request, *args, **kwargs): #Crear notificacion
+        """Crea una nueva notificación (reemplaza CrearNotificacion)"""
         email = request.data.get('email')
         mensaje = request.data.get('mensaje')
 
         try:
             usuario = Usuario.objects.get(email=email)
             if not usuario.estado:  # Solo permite notificaciones de cuentas desactivadas
-                Notificacion.objects.create(usuario=usuario, mensaje=mensaje)
-                return Response({'mensaje': 'Notificación enviada correctamente.'}, status=status.HTTP_201_CREATED)
-            else:
-                return Response({'error': 'Solo las cuentas desactivadas pueden enviar notificaciones.'}, status=status.HTTP_400_BAD_REQUEST)
+                notificacion = Notificacion.objects.create(usuario=usuario, mensaje=mensaje)
+                serializer = self.get_serializer(notificacion)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {'error': 'Solo las cuentas desactivadas pueden enviar notificaciones.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
         except Usuario.DoesNotExist:
             return Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
 
-class EliminarNotificacion(APIView):
-    def delete(self, request, id): 
-        try: 
-            notificacion = Notificacion.objects.get(id=id) 
-            notificacion.delete() 
-            return Response({'mensaje': 'Notificación eliminada correctamente.'}, status=status.HTTP_204_NO_CONTENT) 
-        except Notificacion.DoesNotExist: 
-            return Response({'error': 'Notificación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
-
-class ActualizarEstadoNotificacion(APIView):
-    def patch(self, request, id):
+    def destroy(self, request, *args, **kwargs): #ELiminar notificacion
         try:
-            notificacion = Notificacion.objects.get(id=id)
-            notificacion.leido =  not notificacion.leido
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(
+                {"message": "Notificación eliminada correctamente"},
+                status=status.HTTP_204_NO_CONTENT
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+    @action(detail=True, methods=['patch'])
+    def toggle_leido(self, request, pk=None): #Cambiar estado de notificacion
+        """Alterna el estado leído/no leído (reemplaza ActualizarEstadoNotificacion)"""
+        try:
+            notificacion = self.get_object()
+            notificacion.leido = not notificacion.leido
             notificacion.save()
-            return Response({'mensaje': 'Notificación marcada como.','leido': notificacion.leido}, status=status.HTTP_200_OK)
+            return Response({
+                'mensaje': 'Notificación marcada como',
+                'leido': notificacion.leido
+            }, status=status.HTTP_200_OK)
         except Notificacion.DoesNotExist:
             return Response({'error': 'Notificación no encontrada.'}, status=status.HTTP_404_NOT_FOUND)
-
-class ListarNotificacionesAdmin(viewsets.ModelViewSet):
-    permission_classes = [IsAprobador]
-    queryset = Notificacion.objects.all().order_by('-fecha_envio')
-    serializer_class = NotificacionSerializer
-
 
 ##################################### Administrar Usuarios ###############################################
 ##########################################################################################################
@@ -511,7 +520,6 @@ class ActualizarEstado(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-
 class PublicacionesPendientesView(ModelViewSet):
     queryset = Publicacion.objects.filter(estado=False).order_by('-timeCreate')  # Solo publicaciones no aprobadas
     serializer_class = PublicacionSerializer
@@ -554,6 +562,7 @@ class PublicacionesPendientesView(ModelViewSet):
 
 ##################################### Publicaciones ######################################################
 ##########################################################################################################
+
 class RetiroView(viewsets.ModelViewSet):
     queryset = RegistroRetiro.objects.all()
     def get_serializer_class(self):
@@ -666,9 +675,6 @@ class ReadWeightDataView(APIView):
         except Exception as e:
             print(f"Error inesperado: {e}")
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-
-
 
 def read_weight_data(request):
     try:
@@ -732,6 +738,166 @@ class TransPesoCreateAPIView(APIView):
         if serializer.is_valid():
             serializer.save()  # Guarda el registro si es válido
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TransPesoViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+    
+    def retrieve_puntuacion_usuario(self, request, email=None):
+        try:
+            # Calcular totales de reciclaje por tipo desde TransPeso
+            totales_reciclaje = TransPeso.objects.filter(
+                emailusuario__email=email,
+                estado=True  # Solo considerar registros activos
+            ).values(
+                'tiporec'
+            ).annotate(
+                total_peso=Sum('cantidadpeso')  # Usar cantidadpeso en lugar de peso
+            )
+            
+            # Crear un diccionario con los totales
+            totales_por_tipo = {
+                'total_reciclado': 0,
+                'plastico': 0,
+                'papel': 0,
+                'vidrio': 0,
+                'carton': 0,
+                'latas': 0
+            }
+            
+            # Mapear los IDs de tipo de reciclaje a nombres
+            tipo_mapping = {
+                3: 'plastico',
+                2: 'carton', 
+                12: 'vidrio',
+                16: 'papel',
+                9: 'latas'
+            }
+            
+            # Llenar los totales
+            for total in totales_reciclaje:
+                tipo_nombre = tipo_mapping.get(total['tiporec'])
+                if tipo_nombre:
+                    peso = total['total_peso'] or 0
+                    totales_por_tipo[tipo_nombre] = round(peso, 2)  # Redondear a 2 decimales
+                    totales_por_tipo['total_reciclado'] += peso
+            
+            # Redondear el total general
+            totales_por_tipo['total_reciclado'] = round(totales_por_tipo['total_reciclado'], 2)
+            
+            return Response(totales_por_tipo, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response(
+                {'error': f'Error al obtener los datos: {str(e)}'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class ActualizarEstadoPeso(APIView):
+    permission_classes = [IsAuthenticated, IsAprobador]
+    def patch(self, request, id):
+        try:
+            pesousuario = get_object_or_404(TransPeso, idpeso=id)
+
+            # Extraer y validar el campo estado
+            nuevo_estado = request.data.get("estado")
+            if nuevo_estado is None:
+                return Response(
+                    {"error": "El campo 'estado' es requerido."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+             # Actualizar estado usando el serializador
+            serializer = TransPesoSerializer(
+                pesousuario, 
+                data={"estado": nuevo_estado}, 
+                partial=True  # Permite actualizar solo algunos campos
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {"message": "Estado actualizado correctamente.", "estado": serializer.data['estado']},
+                    status=status.HTTP_200_OK
+                )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {"error": f"Ocurrió un error: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAprobador])
+def eliminar_peso(request, id):
+    try:
+        peso = TransPeso.objects.get(id=id)
+        peso.delete()
+        return Response({'mensaje': 'Registro eliminado exitosamente'}, status=status.HTTP_204_NO_CONTENT)
+    except TransPeso.DoesNotExist:
+        return Response({'error': 'Registro no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+class AdminTransPesoViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, IsAprobador]
+    serializer_class = TransPesoSerializer
+    queryset = TransPeso.objects.all().order_by('-fechatrans')
+
+    def get_queryset(self):
+        # Filtrar por estado si se especifica en la URL
+        estado = self.request.query_params.get('estado', None)
+        queryset = TransPeso.objects.all().order_by('-fechatrans')
+        if estado is not None:
+            queryset = queryset.filter(estado=estado.lower() == 'true')
+        return queryset
+
+    @action(detail=True, methods=['patch'])
+    def aprobar(self, request, pk=None):
+        try:
+            peso = self.get_object()
+            peso.estado = True
+            peso.save()
+            return Response({"message": "Peso aprobado con éxito."})
+        except TransPeso.DoesNotExist:
+            return Response(
+                {"error": "Registro de peso no encontrado."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+    @action(detail=True, methods=['patch'])
+    def desaprobar(self, request, pk=None):
+        try:
+            peso = self.get_object()
+            peso.estado = False
+            peso.save()
+            return Response({"message": "Peso desaprobado con éxito."})
+        except TransPeso.DoesNotExist:
+            return Response(
+                {"error": "Registro de peso no encontrado."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    @action(detail=True, methods=['delete'])
+    def eliminar(self, request, pk=None):
+        try:
+            peso = self.get_object()
+            peso.delete()
+            return Response(
+                {"message": "Registro de peso eliminado con éxito."}, 
+                status=status.HTTP_204_NO_CONTENT
+            )
+        except TransPeso.DoesNotExist:
+            return Response(
+                {"error": "Registro de peso no encontrado."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class PuntosPesaPlasticoView(APIView):

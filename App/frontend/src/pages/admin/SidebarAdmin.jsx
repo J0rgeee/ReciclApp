@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Button } from 'react-bootstrap';
 import Nav from 'react-bootstrap/Nav';
-import Spinner from 'react-bootstrap/Spinner';
 import axios from 'axios';
 import AdminUsuarios from "./AdminUsuarios";
 import AdminPV from "./AdminPV";
 import AdminPubli from "./AdminPubli";
 import AdminRetiros from "./AdminRetiros";
-import './admin.styles.css';
 import AdminStats from "./AdminStats";
-
+import AdminPesos from "./AdminPesos";
+import AdminTienda from "./AdminTienda";
+import './admin.styles.css';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -125,6 +125,14 @@ const SidebarAdmin = ({  isVisible }) => {
           Administrar Tienda
         </Button>
       </Nav.Link>
+      <Nav.Link eventKey="6" className="p-2">
+        <Button
+          className={`button ${activeKey === "6" ? "active" : ""}`}
+          onClick={() => handleButtonClick(6)}
+        >
+          Administrar Pesos
+        </Button>
+      </Nav.Link>
     </Nav>
       <div className="content" key={activeDiv}>
         {showTransition && (
@@ -137,7 +145,8 @@ const SidebarAdmin = ({  isVisible }) => {
         {activeDiv === 2 && <AdminPV />}
         {activeDiv === 3 && <AdminPubli />}
         {activeDiv === 4 && <AdminRetiros />}
-        {activeDiv === 5 && <AdminRetiros />}
+        {activeDiv === 5 && <AdminTienda />}
+        {activeDiv === 6 && <AdminPesos />}
       </div>
     </div>
   );

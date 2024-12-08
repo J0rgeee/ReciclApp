@@ -189,9 +189,10 @@ class TransPuntosSerializer(serializers.ModelSerializer):
           fields = ['id','puntosplas', 'puntospapel', 'putnosvidrio', 'puntoscarton', 'puntoslatas','emailusuario_id']
 
 class TransPesoSerializer(serializers.ModelSerializer):
+    tiporec_nombre = serializers.CharField(source='tiporec.nombre', read_only=True)
     class Meta:
         model = TransPeso
-        fields = ['emailusuario', 'cantidadpeso', 'fechatrans', 'estado', 'tiporec']
+        fields = ['id', 'emailusuario', 'cantidadpeso', 'fechatrans', 'estado', 'tiporec','tiporec_nombre']
         
 class PesoUsuarioPlasticoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -64,7 +64,7 @@ export const crearUsuario = async (nuevoUsuario) => {
   }
 };
 
-// Actualizar usuario existente
+// Actualizar datos de usuario existente
 export const actualizarUsuario = async (email, datosActualizados) => {
   try {
     const response = await axios.put(

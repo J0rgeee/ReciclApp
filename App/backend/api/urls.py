@@ -41,12 +41,15 @@ router11 = routers.DefaultRouter()
 router11.register(r'direcciones', views.CrearDireccionesViewSet)
 
 router12 = routers.DefaultRouter()
-router12.register(r'',views.ListarNotificacionesAdmin)
+router12.register(r'notificaciones', views.NotificacionViewSet, basename='notificaciones')
 
 router13 = DefaultRouter()
 router13.register(r'', PublicacionesPendientesView, basename='pendientes')
 
+router_pesos = DefaultRouter()
+router_pesos.register(r'admin/pesos', views.AdminTransPesoViewSet, basename='admin-pesos')
 
+peso_viewset = views.TransPesoViewSet.as_view({'get': 'retrieve_puntuacion_usuario'})
 puntuacion_viewset = views.PuntuacionViewSet.as_view({'get': 'retrieve_puntuacion_usuario'})
 metas_viewset = views.MetasViewSet.as_view({'get': 'list_metas_usuario'})
 
@@ -65,10 +68,11 @@ urlpatterns = [
     path("Contacto/", include(router9.urls)),
     path("Producto/", include(router10.urls)),
     path('Dire/', include(router11.urls)),
-    path('listNotificaciones/', include(router12.urls)),
+    path('', include(router12.urls)), #notificaciones
     path('pendientes/', include(router13.urls)),
     path('api/pedido/', views.crear_pedido, name='crear_pedido'),
     path('api/pedidos/', views.listar_pedidos, name='listar_pedidos'),
+    path('', include(router_pesos.urls)),
 
     # path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
 
@@ -86,6 +90,8 @@ urlpatterns = [
     path('pesousuario-plas/<str:email>/', views.PuntosPesaPlasticoView.as_view(), name='punto-plastico-list'),
     path('pesousuario-plas/update/<str:emailusuario>/', views.PuntosPesaPlasticoUpdateView.as_view(), name='puntos-plastico-update'),
     path('transpeso/', TransPesoCreateAPIView.as_view(), name='create-transpeso'),
+    path('totalpesos/<str:email>/', peso_viewset, name='peso-usuario'),
+    path('peso/<int:id>/estado/', views.ActualizarEstadoPeso.as_view(), name='actualizar-estado-peso'),
 
     # path('save-weight/', views.save_weight, name='save_weight'),
 
@@ -97,11 +103,7 @@ urlpatterns = [
 	path('user/update/<str:email>/', views.UpdateUsuario.as_view(), name='user-update'),
     path('user/desactivar-cuenta/<str:email>', views.DesUsuario.as_view(), name='desactivar-cuenta'),
     path('user/delete/', views.DesactivarCuenta.as_view(), name='user-delete'),
-    path('reactivar-cuenta/', views.ReactivarCuenta.as_view(), name='reactivar-cuenta'),
 
-    path('notificaciones/', views.CrearNotificacion.as_view(), name='crear-noti'),
-    path('notificaciones/delete/<int:id>/', views.EliminarNotificacion.as_view(), name='borrar-noti'),
-    path('notificaciones/estado/<int:id>/', views.ActualizarEstadoNotificacion.as_view(), name='marcar-leido'),
     #Publicacion
     path('publicaciones/<int:idPublicacion>/', views.ActualizarEstado.as_view(), name='actualizar_estado'),
     path('publicaciones/<publicacion_id>/like/', views.dar_o_eliminar_like, name='dar_o_eliminar_like'),

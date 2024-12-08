@@ -35,13 +35,7 @@ const MenuUsuario = () => {
   return (
       <div>
         <div className="navbar-perfil">
-          <Card className="text-center" style={{ margin: '20px' }}>
-            <Card.Img variant="top" src={usuario.foto} style={{ borderRadius: '50%', width: '100px', height: '100px', margin: '20px auto' }} />
-            <Card.Body>
-              <Card.Title>{usuario.username}</Card.Title>
-              <Card.Text> sadasdsa</Card.Text>
-            </Card.Body>
-          </Card>
+        
           <Nav justify variant="underline" className="navuser" activeKey={activeDiv} onSelect={(selectedKey) => setActiveDiv(selectedKey)}>
             <Nav.Item>
               <Nav.Link eventKey="1">Perfil</Nav.Link>

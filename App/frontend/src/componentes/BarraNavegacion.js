@@ -61,9 +61,9 @@ export function BarraNavegacion() {
             <Navbar.Brand className='titulo'>RecyBear</Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Link to='/AdminHome'><Image src='/botones/b1.png' className="p-2 imgbr" /></Link>
-              <Link to='/foro'><Image src='/botones/b2.png' className="p-2 imgbr" /></Link>
-              <Link to='/tienda'><Image src='/botones/b3.png' className="p-2 imgbr" /></Link>
+              <Link to='/AdminHome'><Image src='/botones/b1.png' className="m-2 imgbr" /></Link>
+              <Link to='/foro'><Image src='/botones/b2.png' className="m-2 imgbr" /></Link>
+              <Link to='/tienda'><Image src='/botones/b3.png' className="m-2 imgbr" /></Link>
               <Button variant="danger" onClick={submitLogout}>
                 <img src='/botones/logout.svg' />
                 Cerrar sesión
@@ -85,10 +85,10 @@ export function BarraNavegacion() {
             <Navbar.Brand><img src="/logo.png" className="logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Link to='/'><Image src='/botones/b1.png' className="p-2 imgbr" /></Link>
-              <Link to='/foro'><Image src='/botones/b2.png' className="p-2 imgbr" /></Link>
-              <Link to='/tienda'><Image src='/botones/b3.png' className="p-2 imgbr" /></Link>
-              <Link to='/pesa'><Image src='/pesa.png' width="80" className="p-2 imgbr" /></Link>
+              <Link to='/'><Image src='/botones/b1.png' className="m-2 imgbr" /></Link>
+              <Link to='/foro'><Image src='/botones/b2.png' className="m-2 imgbr" /></Link>
+              <Link to='/tienda'><Image src='/botones/b3.png' className="m-2 imgbr" /></Link>
+              <Link to='/pesa'><Image src='/pesa.png' width="80" className="m-2 imgbr" /></Link>
               <Button variant="danger" onClick={submitLogout}>
                 <img src='/botones/logout.svg' />
                 Cerrar sesión
@@ -111,9 +111,9 @@ export function BarraNavegacion() {
             <Navbar.Brand><img src="/logo.png" className="logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Link to='/'><Image src='/botones/b1.png' className="p-2 imgbr" /></Link>
-              <Link to='/foro'><Image src='/botones/b2.png' className="p-2 imgbr" /></Link>
-              <Link to='/tienda'><Image src='/botones/b3.png' className="p-2 imgbr" /></Link>
+              <Link to='/'><Image src='/botones/b1.png' className="m-2 imgbr" /></Link>
+              <Link to='/foro'><Image src='/botones/b2.png' className="m-2 imgbr" /></Link>
+              <Link to='/tienda'><Image src='/botones/b3.png' className="m-2 imgbr" /></Link>
               <Button variant="danger" onClick={submitLogout}>
                 <img src='/botones/logout.svg' />
                 Cerrar sesión
