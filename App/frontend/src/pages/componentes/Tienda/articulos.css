@@ -5,19 +5,19 @@
     padding: 20px;
   }
   
-  h2 {
+  .h2 {
     font-family: 'Roboto', sans-serif;
     color: #007BFF;
     margin-bottom: 30px;
   }
   
-  h4 {
+  .h4 {
     font-family: 'Arial', sans-serif;
     color: #333;
     margin-bottom: 10px;
   }
   
-  h5 {
+  .h5 {
     font-family: 'Arial', sans-serif;
     color: #666;
   }
@@ -127,7 +127,7 @@
     border-color: #ffeeba;
   }
   
-  h1, h2, h3, h4, h5 {
+  .h1, .h2, .h3, .h4, .h5 {
     font-family: 'Roboto', sans-serif;
   }
   

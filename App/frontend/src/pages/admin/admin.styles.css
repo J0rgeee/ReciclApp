@@ -343,7 +343,7 @@ body {
     margin-bottom: 1rem;
 }
 
-.d-flex {
+.d-flex-side {
     display: flex;
     height: calc(100vh - 134.5px);
 }

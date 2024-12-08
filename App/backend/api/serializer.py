@@ -121,6 +121,7 @@ class UsuarioRegistroSerializaer(serializers.ModelSerializer):
             # Asignamos el username después de crear el usuario
             if username:
                 user.username = username
+                user.tipoUser_id = 2
                 user.save()
             return user
         except Exception as e:

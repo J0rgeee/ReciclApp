@@ -201,7 +201,7 @@ const AdminUsuarios = () => {
                   <th>Apellido</th>
                   <th>Username</th>
                   <th>Email</th>
-                  <th>Fecha Nacimiento</th>
+                  <th>Tipo Usuario</th>
                   <th>Teléfono</th>
                   <th>Estado Cuenta</th>
                   <th>Acciones</th>

@@ -62,7 +62,7 @@ const SidebarAdmin = ({  isVisible }) => {
   }
 
   return (
-    <div className="d-flex">
+    <div className="d-flex-side">
        <Nav
       className="flex-column sidebar-admin"
       activeKey={activeKey} // Vincula el estado al `activeKey`
@@ -70,7 +70,7 @@ const SidebarAdmin = ({  isVisible }) => {
     >
       <img
         variant="top"
-        src="Usuarios/perfilH.png" // Reemplaza con la ruta de tu imagen
+        src={usuario.img} // Reemplaza con la ruta de tu imagen
         className="img"
       />
       <h4 className="text-center m-3">

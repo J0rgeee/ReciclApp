@@ -51,10 +51,7 @@ export function Register() {
                 email: email,
                 username: username,
                 password: password,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
+                tipoUser: '2',
             });
 
             console.log('Respuesta del servidor:', response);

@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 import './barranav.style.css';
 import { Image } from 'react-bootstrap';
 
-
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
@@ -17,14 +16,9 @@ const client = axios.create({
   baseURL: "http://localhost:8000"
 });
 
-
 export function BarraNavegacion() {
-
-
   const [usuarioActivo, setUsuarioActivo] = useState();
   const [usuario, setUsuario] = useState([]);
-
-
 
   useEffect(() => {
 
@@ -56,32 +50,25 @@ export function BarraNavegacion() {
 
     });
 
-
   }
   if (usuario.tipoUser === 1) //admin
   {
     return (
       <div>
-        <Navbar className='navbar-reci' expand="lg">
-          <Container className='p-1'>
-            <Navbar.Brand><img src="/logo.png" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
-            <Navbar.Brand className='titulo'>RecyBear</Navbar.Brand>            
-
+        <Navbar className='navbar-reci' expand="md">
+          <Container className='p-2'>
+            <Navbar.Brand><img src="/logo.png" className="logoreci" alt="logoReci" /></Navbar.Brand>
+            <Navbar.Brand className='titulo'>RecyBear</Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Link to='/AdminHome'>   <Image src='/botones/b1.png' width="80" className="d-inline-block align-top p-2 imgbr" />    </Link>
-              <Link to='/foro'>  <Image src='/botones/b2.png' width="80" className="d-inline-block align-top p-2 imgbr" />    </Link>
-              <Link to='/tienda'> <Image src='/botones/b3.png' width="80" className="d-inline-block align-top p-2 imgbr" />  </Link>
-
+              <Link to='/AdminHome'><Image src='/botones/b1.png' className="p-2 imgbr" /></Link>
+              <Link to='/foro'><Image src='/botones/b2.png' className="p-2 imgbr" /></Link>
+              <Link to='/tienda'><Image src='/botones/b3.png' className="p-2 imgbr" /></Link>
+              <Button variant="danger" onClick={submitLogout}>
+                <img src='/botones/logout.svg' />
+                Cerrar sesión
+              </Button>
             </Navbar.Collapse>
-            <Navbar.Brand>
-              <form onSubmit={e => submitLogout(e)}>
-                <Button type="submit" variant="danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-right" viewBox="0 0 16 16">
-                  <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5" />
-                </svg> Cerrar sesion
-                </Button>
-              </form></Navbar.Brand>
-
           </Container>
         </Navbar>
         <Outlet />
@@ -92,29 +79,21 @@ export function BarraNavegacion() {
   if (usuario.tipoUser === 2) { //usuario
     return (
       <div>
-        <Navbar className='navbar-reci' expand="lg">
-          <Container>
-
+        <Navbar className='navbar-reci' expand="md">
+          <Container className='p-2'>
             <Navbar.Brand>RecyBear</Navbar.Brand>
-            <Navbar.Brand><img src="/logo.png" width="80" height="80" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
-            <Navbar.Brand>Bienvenido señor: {usuario.username}</Navbar.Brand>
-
+            <Navbar.Brand><img src="/logo.png" className="logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Link to='/'>   <Image src='/botones/b1.png' width="80" className="d-inline-block align-top p-2 imgbr" />    </Link>
-              <Link to='/foro'>   <Image src='/botones/b2.png' width="80" className="d-inline-block align-top p-2 imgbr" />    </Link>
-              <Link to='/tienda'> <Image src='/botones/b3.png' width="80" className="d-inline-block align-top p-2 imgbr" />  </Link>
-              <Link to='/pesa'> <Image src='/pesa.png' width="80" className="d-inline-block align-top p-2 imgbr" />  </Link>
-
-
+              <Link to='/'><Image src='/botones/b1.png' className="p-2 imgbr" /></Link>
+              <Link to='/foro'><Image src='/botones/b2.png' className="p-2 imgbr" /></Link>
+              <Link to='/tienda'><Image src='/botones/b3.png' className="p-2 imgbr" /></Link>
+              <Link to='/pesa'><Image src='/pesa.png' width="80" className="p-2 imgbr" /></Link>
+              <Button variant="danger" onClick={submitLogout}>
+                <img src='/botones/logout.svg' />
+                Cerrar sesión
+              </Button>
             </Navbar.Collapse>
-            <Navbar.Brand>
-              <form onSubmit={e => submitLogout(e)}>
-                <Button type="submit" variant="danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-right" viewBox="0 0 16 16">
-                  <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5" />
-                </svg> Cerrar sesion
-                </Button>
-              </form></Navbar.Brand>
           </Container>
         </Navbar>
         <Outlet />
@@ -125,27 +104,21 @@ export function BarraNavegacion() {
   if (usuario.tipoUser === 3) { // trabajador
     return (
       <div>
-        <Navbar className='navbar-reci' expand="lg">
-          <Container>
-
+        <Navbar className='navbar-reci' expand="md">
+          <Container className='p-2'>
             <Navbar.Brand>RecyBear</Navbar.Brand>
             <Navbar.Brand>Bienvenido señor trabajador: {usuario.username}</Navbar.Brand>
-
-            <Navbar.Brand><img src="/logo.png" width="100" height="100" className="d-inline-block align-top logoreci" alt="logoReci" /></Navbar.Brand>
+            <Navbar.Brand><img src="/logo.png" className="logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Link to='/'>   <Image src='/botones/b1.png' width="80" className="d-inline-block align-top p-2 imgbr" /></Link>
-              <Link to='/foro'>   <Image src='/botones/b2.png' width="80" className="d-inline-block align-top p-2 imgbr" />    </Link>
-              <Link to='/tienda'> <Image src='/botones/b3.png' width="80" className="d-inline-block align-top p-2 imgbr" />  </Link>
-
+              <Link to='/'><Image src='/botones/b1.png' className="p-2 imgbr" /></Link>
+              <Link to='/foro'><Image src='/botones/b2.png' className="p-2 imgbr" /></Link>
+              <Link to='/tienda'><Image src='/botones/b3.png' className="p-2 imgbr" /></Link>
+              <Button variant="danger" onClick={submitLogout}>
+                <img src='/botones/logout.svg' />
+                Cerrar sesión
+              </Button>
             </Navbar.Collapse>
-            <Navbar.Brand>
-              <form onSubmit={e => submitLogout(e)}>
-                <Button type="submit" variant="danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-right" viewBox="0 0 16 16">
-                  <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5" />
-                </svg> Cerrar sesion
-                </Button>
-              </form></Navbar.Brand>
           </Container>
         </Navbar>
         <Outlet />
@@ -153,30 +126,25 @@ export function BarraNavegacion() {
     )
   }
 
-
   return (
     <div>
       <Navbar className='navbar-reci justify-content-between' expand='md'>
-        <Container fluid>
-          <Navbar.Brand className=''>
-            <img src="/logo.png" width="80" height="80" className="d-inline-block align-top logoreci" alt="logoReci" />
+        <Container className='p-2'>
+        <Navbar.Brand className='titulo'>RecyBear</Navbar.Brand>
+          <Navbar.Brand>
+            <img src="/logo.png" className="logoreci" alt="logoReci" />
           </Navbar.Brand>
-          <Navbar.Brand>RecyBear</Navbar.Brand>
-
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
-            <Link to='/'> <Image src='/botones/b1.png' width="70" className="d-inline-block align-top p-2 imgbr" /> </Link>
-            <Link to='/foro'> <Image src='/botones/b2.png' width="70" className="d-inline-block align-top p-2 imgbr" /> </Link>
-            <Link to='/tienda'> <Image src='/botones/b3.png' width="70" className="d-inline-block align-top p-2 imgbr" /> </Link>
-            <Link to='/sesion'> <Image src='/botones/b4.png' width="70" className="d-inline-block align-top p-2 imgbr" /> </Link>
-            <Link to='/reciclaje'> <Image src='/botones/libro.png' width="70" className="d-inline-block align-top p-2 imgbr" /> </Link>
-            <Link to='/mapa'> <Image src='/botones/botonMapa.png' width="80" className="d-inline-block align-top p-2 imgbr" /> </Link>
+            <Link to='/'><Image src='/botones/b1.png' className="m-2 imgbr" /></Link>
+            <Link to='/foro'><Image src='/botones/b2.png' className="m-2 imgbr" /></Link>
+            <Link to='/tienda'><Image src='/botones/b3.png' className="m-2 imgbr" /></Link>
+            <Link to='/sesion'><Image src='/botones/b4.png' className="m-2 imgbr" /></Link>
+            <Link to='/reciclaje'><Image src='/botones/libro.png' className="m-2 imgbr" /></Link>
+            <Link to='/mapa'><Image src='/botones/botonMapa.png' width="80" className="m-2 imgbr" /></Link>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
-
-
       <Outlet />
     </div>
   )

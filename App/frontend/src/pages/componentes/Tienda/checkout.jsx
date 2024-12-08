@@ -120,10 +120,10 @@ const CheckoutTienda = ({ carrito }) => {
 
   return (
     <Container>
-      <h2 className="text-center mb-4">Checkout</h2>
+      <h2 className="text-center mb-4 h2">Checkout</h2>
       <Row className="mb-4">
         <Col>
-          <h4>Productos en el carrito</h4>
+          <h4 className="h4">Productos en el carrito</h4>
           {carrito.length === 0 ? (
             <p>No hay productos en el carrito.</p>
           ) : (
@@ -135,7 +135,7 @@ const CheckoutTienda = ({ carrito }) => {
               ))}
             </ul>
           )}
-          <h5 className="mt-3">Costo total: {calcularCostoTotal()} puntos</h5>
+          <h5 className="mt-3 h5">Costo total: {calcularCostoTotal()} puntos</h5>
         </Col>
       </Row>
       <Row className="mb-4">

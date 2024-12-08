@@ -29,11 +29,11 @@ export function Home() {
     const [usuarioActivo, setUsuarioActivo] = useState();
     const [usuario, setUsuario] = useState([]);
 
-    const usuAct = async() =>{
+    const usuAct = async () => {
         const useract = await client.get('/api/user');
         setUsuario(useract.data.user);
         console.log(usuario);
-      }
+    }
 
     useEffect(() => {
         client.get("/api/user").then(function (res) {
@@ -45,50 +45,47 @@ export function Home() {
             });
     }, []);
 
-    if (usuario.tipoUser===1)
-        {
-            return(
-                <div>
-                        <AdminHome/>
-                </div>
-            )
-        } 
+    if (usuario.tipoUser === 1) {
+        return (
+            <div>
+                <AdminHome />
+            </div>
+        )
+    }
 
-    if (usuario.tipoUser===2)
-        {
-            return(
-                <div>
-                    <PerfilUsuario/>
-                </div>
-            )
-        } 
-    if (usuario.tipoUser===3)
-        {
-            return(
-                <div>
-                        <PerfilTrabajador/>
-                </div>
-            )
-        } 
-    
-    return ( 
+    if (usuario.tipoUser === 2) {
+        return (
+            <div>
+                <PerfilUsuario />
+            </div>
+        )
+    }
+    if (usuario.tipoUser === 3) {
+        return (
+            <div>
+                <PerfilTrabajador />
+            </div>
+        )
+    }
+
+    return (
         <div>
-            
-           <Container fluid >
+
+            <Container fluid >
                 <Row>
-                    <BajaNavBar/>
+                    <BajaNavBar />
                 </Row>
                 <Row>
-                    <Empresas/>
+                    <Empresas />
                 </Row>
                 <Row>
-                    <Demo/>
+                    <Demo />
                 </Row>
                 <Row>
-                    <Contacto/>
+                    <Contacto />
                 </Row>
                 <Row>
-                    <Footer/>
+                    <Footer />
                 </Row>
             </Container>
 

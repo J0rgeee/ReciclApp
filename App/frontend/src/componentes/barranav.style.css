@@ -1,6 +1,14 @@
 .navbar-reci{
     background-color: #006400;
-
+    justify-content: space-around !important;
+    padding-top: 0;
+    padding-bottom: 0;
+    .navbar-collapse{
+        .imgbr {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            width: 55px;
+        }
+    }
 }
 
 .navbar-reci .navbar-brand,
@@ -22,7 +30,6 @@
     border-radius: 50%;
     width: 80px;
     height: 80px;
-
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.45);
 }
 
@@ -33,9 +40,7 @@
     font-size: 30px;
 }
 
-.imgbr {
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
+
 
 .imgbr:hover {
     transform:  scale(1.1);
@@ -47,11 +52,6 @@
     font-weight: 400;
     font-style: normal;
   }
-
-/*
-<uniquifier>: Use a unique and descriptive class name
-<weight>: Use a value from 400 to 700
-*/
 
 .dynapuff {
   font-family: "DynaPuff", system-ui;
