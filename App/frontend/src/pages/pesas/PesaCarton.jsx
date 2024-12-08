@@ -58,13 +58,13 @@ function PesaCarton({email}) {
 
     try {
       const payload = {
-        emailusuario: currentUser.id, // ID del usuario autenticado
+        emailusuario: currentUser.email, // ID del usuario autenticado
         cantidadpeso: weight,        // Peso calculado
         estado: false,                // Estado por defecto
         tiporec: 2,  // Usa el email del usuario autenticado
       };
 
-      const response = await client.patch(
+      const response = await client.post(
         `http://localhost:8000/api/transpeso/`,
         payload,
         { headers: { "X-CSRFToken": csrftoken } }

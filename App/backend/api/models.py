@@ -119,7 +119,7 @@ class TransPuntos(models.Model):
 
 class TransPeso(models.Model):
     emailusuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    cantidadpeso = models.IntegerField()
+    cantidadpeso = models.FloatField()
     fechatrans = models.DateField(auto_now_add=True)
     estado = models.BooleanField(default=True)
     tiporec= models.ForeignKey(TipoReciclaje,on_delete=models.CASCADE,default=True)

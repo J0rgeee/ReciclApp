@@ -719,14 +719,19 @@ def read_weight_data(request):
     
 class TransPesoCreateAPIView(APIView):
     def post(self, request):
+        data = request.data
+        try:
+            tipo_reciclaje = TipoReciclaje.objects.get(idTR=data.get('tiporec'))
+        
+        except TipoReciclaje.DoesNotExist:
+            return Response({'error':'Tipo de reciciclaje nno encontrado'}, status=status.HTTP_200_OK)
+         
         # Serializa los datos entrantes
         serializer = TransPesoSerializer(data=request.data)
         
         if serializer.is_valid():
             serializer.save()  # Guarda el registro si es válido
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-        # Si no es válido, regresa un error
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class PuntosPesaPlasticoView(APIView):
