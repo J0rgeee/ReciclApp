@@ -38,7 +38,7 @@ const AdminUsuarios = () => {
   // Obtener lista de usuarios
   const fetchUsuarios = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/AdminUsuario/adminusuario/");
+      const response = await axios.get("http://localhost:8000/api/adminusuario/");
       setUsuarios(response.data);
     } catch (error) {
       console.error("Error al obtener los usuarios:", error);
@@ -79,7 +79,7 @@ const AdminUsuarios = () => {
   const fetchTiposUsuario = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/AdminUsuario/adminusuario/list-tipo-user/"
+        "http://localhost:8000/api/adminusuario/list-tipo-user/"
       );
       setTiposUsuario(response.data);
     } catch (error) {
@@ -153,11 +153,11 @@ const AdminUsuarios = () => {
   // Crear nuevo usuario
   const crearUser = async (e) => {
     e.preventDefault();
-    if (!nuevoUsuario.email || !nuevoUsuario.password || !nuevoUsuario.tipoUsuario) {
+    if (!nuevoUsuario.email || !nuevoUsuario.password || !nuevoUsuario.tipoUser) {
       alert("Por favor, completa todos los campos.");
       return;
     }
-
+    console.log("Datos a enviar:", nuevoUsuario);
     const result = await crearUsuario(nuevoUsuario);
     if (result.success) {
       setAlerta({ tipo: "success", mensaje: result.data.message });
@@ -214,7 +214,7 @@ const AdminUsuarios = () => {
                         className="btn-sm rounded-pill" onClick={() => setSelectedUsuario(usuario) || setShowModal(true)}>
                         ✏ Modificar
                       </Button>
-                      <Button variant="danger"
+                      <Button variant="danger ms-4"
                         className="btn-sm rounded-pill" onClick={() => eliminarUser(usuario.email)}>
                         ❌ Eliminar
                       </Button>
@@ -265,12 +265,12 @@ const AdminUsuarios = () => {
               <Modal.Title>Crear Usuario</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {["email", "password", "tipoUsuario"].map((field) => (
+              {["email", "password", "tipoUser"].map((field) => (
                 <Form.Group controlId={`formNuevo${field}`} key={field}>
                   <Form.Label>
-                    {field === "tipoUsuario" ? "Tipo de Usuario" : field.charAt(0).toUpperCase() + field.slice(1)}
+                    {field === "tipoUser" ? "Tipo de Usuario" : field.charAt(0).toUpperCase() + field.slice(1)}
                   </Form.Label>
-                  {field === "tipoUsuario" ? (
+                  {field === "tipoUser" ? (
                     <Form.Control
                       as="select"
                       name={field}

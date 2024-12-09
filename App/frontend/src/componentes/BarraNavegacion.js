@@ -20,37 +20,49 @@ export function BarraNavegacion() {
   const [usuarioActivo, setUsuarioActivo] = useState();
   const [usuario, setUsuario] = useState([]);
 
-  useEffect(() => {
-
-    const usuAct = async () => {
-      const useract = await axios.get('http://localhost:8000/api/user');
-      //  console.log(useract);
+  const usuAct = async () => {
+    try {
+      const useract = await client.get('/api/user');
       setUsuario(useract.data.user);
-      console.log(usuario);
-
+    } catch (error) {
+      console.error('Error al obtener usuario:', error);
+      setUsuarioActivo(false);
     }
+  }
 
-    client.get("/api/user").then(function (res) {
-      setUsuarioActivo(true);
-      usuAct();
-    })
-      .catch(function (error) {
+  useEffect(() => {
+    // Verificar el estado del usuario cuando el componente se monta
+    const checkUserStatus = async () => {
+      try {
+        await client.get("/api/user");
+        setUsuarioActivo(true);
+        usuAct();
+      } catch (error) {
         setUsuarioActivo(false);
-      });
+      }
+    };
+
+    checkUserStatus();
+
+    // Agregar un event listener para detectar cambios en la autenticación
+    window.addEventListener('auth-change', checkUserStatus);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('auth-change', checkUserStatus);
+    };
   }, []);
 
   function submitLogout(e) {
     e.preventDefault();
-    client.post(
-      "/api/logout",
-      { withCredentials: true }
-    ).then(function (res) {
-      setUsuarioActivo(false);
-      window.location.replace('/');
-
-    });
-
+    client.post("/api/logout", { withCredentials: true })
+      .then(function (res) {
+        setUsuarioActivo(false);
+        setUsuario([]); // Limpiar el estado del usuario
+        window.location.replace('/');
+      });
   }
+
   if (usuario.tipoUser === 1) //admin
   {
     return (
@@ -107,11 +119,10 @@ export function BarraNavegacion() {
         <Navbar className='navbar-reci' expand="md">
           <Container className='p-2'>
             <Navbar.Brand>RecyBear</Navbar.Brand>
-            <Navbar.Brand>Bienvenido señor trabajador: {usuario.username}</Navbar.Brand>
             <Navbar.Brand><img src="/logo.png" className="logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-              <Link to='/'><Image src='/botones/b1.png' className="m-2 imgbr" /></Link>
+              <Link to='/TrabHome'><Image src='/botones/b1.png' className="m-2 imgbr" /></Link>
               <Link to='/foro'><Image src='/botones/b2.png' className="m-2 imgbr" /></Link>
               <Link to='/tienda'><Image src='/botones/b3.png' className="m-2 imgbr" /></Link>
               <Button variant="danger" onClick={submitLogout}>

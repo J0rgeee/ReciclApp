@@ -15,13 +15,16 @@ import { MarkerProvider } from './pages/mapa/MarkerContext';
 import PuntosVerdesW from './pages/mapa/PuntosVerdesW';
 import { Pesa } from './pages/Pesa';
 import CheckoutTienda from './pages/componentes/Tienda/checkout';
-import AdminStats from './pages/admin/AdminStats';
+import TrabHome from './pages/trabajador/TrabHome';
+import MenuUsuario from './pages/usuario/MenuUsuario';
 
 function App() {
-  const location = useLocation(); // Obtén la ruta activa
+  
+  const location = useLocation();
+  console.log('Ruta actual:', location.pathname);
+  const hideFooter = ['/AdminHome', '/TrabHome'].includes(location.pathname);
+  console.log('¿Ocultar footer?:', hideFooter);
 
-  // Determina si la ruta activa requiere ocultar el footer
-  const hideFooter = location.pathname === '/adminhome';
   return (
     <MarkerProvider>
       <div>
@@ -35,7 +38,9 @@ function App() {
           <Route path='sesion' element={<Sesion />} />
           <Route path='reciclaje' element={<Reciclaje />} />
           <Route path='pesa' element={<Pesa />} />
-          <Route path='adminhome' element={<AdminHome hideFooter={true} />} />
+          <Route path='/AdminHome' element={<AdminHome />} />
+          <Route path='/TrabHome' element={<TrabHome />} />
+          <Route path='/MenuUsuario' element={<MenuUsuario />} />
         </Routes>
         {!hideFooter && <Footer />}
       </div>

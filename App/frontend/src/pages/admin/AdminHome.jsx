@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import SidebarAdmin from './SidebarAdmin';
 import axios from 'axios';
 import { Alert } from 'react-bootstrap';
-import { Footer } from '../../componentes/Footer';
 
 // Configuración global para Axios
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -51,7 +50,7 @@ export const fetchNotificaciones = async () => {
 export const crearUsuario = async (nuevoUsuario) => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/api/AdminUsuario/adminusuario/create-user/",
+      "http://localhost:8000/api/adminusuario/create-user/",
       nuevoUsuario,
       {
         headers: { "X-CSRFToken": getCsrfToken() },

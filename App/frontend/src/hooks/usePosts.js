@@ -9,7 +9,11 @@ const usePosts = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/Publi/publi/', {
-          withCredentials: true,
+          withCredentials: true, 
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.cookie.split('csrftoken=')[1]?.split(';')[0]
+          }
         });
         setPosts(response.data);
       } catch (error) {

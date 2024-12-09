@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework import viewsets,permissions, status,generics
 from .serializer import PesoUsuarioPlasticoSerializer, TransPesoSerializer,TransPuntosSerializer,DireccionesSerializer,MetasSerializer,ProgresoUsuarioMetaSerializer,PuntuacionSerializer,ProductoSerializer,SugRecSerializer,DesactivarUserSerializaer,RegistroRetiroSerializer,PublicacionSerializer,UsuarioUpdateSerializaer,PuntoVerdeSerializer,ComunaSerializer,CiudadSerializer,TipoReciclajePveSerializer,TipoReciclajeSerializer,UsuarioLoginSerializer,UsuarioRegistroSerializaer,UsuarioSerializer,AdminUsuariosSerializer,ComentarioSerializer,PedidoSerializer, NotificacionSerializer # type: ignore
@@ -20,11 +19,8 @@ from django.views.decorators.http import require_GET
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password  # Para encriptar contraseñas
 from django.db.models import Sum
-
-import json
 import serial
-
-from .permissions import IsAprobador
+from .permissions import IsAdministrador, IsTrabajador, IsAdminOrTrabajador
 
 # Create your views here.
 class PtoVerdeView (viewsets.ModelViewSet):
@@ -188,7 +184,7 @@ class UserView(APIView):
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAprobador])
+@permission_classes([IsAuthenticated, IsAdminOrTrabajador])
 def admin_stats(request):
     try:
         # Calcular totales de peso por tipo de reciclaje
@@ -220,7 +216,7 @@ def admin_stats(request):
 ##################################### Administrar Usuarios ###############################################   
     
 class AdminUsuarios(viewsets.ViewSet):
-    permission_classes = [IsAprobador]
+    permission_classes = [IsAuthenticated, IsAdministrador]
     serializer_class = AdminUsuariosSerializer
     queryset = Usuario.objects.all()
 
@@ -294,7 +290,7 @@ class AdminUsuarios(viewsets.ViewSet):
         return Response(tipos, status=status.HTTP_200_OK)
 
 class UpdateUsuario(generics.UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsAprobador]
+    permission_classes = [permissions.IsAuthenticated, IsAdministrador]
     queryset = Usuario.objects.all()
     serializer_class = UsuarioUpdateSerializaer
 
@@ -309,7 +305,7 @@ class UpdateUsuario(generics.UpdateAPIView):
     
 class DesUsuario(generics.UpdateAPIView):
     #Desactivar o activar usuario (por el administrador)
-    permission_classes = [permissions.IsAuthenticated, IsAprobador]
+    permission_classes = [permissions.IsAuthenticated, IsAdministrador]
     queryset = Usuario.objects.all()
     serializer_class = DesactivarUserSerializaer
     lookup_field = 'email'
@@ -362,7 +358,7 @@ class NotificacionViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             permission_classes = [AllowAny]
         elif self.action in ['toggle_leido', 'list', 'destroy', 'update', 'partial_update']:
-            permission_classes = [IsAuthenticated, IsAprobador]
+            permission_classes = [IsAuthenticated, IsAdministrador]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
@@ -514,7 +510,7 @@ def comentarios_publicacion(request, idPublicacion, idComentario=None):
     return Response({"error": "ID del comentario es necesario para eliminarlo"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ActualizarEstado(APIView):
-    permission_classes = [IsAuthenticated, IsAprobador]
+    permission_classes = [IsAuthenticated, IsAdministrador, IsTrabajador]
     def patch(self, request, idPublicacion):
         try:
             publicacion = get_object_or_404(Publicacion, idPublicacion=idPublicacion)
@@ -549,7 +545,7 @@ class ActualizarEstado(APIView):
 class PublicacionesPendientesView(ModelViewSet):
     queryset = Publicacion.objects.filter(estado=False).order_by('-timeCreate')  # Solo publicaciones no aprobadas
     serializer_class = PublicacionSerializer
-    permission_classes = [IsAuthenticated, IsAprobador]
+    permission_classes = [IsAuthenticated, IsAdminOrTrabajador]
 
     @action(detail=True, methods=['patch'], url_path='aprobar')
     def aprobar(self, request, pk=None):
@@ -561,7 +557,7 @@ class PublicacionesPendientesView(ModelViewSet):
         except Publicacion.DoesNotExist:
             return Response({"error": "Publicación no encontrada."}, status=404)
         
-    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated, IsAprobador])
+    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated, IsAdminOrTrabajador])
     def desaprobar(self, request, pk=None):
         """
         Acción para desaprobar una publicación.
@@ -574,7 +570,7 @@ class PublicacionesPendientesView(ModelViewSet):
         except Publicacion.DoesNotExist:
             return Response({"error": "Publicación no encontrada o ya desaprobada."}, status=404)
 
-    @action(detail=True, methods=['delete'], permission_classes=[IsAuthenticated, IsAprobador])
+    @action(detail=True, methods=['delete'], permission_classes=[IsAuthenticated, IsAdministrador])
     def eliminar(self, request, pk=None):
         """
         Acción para eliminar una publicación.
@@ -815,7 +811,7 @@ class TransPesoViewSet(viewsets.ViewSet):
             )
 
 class AdminTransPesoViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAprobador]
+    permission_classes = [IsAuthenticated, IsAdminOrTrabajador]
     serializer_class = TransPesoSerializer
     queryset = TransPeso.objects.all().order_by('-fechatrans')
 

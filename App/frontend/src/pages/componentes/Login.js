@@ -1,12 +1,11 @@
 import React from 'react'
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Stack from 'react-bootstrap/Stack';
 import Card from 'react-bootstrap/Card';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import axios from 'axios';
 import './styles.css';
-
+import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import { Register } from './Register';
 import { auth, googleProvider } from '../../componentes/firebaseConfig';
@@ -24,7 +23,7 @@ const client = axios.create({
 });
 
 export function Login() {
-
+    const navigate = useNavigate();
     const [, setUsuarioActivo] = useState();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -37,7 +36,7 @@ export function Login() {
         e.preventDefault();
         setErrorMessage('');  // Reseteamos cualquier mensaje de error previo
         try {
-            const response = await axios.post("http://localhost:8000/api/login", {
+            await axios.post("http://localhost:8000/api/login", {
                 email: email,
                 password: password
             });
@@ -49,11 +48,18 @@ export function Login() {
             const userResponse = await axios.get("http://localhost:8000/api/user");
             const userType = userResponse.data.user.tipoUser;
 
+            // Disparar evento de cambio de autenticación
+            window.dispatchEvent(new Event('auth-change'));
+
             // Redirigir según el tipo de usuario
-            if (userType === 1) {  // Si es administrador
-                window.location.replace('adminhome');
+            if (userType === 1) {
+                navigate('/AdminHome');
+            } else if (userType === 2) {
+                navigate('/MenuUsuario');
+            } else if (userType === 3) {
+                navigate('/TrabHome');
             } else {
-                window.location.replace('/');
+                navigate('/');
             }
 
         } catch (error) {
@@ -70,7 +76,6 @@ export function Login() {
             }
         }
     }
-
 
     function generateRandomPassword(length) {
         const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -89,23 +94,31 @@ export function Login() {
             const userData = {
                 displayName: user.displayName,
                 email: user.email,
-                password: generateRandomPassword(12) // Genera una contraseña aleatoria
+                password: generateRandomPassword(12)
             };
 
             // Verificar si el usuario ya está registrado
             const response = await client.post("/api/check-user", { email: user.email });
 
             if (response.data.exists) {
-                // Si el usuario ya está registrado, simplemente inicia sesión
-                setUsuarioActivo(true);
-                window.location.replace('/');
+                // Si el usuario ya está registrado, obtener su tipo y redirigir
+                const userResponse = await client.get("/api/user");
+                const userType = userResponse.data.user.tipoUser;
+                
+                if (userType === 1) {
+                    navigate('/AdminHome');
+                } else if (userType === 2) {
+                    navigate('/MenuUsuario');
+                } else if (userType === 3) {
+                    navigate('/TrabHome');
+                } else {
+                    navigate('/');
+                }
             } else {
                 // Si el usuario no está registrado, regístralo
-                userData.password = generateRandomPassword(12); // Genera una contraseña aleatoria
                 await client.post("/api/register", userData);
-
-                setUsuarioActivo(true);
-                window.location.replace('/');
+                window.dispatchEvent(new Event('auth-change'));
+                navigate('/');
             }
         } catch (error) {
             console.error("Error signing in: ", error);

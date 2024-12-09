@@ -62,7 +62,7 @@ urlpatterns = [
     path("TipoRec/", include(router3.urls)),
     path("Comuna/", include(router4.urls)), 
     path("Ciudad/", include(router5.urls)),
-    path("AdminUsuario/", include(router6.urls)),
+    path("", include(router6.urls)), #admin usuarios
     path("Publi/", include(router7.urls)),
     path("Regret/", include(router8.urls)),
     path("Contacto/", include(router9.urls)),

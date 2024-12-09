@@ -61,12 +61,6 @@
     background-color: aliceblue;
 }
 
-.content {
-    flex-grow: 1;
-    position: relative;
-    padding: 1rem;
-}
-
 .scroll {
     overflow: auto;
     max-height: 500px;
@@ -201,7 +195,7 @@
 /* admin publi */
 
 .sidebar-admin {
-    height: calc(100vh - 134.5px);
+    height: calc(100vh - 113.22px);
     display: flex;
     background-color: #8FBC8F;
 }
@@ -345,7 +339,7 @@ body {
 
 .d-flex-side {
     display: flex;
-    height: calc(100vh - 134.5px);
+    height: calc(100vh - 113.22px);
 }
 
 .sidebar-admin {
