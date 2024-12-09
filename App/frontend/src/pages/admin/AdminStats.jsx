@@ -1,35 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
+import useStats from '../../hooks/useStats';
 import './admin.styles.css';
 
 const AdminStats = () => {
-    const [stats, setStats] = useState({
-        totalUsuarios: 0,
-        usuariosActivos: 0,
-        totalPuntosVerdes: 0,
-        totalPublicaciones: 0
-    });
+    const { stats, loading, error } = useStats();
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/api/admin/stats/');
-                setStats(response.data);
-            } catch (error) {
-                console.error('Error al cargar estadísticas:', error);
-            }
-        };
+    if (loading) return <div>Cargando estadísticas...</div>;
+    if (error) return <div>Error: {error}</div>;
 
-        fetchStats();
-    }, []);
+    // Calcular total de kilos
+    const totalKilos = Object.values(stats.pesosPorTipo || {}).reduce((a, b) => a + b, 0);
 
     return (
         <div className="d-flex">
             <div className="content">
                 <Container fluid className="admin-stats-container">
                     <h2 className="text-center mb-4">Panel de Control</h2>
-                    <Row>
+                    
+                    {/* Estadísticas Generales */}
+                    <h4 className="mb-3">Estadísticas Generales</h4>
+                    <Row className="mb-4">
                         <Col md={3}>
                             <Card className="stat-card">
                                 <Card.Body>
@@ -70,6 +61,35 @@ const AdminStats = () => {
                                 </Card.Body>
                             </Card>
                         </Col>
+                    </Row>
+
+                    {/* Estadísticas de Reciclaje */}
+                    <h4 className="mb-3">Estadísticas de Reciclaje</h4>
+                    <Row>
+                        <Col md={12} className="mb-4">
+                            <Card className="stat-card">
+                                <Card.Body>
+                                    <Card.Title>Total Kilos Reciclados</Card.Title>
+                                    <Card.Text className="stat-number">
+                                        {totalKilos.toFixed(2)} kg
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                    <Row>
+                        {Object.entries(stats.pesosPorTipo || {}).map(([tipo, kilos]) => (
+                            <Col md={4} key={tipo} className="mb-3">
+                                <Card className="stat-card">
+                                    <Card.Body>
+                                        <Card.Title>{tipo}</Card.Title>
+                                        <Card.Text className="stat-number">
+                                            {kilos.toFixed(2)} kg
+                                        </Card.Text>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
                     </Row>
                 </Container>
             </div>

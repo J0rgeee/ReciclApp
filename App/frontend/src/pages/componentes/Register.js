@@ -94,7 +94,7 @@ export function Register() {
 
     return (
         <div className='reg'>
-            <Button onClick={handleShow} className='pd-2 boton'> Crear cuenta </Button>
+            <Button onClick={handleShow} className='pd-2 boton mb-2'> Crear cuenta </Button>
             <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} >
                 <Form onSubmit={e => submitRegister(e)}>
                     <Modal.Header closeButton>

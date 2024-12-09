@@ -119,7 +119,7 @@ const CheckoutTienda = ({ carrito }) => {
   }, []);
 
   return (
-    <Container>
+    <Container className="container-tienda">
       <h2 className="text-center mb-4 h2">Checkout</h2>
       <Row className="mb-4">
         <Col>

@@ -64,6 +64,8 @@ function PesaCarton({email}) {
         tiporec: 2,  
       };
 
+      
+
       const response = await client.post(
         `http://localhost:8000/api/transpeso/`,
         payload,

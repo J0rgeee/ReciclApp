@@ -44,7 +44,7 @@ export function Login() {
 
             // Si la respuesta es exitosa, verificamos el tipo de usuario
             setUsuarioActivo(true);
-            
+
             // Obtener información del usuario
             const userResponse = await axios.get("http://localhost:8000/api/user");
             const userType = userResponse.data.user.tipoUser;
@@ -115,58 +115,58 @@ export function Login() {
     const EnviarNotificacion = () => {
         const [email, setEmail] = useState('');
         const [mensaje, setMensaje] = useState('');
-      
+
         const enviarNotificacion = async () => {
-          try {
-            await axios.post('http://localhost:8000/api/notificaciones/', {
-              email,
-              mensaje,
-            });
-            Swal.fire('Éxito', 'Notificación enviada al administrador.', 'success');
-          } catch (error) {
-            Swal.fire('Error', 'No se pudo enviar la notificación.', 'error');
-          }
+            try {
+                await axios.post('http://localhost:8000/api/notificaciones/', {
+                    email,
+                    mensaje,
+                });
+                Swal.fire('Éxito', 'Notificación enviada al administrador.', 'success');
+            } catch (error) {
+                Swal.fire('Error', 'No se pudo enviar la notificación.', 'error');
+            }
         };
-      
+
         return (
-          <div>
-            <a onClick={handleShow} className='m-2'>Reactivar cuenta</a>
-            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} >
-                <Form onSubmit={e => enviarNotificacion(e)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Solicitud de activacion de cuenta</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form.Group className="mb-3" controlId="email" >
-                            <Form.Label>Ingrese su email</Form.Label>
-                            <Form.Control 
-                            type="email" 
-                            placeholder="name@ejemplo.com" 
-                            value={email} onChange={e => setEmail(e.target.value)} 
-                            required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="usuario">
-                            <Form.Label>Mensaje</Form.Label>
-                            <Form.Control 
-                            type="text" 
-                            placeholder="Nombre de usuario" 
-                            value={mensaje} onChange={e => setMensaje(e.target.value)} 
-                            required
-                            />
-                        </Form.Group>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                        <Button variant="primary" type="submit" id='register'>Enviar</Button>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
-          </div>
+            <div>
+                <a onClick={handleShow} className='m-2'>Reactivar cuenta</a>
+                <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} >
+                    <Form onSubmit={e => enviarNotificacion(e)}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Solicitud de activacion de cuenta</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form.Group className="mb-3" controlId="email" >
+                                <Form.Label>Ingrese su email</Form.Label>
+                                <Form.Control
+                                    type="email"
+                                    placeholder="name@ejemplo.com"
+                                    value={email} onChange={e => setEmail(e.target.value)}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3" controlId="usuario">
+                                <Form.Label>Mensaje</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Nombre de usuario"
+                                    value={mensaje} onChange={e => setMensaje(e.target.value)}
+                                    required
+                                />
+                            </Form.Group>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={handleClose}>
+                                Close
+                            </Button>
+                            <Button variant="primary" type="submit" id='register'>Enviar</Button>
+                        </Modal.Footer>
+                    </Form>
+                </Modal>
+            </div>
         );
-      };
+    };
 
     return (
 
@@ -194,18 +194,18 @@ export function Login() {
                             <Form.Control className='control' type="password" placeholder="" value={password} onChange={e => setPassword(e.target.value)} />
                         </FloatingLabel>
                     </Form.Group>
-                    <Stack gap={2} className="col-md-5 mx-auto">
-                        <Button className='boton' type='submit' id='login'>Iniciar sesion</Button>
-                        <Button variant='light' onClick={signInWithGoogle} className='FcGoogle'>Continuar con Google<FcGoogle /></Button>
-                        <Register />
-                    </Stack>
+
+                    <Button className='boton mb-2' type='submit' id='login'>Iniciar sesion</Button>
                 </Form>
+
+                <Button variant='light' onClick={signInWithGoogle} className='FcGoogle mb-2'>Continuar con Google<FcGoogle /></Button>
+                <Register />
                 {errorMessage && (
                     <div className="error-message" style={{ color: 'red', marginTop: '20px' }}>
                         {errorMessage}
                     </div>
                 )}
-                <EnviarNotificacion/>
+                <EnviarNotificacion />
             </Card>
         </div>
 

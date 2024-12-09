@@ -1,8 +1,11 @@
 .contenedor {
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center;     /* Centra verticalmente */
-    height: 100vh;          /* Ajusta la altura según sea necesario */
+    justify-content: center;
+    /* Centra horizontalmente */
+    align-items: center;
+    /* Centra verticalmente */
+    height: 100vh;
+    /* Ajusta la altura según sea necesario */
 }
 
 /* Estilos Login */
@@ -16,78 +19,99 @@
     background-color: rgba(240, 255, 255, 0.836);
     margin-top: 50px;
     padding: 20px;
-    width: 60%;
-    height: 400px;
+    width: 35%;
+    align-items: center;
+    flex-wrap: nowrap;
 
-    .card-title{
+    .card-title {
         font-weight: bold;
         margin-bottom: 20px;
         display: grid;
         justify-content: center;
     }
-}
 
-.control {
-    width: 100% !important;
+    form {
+        width: 100%;
+
+        .boton {
+            background-color: rgb(22, 102, 36);
+            border: 0;
+            --bs-btn-hover-bg: #228b22;
+            border-radius: 1cap;
+            width: 50%;
+        }
+    }
 }
 
 .boton {
-    background-color: rgb(99, 99, 94);
+    background-color: rgb(22, 102, 36);
     border: 0;
     --bs-btn-hover-bg: #228b22;
     border-radius: 1cap;
-    box-shadow: 20%;
+    width: 50%;
 }
 
-.FcGoogle{
+.FcGoogle {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    width: 50%;
+    border-color: rgb(107, 107, 107);
 }
+
 /* Estilos Login */
 
-/* Estilos Resgister */
+/* Estilos Register */
 .reg {
     display: contents;
 }
-/* Estilos Resgister */
+
+/* Estilos Register */
 
 .footer-custom {
-    background-color: #41B59A; 
-  }
+    background-color: #41B59A;
+}
 
 /* Estilos BajadaNavBar */
 
 .bn1 {
     background-color: #41B59A;
-    .bn2{
+
+    .bn2 {
         background-color: #41B59A;
         border: none;
+
         .bajadanav {
             align-content: center;
-            h1, h3, h5{
+
+            h1,
+            h3,
+            h5 {
                 color: rgb(37, 37, 37);
             }
-        }  
+        }
     }
 }
-
-
 
 .max {
     max-width: max-content;
 }
 
-.imagen{
-    width: 100%;  /* Ajusta el ancho como desees */
-    height: 100%; /* Ajusta la altura como desees */
-    object-fit: cover; /* Mantiene la proporción y recorta la imagen si es necesario */
+.imagen {
+    width: 100%;
+    /* Ajusta el ancho como desees */
+    height: 100%;
+    /* Ajusta la altura como desees */
+    object-fit: cover;
+    /* Mantiene la proporción y recorta la imagen si es necesario */
 }
 
-.imagen-baja-nav{
-    width: 85%;  /* Ajusta el ancho como desees */
-    height: 100%; /* Ajusta la altura como desees */
-    object-fit: cover; 
+.imagen-baja-nav {
+    width: 85%;
+    /* Ajusta el ancho como desees */
+    height: 100%;
+    /* Ajusta la altura como desees */
+    object-fit: cover;
 
 }
 

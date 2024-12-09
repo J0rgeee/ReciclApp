@@ -91,7 +91,7 @@ urlpatterns = [
     path('pesousuario-plas/update/<str:emailusuario>/', views.PuntosPesaPlasticoUpdateView.as_view(), name='puntos-plastico-update'),
     path('transpeso/', TransPesoCreateAPIView.as_view(), name='create-transpeso'),
     path('totalpesos/<str:email>/', peso_viewset, name='peso-usuario'),
-    path('peso/<int:id>/estado/', views.ActualizarEstadoPeso.as_view(), name='actualizar-estado-peso'),
+    path('admin/stats/', views.admin_stats, name='admin-stats'),
 
     # path('save-weight/', views.save_weight, name='save_weight'),
 
@@ -111,7 +111,4 @@ urlpatterns = [
     path('publicaciones/<int:idPublicacion>/comments/<int:idComentario>/', views.comentarios_publicacion, name='eliminar_comentario'),
 
     path('get-google-maps-api-key/', views.get_google_maps_api_key, name='get_google_maps_api_key'),
-
-    path('api/admin/stats/', views.admin_stats, name='admin-stats'),
-
 ]   

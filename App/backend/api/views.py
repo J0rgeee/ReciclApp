@@ -26,8 +26,6 @@ import serial
 
 from .permissions import IsAprobador
 
-
-
 # Create your views here.
 class PtoVerdeView (viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
@@ -181,7 +179,6 @@ class UserLogout(APIView):
         logout(request)
         return Response(status=status.HTTP_200_OK)
 
-
 class UserView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
@@ -190,6 +187,35 @@ class UserView(APIView):
         serializer = UsuarioSerializer(request.user)
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAprobador])
+def admin_stats(request):
+    try:
+        # Calcular totales de peso por tipo de reciclaje
+        pesos_por_tipo = TransPeso.objects.filter(estado=True).values('tiporec__nombre').annotate(
+            total_peso=Sum('cantidadpeso')
+        )
+        
+        # Convertir QuerySet a diccionario para fácil acceso
+        pesos_dict = {
+            item['tiporec__nombre']: float(item['total_peso'] or 0) 
+            for item in pesos_por_tipo
+        }
+
+        stats = {
+            'totalUsuarios': Usuario.objects.count(),
+            'usuariosActivos': Usuario.objects.filter(estado=True).count(),
+            'totalPuntosVerdes': PuntoVerde.objects.count(),
+            'totalPublicaciones': Publicacion.objects.count(),
+            'pesosPorTipo': pesos_dict
+        }
+        return Response(stats, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(
+            {'error': f'Error al obtener estadísticas: {str(e)}'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    
 ##########################################################################################################
 ##################################### Administrar Usuarios ###############################################   
     
@@ -584,7 +610,6 @@ class PuntuacionViewSet(viewsets.ViewSet):
         serializer = PuntuacionSerializer(puntuacion)
         return Response(serializer.data, status=status.HTTP_200_OK)
 	
-
 class MetasViewSet(viewsets.ViewSet):
     def list_metas_usuario(self, request, email=None):
         metas = Metas.objects.all()
@@ -600,7 +625,6 @@ class MetasViewSet(viewsets.ViewSet):
         
         return Response(metas_con_progreso, status=status.HTTP_200_OK)
 	
-
 class DireccionesListView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -613,7 +637,6 @@ class DireccionesListView(APIView):
         serializer = DireccionesSerializer(direcciones, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 	
-
 class DireccionesUpdateView(APIView):
     def patch(self, request, idDireccion):
         try:
@@ -629,14 +652,12 @@ class DireccionesUpdateView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	
-
 class ComunaListView(APIView):
     def get(self, request):
         comunas = Comuna.objects.all()
         serializer = ComunaSerializer(comunas, many=True)
         return Response(serializer.data)
 	
-
 class CrearDireccionesViewSet(viewsets.ModelViewSet):
     queryset = Direcciones.objects.all()
     serializer_class = DireccionesSerializer
@@ -793,49 +814,6 @@ class TransPesoViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-class ActualizarEstadoPeso(APIView):
-    permission_classes = [IsAuthenticated, IsAprobador]
-    def patch(self, request, id):
-        try:
-            pesousuario = get_object_or_404(TransPeso, idpeso=id)
-
-            # Extraer y validar el campo estado
-            nuevo_estado = request.data.get("estado")
-            if nuevo_estado is None:
-                return Response(
-                    {"error": "El campo 'estado' es requerido."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-             # Actualizar estado usando el serializador
-            serializer = TransPesoSerializer(
-                pesousuario, 
-                data={"estado": nuevo_estado}, 
-                partial=True  # Permite actualizar solo algunos campos
-            )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    {"message": "Estado actualizado correctamente.", "estado": serializer.data['estado']},
-                    status=status.HTTP_200_OK
-                )
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response(
-                {"error": f"Ocurrió un error: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsAprobador])
-def eliminar_peso(request, id):
-    try:
-        peso = TransPeso.objects.get(id=id)
-        peso.delete()
-        return Response({'mensaje': 'Registro eliminado exitosamente'}, status=status.HTTP_204_NO_CONTENT)
-    except TransPeso.DoesNotExist:
-        return Response({'error': 'Registro no encontrado'}, status=status.HTTP_404_NOT_FOUND)
-
 class AdminTransPesoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAprobador]
     serializer_class = TransPesoSerializer
@@ -981,8 +959,6 @@ def crear_pedido(request):
         except PuntuacioUsuario.DoesNotExist:
             return Response({"error": "No se encontraron puntos"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 @api_view(['GET'])
 def listar_pedidos(request):
     if request.method == 'GET':
@@ -990,17 +966,3 @@ def listar_pedidos(request):
         pedidos = Pedido.objects.filter(usuario=request.user)
         serializer = PedidoSerializer(pedidos, many=True)
         return Response(serializer.data)
-
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def admin_stats(request):
-    try:
-        stats = {
-            'totalUsuarios': Usuario.objects.count(),
-            'usuariosActivos': Usuario.objects.filter(estado=True).count(),
-            'totalPuntosVerdes': PuntoVerde.objects.count(),
-            'totalPublicaciones': Publicacion.objects.count()
-        }
-        return Response(stats)
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)

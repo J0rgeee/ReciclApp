@@ -87,7 +87,7 @@ const Puntuacion = ({ usuario }) => {
             <div className="recycling-item">
               <FaBox className="material-icon plastic" />
               <div>
-                <h5>{datosReciclaje.plastico.toFixed(2)} kg</h5>
+                <h5>{datosReciclaje.plastico.toFixed(2)} g</h5>
                 <small>Plástico</small>
               </div>
             </div>
@@ -95,7 +95,7 @@ const Puntuacion = ({ usuario }) => {
             <div className="recycling-item">
               <FaBox className="material-icon cardboard" />
               <div>
-                <h5>{datosReciclaje.carton.toFixed(2)} kg</h5>
+                <h5>{datosReciclaje.carton.toFixed(2)} g</h5>
                 <small>Cartón</small>
               </div>
             </div>
@@ -103,7 +103,7 @@ const Puntuacion = ({ usuario }) => {
             <div className="recycling-item">
               <FaWineBottle className="material-icon glass" />
               <div>
-                <h5>{datosReciclaje.vidrio.toFixed(2)} kg</h5>
+                <h5>{datosReciclaje.vidrio.toFixed(2)} g</h5>
                 <small>Vidrio</small>
               </div>
             </div>
@@ -111,7 +111,7 @@ const Puntuacion = ({ usuario }) => {
             <div className="recycling-item">
               <FaNewspaper className="material-icon paper" />
               <div>
-                <h5>{datosReciclaje.papel.toFixed(2)} kg</h5>
+                <h5>{datosReciclaje.papel.toFixed(2)} g</h5>
                 <small>Papel</small>
               </div>
             </div>
@@ -119,7 +119,7 @@ const Puntuacion = ({ usuario }) => {
             <div className="recycling-item">
               <FaTrashAlt className="material-icon cans" />
               <div>
-                <h5>{datosReciclaje.latas.toFixed(2)} kg</h5>
+                <h5>{datosReciclaje.latas.toFixed(2)} g</h5>
                 <small>Latas</small>
               </div>
             </div>
