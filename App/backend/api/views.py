@@ -745,17 +745,41 @@ class TransPesoCreateAPIView(APIView):
         data = request.data
         try:
             tipo_reciclaje = TipoReciclaje.objects.get(idTR=data.get('tiporec'))
-        
+            
+            # Asegurarse de que el peso sea válido
+            peso = float(data.get('cantidadpeso', 0))
+            if peso <= 0:
+                return Response(
+                    {'error': 'El peso debe ser mayor que 0'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Serializar y guardar los datos
+            serializer = TransPesoSerializer(data=request.data)
+            if serializer.is_valid():
+                transpeso = serializer.save()
+                return Response({
+                    'message': 'Registro creado exitosamente',
+                    'data': TransPesoSerializer(transpeso).data
+                }, status=status.HTTP_201_CREATED)
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
         except TipoReciclaje.DoesNotExist:
-            return Response({'error':'Tipo de reciciclaje nno encontrado'}, status=status.HTTP_200_OK)
-         
-        # Serializa los datos entrantes
-        serializer = TransPesoSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            serializer.save()  # Guarda el registro si es válido
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Tipo de reciclaje no encontrado'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except ValueError:
+            return Response(
+                {'error': 'Peso inválido'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Error inesperado: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class TransPesoViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]

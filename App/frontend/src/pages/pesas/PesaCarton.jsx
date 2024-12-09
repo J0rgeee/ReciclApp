@@ -18,8 +18,6 @@ const client = axios.create({
 function PesaCarton({email}) {
   const [weight, setWeight] = useState(null);
   const [error, setError] = useState(null);
-  const [formData, setformData] = useState(null);
-  const [lastPeso,setLastPeso] = useState(null);
   const [currentUser, setCurrentUser] = useState([]);
 
   useEffect(() => {
@@ -59,12 +57,10 @@ function PesaCarton({email}) {
     try {
       const payload = {
         emailusuario: currentUser.email, // ID del usuario autenticado
-        cantidadpeso: weight,        // Peso calculado
+        cantidadpeso: weight / 1000,        // Peso calculado
         estado: false,                // Estado por defecto
         tiporec: 2,  
       };
-
-      
 
       const response = await client.post(
         `http://localhost:8000/api/transpeso/`,
@@ -78,7 +74,7 @@ function PesaCarton({email}) {
       setError("No se pudo guardar el peso.");
     }
   };
-
+/*
 useEffect(() => {
     console.log(email);
     const ultimoPeso = async () => {
@@ -93,7 +89,7 @@ useEffect(() => {
     ultimoPeso();
     console.log(lastPeso)
 }, []);
-
+*/
     
   return (
       <Container>

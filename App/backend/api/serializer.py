@@ -190,10 +190,44 @@ class TransPuntosSerializer(serializers.ModelSerializer):
 
 class TransPesoSerializer(serializers.ModelSerializer):
     tiporec_nombre = serializers.CharField(source='tiporec.nombre', read_only=True)
+    
     class Meta:
         model = TransPeso
-        fields = ['id', 'emailusuario', 'cantidadpeso', 'fechatrans', 'estado', 'tiporec','tiporec_nombre']
+        fields = ['id', 'emailusuario', 'cantidadpeso', 'fechatrans', 'estado', 'tiporec', 'tiporec_nombre']
+
+    def create(self, validated_data):
+        # Crear el registro de TransPeso
+        transpeso = TransPeso.objects.create(**validated_data)
         
+        # Calcular puntos basados en el peso (por ejemplo, 1 punto por cada 0.1 kg)
+        puntos = int(validated_data['cantidadpeso'] * 10)  # Multiplica por 10 para convertir kg a puntos
+        
+        try:
+            # Obtener o crear registro de puntuación para el usuario
+            puntuacion, created = PuntuacioUsuario.objects.get_or_create(
+                emailusuario=validated_data['emailusuario']
+            )
+            
+            # Actualizar los puntos según el tipo de reciclaje
+            tipo_reciclaje_id = validated_data['tiporec'].idTR
+            if tipo_reciclaje_id == 3:  # Plástico
+                puntuacion.puntosplas += puntos * 200
+            elif tipo_reciclaje_id == 2:  # Cartón
+                puntuacion.puntoscarton += puntos * 100
+            elif tipo_reciclaje_id == 12:  # Vidrio
+                puntuacion.putnosvidrio += puntos * 150
+            elif tipo_reciclaje_id == 16:  # Papel
+                puntuacion.puntospapel += puntos * 120
+            elif tipo_reciclaje_id == 9:  # Latas
+                puntuacion.puntoslatas += puntos * 250
+            
+            puntuacion.save()
+            
+        except Exception as e:
+            print(f"Error al actualizar puntos: {str(e)}")
+            
+        return transpeso
+
 class PesoUsuarioPlasticoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PesoUsuario
