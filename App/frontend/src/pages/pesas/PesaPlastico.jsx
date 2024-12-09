@@ -14,12 +14,10 @@ const client = axios.create({
     baseURL: "http://localhost:8000",
 });
 
-function PesaPlastico({email}) {
+function PesaPlastico() {
     const [weight, setWeight] = useState(null);
     const [error, setError] = useState(null);
-    const [lastPeso, setLastPeso] = useState(null);
     const [currentUser, setCurrentUser] = useState([]);
-    const TIPO_RECICLAJE = 3;
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -41,13 +39,14 @@ function PesaPlastico({email}) {
     const fetchWeight = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/read-weight/');
-            setWeight(response.data.max_weight);
+            const pesoRedondeado = parseFloat(response.data.max_weight).toFixed(2);
+            setWeight(pesoRedondeado);
             setError(null);
             
             Swal.fire({
                 icon: 'success',
                 title: 'Peso registrado',
-                text: `Se registró un peso de ${response.data.max_weight} gramos`
+                text: `Se registró un peso de ${pesoRedondeado} gramos`
             });
         } catch (error) {
             setError('No se encontró peso válido');
@@ -70,14 +69,16 @@ function PesaPlastico({email}) {
         }
 
         try {
+            const pesoKg = (parseFloat(weight) / 1000).toFixed(2);
             const payload = {
                 emailusuario: currentUser.email,
-                cantidadpeso: weight / 1000,
-                estado: true,
-                tiporec: TIPO_RECICLAJE,
+                cantidadpeso: pesoKg,
+                estado: false,
+                tiporec: 3,
             };
 
-            const response = await client.post(`/api/transpeso/`, 
+            const response = await client.post(
+                `/api/transpeso/`,
                 payload,
                 { headers: { "X-CSRFToken": csrftoken } }
             );

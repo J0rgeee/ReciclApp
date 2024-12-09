@@ -196,11 +196,12 @@ class TransPesoSerializer(serializers.ModelSerializer):
         fields = ['id', 'emailusuario', 'cantidadpeso', 'fechatrans', 'estado', 'tiporec', 'tiporec_nombre']
 
     def create(self, validated_data):
+        # Redondear el peso a 2 decimales antes de crear el registro
+        peso_kg = round(float(validated_data['cantidadpeso']), 2)
+        validated_data['cantidadpeso'] = peso_kg
+        
         # Crear el registro de TransPeso
         transpeso = TransPeso.objects.create(**validated_data)
-        
-        # Calcular puntos basados en el peso (por ejemplo, 1 punto por cada 0.1 kg)
-        puntos = int(validated_data['cantidadpeso'] * 10)  # Multiplica por 10 para convertir kg a puntos
         
         try:
             # Obtener o crear registro de puntuación para el usuario
@@ -208,18 +209,30 @@ class TransPesoSerializer(serializers.ModelSerializer):
                 emailusuario=validated_data['emailusuario']
             )
             
-            # Actualizar los puntos según el tipo de reciclaje
+            # Multiplicadores según la tabla de EcoPuntos
+            multiplicadores = {
+                2: 100,   # Cartón: 100 puntos/kg
+                12: 150,  # Vidrio: 150 puntos/kg
+                16: 120,  # Papel: 120 puntos/kg
+                3: 200,   # Plástico: 200 puntos/kg
+                9: 250    # Latas: 250 puntos/kg
+            }
+            
+            # Calcular puntos según el tipo de material
             tipo_reciclaje_id = validated_data['tiporec'].idTR
+            puntos = int(peso_kg * multiplicadores.get(tipo_reciclaje_id, 0))
+            
+            # Actualizar los puntos según el tipo de reciclaje
             if tipo_reciclaje_id == 3:  # Plástico
-                puntuacion.puntosplas += puntos * 200
+                puntuacion.puntosplas += puntos
             elif tipo_reciclaje_id == 2:  # Cartón
-                puntuacion.puntoscarton += puntos * 100
+                puntuacion.puntoscarton += puntos
             elif tipo_reciclaje_id == 12:  # Vidrio
-                puntuacion.putnosvidrio += puntos * 150
+                puntuacion.putnosvidrio += puntos
             elif tipo_reciclaje_id == 16:  # Papel
-                puntuacion.puntospapel += puntos * 120
+                puntuacion.puntospapel += puntos
             elif tipo_reciclaje_id == 9:  # Latas
-                puntuacion.puntoslatas += puntos * 250
+                puntuacion.puntoslatas += puntos
             
             puntuacion.save()
             
@@ -227,6 +240,19 @@ class TransPesoSerializer(serializers.ModelSerializer):
             print(f"Error al actualizar puntos: {str(e)}")
             
         return transpeso
+
+    def validate_cantidadpeso(self, value):
+        """
+        Validar y limpiar el peso antes de procesarlo
+        """
+        try:
+            # Convertir a float y redondear a 2 decimales
+            peso = round(float(value), 2)
+            if peso <= 0:
+                raise serializers.ValidationError("El peso debe ser mayor que 0")
+            return peso
+        except ValueError:
+            raise serializers.ValidationError("El peso debe ser un número válido")
 
 class PesoUsuarioPlasticoSerializer(serializers.ModelSerializer):
     class Meta:

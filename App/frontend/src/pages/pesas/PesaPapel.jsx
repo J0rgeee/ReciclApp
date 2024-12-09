@@ -1,105 +1,136 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Button, Row, Col,Form } from 'react-bootstrap';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import Cookies from "js-cookie";
 
-function PesaPapel({email}) {
+const csrftoken = Cookies.get("csrftoken");
+
+const client = axios.create({
+    baseURL: "http://localhost:8000",
+});
+
+function PesaPapel() {
     const [weight, setWeight] = useState(null);
     const [error, setError] = useState(null);
-    const [lastPeso,setLastPeso] = useState(null);
     const [currentUser, setCurrentUser] = useState([]);
-  
+
     useEffect(() => {
-      // Obtener usuario autenticado
-      const fetchUser = async () => {
-        try {
-          const response = await axios.get('http://localhost:8000/api/user', { withCredentials: true });
-          setCurrentUser(response.data.user);  // Supón que response.data contiene el objeto de usuario
-          console.log(response.data.user.email);
-          console.log("Usuario autenticado:", currentUser.email);
-  
-        } catch (error) {
-          console.error("Error al obtener el usuario autenticado:", error);
-        }
-      };
-      fetchUser();
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/user', { withCredentials: true });
+                setCurrentUser(response.data.user);
+            } catch (error) {
+                console.error("Error al obtener el usuario autenticado:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo obtener la información del usuario'
+                });
+            }
+        };
+        fetchUser();
     }, []);
-  
-  
+
     const fetchWeight = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/read-weight/');
-            setWeight(response.data.max_weight); 
-            setError(null); 
+            setWeight(response.data.max_weight);
+            setError(null);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Peso registrado',
+                text: `Se registró un peso de ${response.data.max_weight} gramos`
+            });
         } catch (error) {
-            setError('No se encontro peso valido');
+            setError('No se encontró peso válido');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo obtener el peso'
+            });
         }
     };
-  
-    // Función para subir el peso calculado
-    const subirPeso = async () => {
-      if (!weight) {
-        setError("No hay un peso calculado para guardar.");
-        return;
-      }
-  
-      try {
-        const payload = {
-          emailusuario: currentUser.email, // ID del usuario autenticado
-          cantidadpeso: weight,        // Peso calculado
-          estado: false,                // Estado por defecto
-          tiporec: 2,  
-        };
-  
-        const response = await client.post(
-          `http://localhost:8000/api/transpeso/`,
-          payload,
-          { headers: { "X-CSRFToken": csrftoken } }
-        );
-        console.log("Peso guardado:", response.data);
-        setError(null);
-      } catch (error) {
-        console.error("Error al guardar el peso:", error);
-        setError("No se pudo guardar el peso.");
-      }
-    };
-  
-  useEffect(() => {
-      console.log(email);
-      const ultimoPeso = async () => {
-          try {
-              const response = await axios.get(`http://localhost:8000/api/pesousuario-plas/${email}/`);
-              setLastPeso(response.data);
-          } catch (error) {
-              setError('No se encontro peso valido');
-          }
-          };
-  
-      ultimoPeso();
-      console.log(lastPeso)
-  }, []);
 
-  return (
-      <Container>
-          <Row className="justify-content-center">
-              <Col md={8}>
-                  <p><h1>USTED VA A RECICLAR PAPEL</h1></p>
-                  <h2>Peso Actual:</h2>
-                  {error ? (
-                      <p>{error}</p>
-                  ) : (
-                      <p>{weight !== null ? `${weight} gramos` : 'Presione el boton para iniciar el registro'}</p>
-                  )}
-                  <Button variant="primary" onClick={fetchWeight}>
-                      Calcular mi peso 
-                  </Button>
-                  <Button variant="primary" >
-                      Subir mi Peso 
-                  </Button>
-                  <p></p>
-              </Col>
-          </Row>
-      </Container>
-  );
+    const subirPeso = async () => {
+        if (!weight) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'No hay un peso calculado para guardar'
+            });
+            return;
+        }
+
+        try {
+            const payload = {
+                emailusuario: currentUser.email,
+                cantidadpeso: weight / 1000,
+                estado: false,
+                tiporec: 3,
+            };
+
+            const response = await client.post(`/api/transpeso/`, 
+                payload,
+                { headers: { "X-CSRFToken": csrftoken } }
+            );
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Peso guardado exitosamente!',
+                text: `Se han registrado ${weight} gramos de plástico`
+            });
+
+            setWeight(null);
+            setError(null);
+        } catch (error) {
+            console.error("Error al guardar el peso:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo guardar el peso'
+            });
+        }
+    };
+
+    return (
+        <Container>
+            <Row className="justify-content-center">
+                <Col md={8}>
+                    <h1 className="text-center mb-4">RECICLAJE DE PLÁSTICO</h1>
+                    <div className="text-center mb-4">
+                        <h2>Peso Actual:</h2>
+                        {error ? (
+                            <p className="text-danger">{error}</p>
+                        ) : (
+                            <p className="h3">
+                                {weight !== null ? `${weight} gramos` : 'Presione el botón para iniciar el registro'}
+                            </p>
+                        )}
+                    </div>
+                    <div className="d-grid gap-2">
+                        <Button 
+                            variant="primary" 
+                            size="lg"
+                            onClick={fetchWeight}
+                            className="mb-2"
+                        >
+                            Calcular mi peso
+                        </Button>
+                        <Button 
+                            variant="success" 
+                            size="lg"
+                            onClick={subirPeso}
+                            disabled={!weight}
+                        >
+                            Guardar mi Peso
+                        </Button>
+                    </div>
+                </Col>
+            </Row>
+        </Container>
+    );
 }
 
 export default PesaPapel;
