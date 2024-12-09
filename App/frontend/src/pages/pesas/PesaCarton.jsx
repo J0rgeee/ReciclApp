@@ -38,66 +38,69 @@ function PesaCarton() {
     }, []);
 
     const fetchWeight = async () => {
-        try {
-            const response = await axios.get('http://localhost:8000/api/read-weight/');
-            setWeight(response.data.max_weight);
-            setError(null);
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Peso registrado',
-                text: `Se registró un peso de ${response.data.max_weight} gramos`
-            });
-        } catch (error) {
-            setError('No se encontró peso válido');
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'No se pudo obtener el peso'
-            });
-        }
-    };
+      try {
+          const response = await axios.get('http://localhost:8000/api/read-weight/');
+          const pesoRedondeado = parseFloat(response.data.max_weight).toFixed(2);
+          setWeight(pesoRedondeado);
+          setError(null);
+          
+          Swal.fire({
+              icon: 'success',
+              title: 'Peso registrado',
+              text: `Se registró un peso de ${pesoRedondeado} gramos`
+          });
+      } catch (error) {
+          setError('No se encontró peso válido');
+          Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo obtener el peso'
+          });
+      }
+  };
 
-    const subirPeso = async () => {
-        if (!weight) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: 'No hay un peso calculado para guardar'
-            });
-            return;
-        }
+  const subirPeso = async () => {
+      if (!weight) {
+          Swal.fire({
+              icon: 'warning',
+              title: 'Advertencia',
+              text: 'No hay un peso calculado para guardar'
+          });
+          return;
+      }
 
-        try {
-            const payload = {
-                emailusuario: currentUser.email,
-                cantidadpeso: weight / 1000,
-                estado: false,
-                tiporec: 3,
-            };
+      try {
+          const pesoKg = (parseFloat(weight) / 1000).toFixed(2);
+          const payload = {
+              emailusuario: currentUser.email,
+              cantidadpeso: pesoKg,
+              estado: false,
+              tiporec: 2,
+          };
 
-            const response = await client.post(`/api/transpeso/`, 
-                payload,
-                { headers: { "X-CSRFToken": csrftoken } }
-            );
+          const response = await client.post(
+              `/api/transpeso/`,
+              payload,
+              { headers: { "X-CSRFToken": csrftoken } }
+          );
 
-            Swal.fire({
-                icon: 'success',
-                title: '¡Peso guardado exitosamente!',
-                text: `Se han registrado ${weight} gramos de plástico`
-            });
+          Swal.fire({
+              icon: 'success',
+              title: '¡Peso guardado exitosamente!',
+              text: `Se han registrado ${weight} gramos de plástico`
+          });
 
-            setWeight(null);
-            setError(null);
-        } catch (error) {
-            console.error("Error al guardar el peso:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'No se pudo guardar el peso'
-            });
-        }
-    };
+          setWeight(null);
+          setError(null);
+      } catch (error) {
+          console.error("Error al guardar el peso:", error);
+          Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo guardar el peso'
+          });
+      }
+  };
 
     return (
         <Container>
