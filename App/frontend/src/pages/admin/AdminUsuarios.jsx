@@ -87,6 +87,11 @@ const AdminUsuarios = () => {
     }
   };
 
+  const getTipoUsuarioDesc = (idTR) => {
+    const tipoUsuario = tiposUsuario.find(tipo => tipo.idTR === idTR);
+    return tipoUsuario ? tipoUsuario.desc : idTR;
+  };
+
   useEffect(() => {
     fetchUsuarios();
     fetchTiposUsuario();
@@ -200,7 +205,7 @@ const AdminUsuarios = () => {
                     <td>{usuario.apellido}</td>
                     <td>{usuario.username}</td>
                     <td>{usuario.email}</td>
-                    <td>{usuario.tipoUser}</td>
+                    <td>{getTipoUsuarioDesc(usuario.tipoUser)}</td>
                     <td>{usuario.telefono}</td>
                     <td>{usuario.estado ? "Activa" : "Inactiva"}
                       <Form.Check
