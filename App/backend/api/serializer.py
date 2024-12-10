@@ -199,60 +199,65 @@ class TransPesoSerializer(serializers.ModelSerializer):
         # Redondear el peso a 2 decimales antes de crear el registro
         peso_kg = round(float(validated_data['cantidadpeso']), 2)
         validated_data['cantidadpeso'] = peso_kg
+        validated_data['estado'] = False  # Aseguramos que se cree en estado False
         
-        # Crear el registro de TransPeso
+        # Crear el registro de TransPeso sin sumar puntos
         transpeso = TransPeso.objects.create(**validated_data)
-        
-        try:
-            # Obtener o crear registro de puntuación para el usuario
-            puntuacion, created = PuntuacioUsuario.objects.get_or_create(
-                emailusuario=validated_data['emailusuario']
-            )
-            
-            # Multiplicadores según la tabla de EcoPuntos
-            multiplicadores = {
-                2: 100,   # Cartón: 100 puntos/kg
-                12: 150,  # Vidrio: 150 puntos/kg
-                16: 120,  # Papel: 120 puntos/kg
-                3: 200,   # Plástico: 200 puntos/kg
-                9: 250    # Latas: 250 puntos/kg
-            }
-            
-            # Calcular puntos según el tipo de material
-            tipo_reciclaje_id = validated_data['tiporec'].idTR
-            puntos = int(peso_kg * multiplicadores.get(tipo_reciclaje_id, 0))
-            
-            # Actualizar los puntos según el tipo de reciclaje
-            if tipo_reciclaje_id == 3:  # Plástico
-                puntuacion.puntosplas += puntos
-            elif tipo_reciclaje_id == 2:  # Cartón
-                puntuacion.puntoscarton += puntos
-            elif tipo_reciclaje_id == 12:  # Vidrio
-                puntuacion.putnosvidrio += puntos
-            elif tipo_reciclaje_id == 16:  # Papel
-                puntuacion.puntospapel += puntos
-            elif tipo_reciclaje_id == 9:  # Latas
-                puntuacion.puntoslatas += puntos
-            
-            puntuacion.save()
-            
-        except Exception as e:
-            print(f"Error al actualizar puntos: {str(e)}")
-            
         return transpeso
 
     def validate_cantidadpeso(self, value):
-        """
-        Validar y limpiar el peso antes de procesarlo
-        """
         try:
-            # Convertir a float y redondear a 2 decimales
             peso = round(float(value), 2)
             if peso <= 0:
                 raise serializers.ValidationError("El peso debe ser mayor que 0")
             return peso
         except ValueError:
             raise serializers.ValidationError("El peso debe ser un número válido")
+
+    def update(self, instance, validated_data):
+        # Si el estado cambia a True, actualizamos los puntos
+        if validated_data.get('estado', False) and not instance.estado:
+            try:
+                puntuacion, created = PuntuacioUsuario.objects.get_or_create(
+                    emailusuario=instance.emailusuario
+                )
+                
+                # Multiplicadores según la tabla de EcoPuntos
+                multiplicadores = {
+                    2: 100,   # Cartón: 100 puntos/kg
+                    12: 150,  # Vidrio: 150 puntos/kg
+                    16: 120,  # Papel: 120 puntos/kg
+                    3: 200,   # Plástico: 200 puntos/kg
+                    9: 250    # Latas: 250 puntos/kg
+                }
+                
+                # Calcular puntos según el tipo de material
+                peso_kg = instance.cantidadpeso
+                tipo_reciclaje_id = instance.tiporec.idTR
+                puntos = int(peso_kg * multiplicadores.get(tipo_reciclaje_id, 0))
+                
+                # Actualizar los puntos según el tipo de reciclaje
+                if tipo_reciclaje_id == 3:  # Plástico
+                    puntuacion.puntosplas += puntos
+                elif tipo_reciclaje_id == 2:  # Cartón
+                    puntuacion.puntoscarton += puntos
+                elif tipo_reciclaje_id == 12:  # Vidrio
+                    puntuacion.putnosvidrio += puntos
+                elif tipo_reciclaje_id == 16:  # Papel
+                    puntuacion.puntospapel += puntos
+                elif tipo_reciclaje_id == 9:  # Latas
+                    puntuacion.puntoslatas += puntos
+                
+                puntuacion.save()
+                
+            except Exception as e:
+                print(f"Error al actualizar puntos: {str(e)}")
+        
+        # Actualizar los campos del modelo
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
 
 class PesoUsuarioPlasticoSerializer(serializers.ModelSerializer):
     class Meta:

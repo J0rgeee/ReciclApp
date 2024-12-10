@@ -781,123 +781,104 @@ class TransPesoCreateAPIView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-class TransPesoViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
-    
-    def retrieve_puntuacion_usuario(self, request, email=None):
-        try:
-            # Calcular totales de reciclaje por tipo desde TransPeso
-            totales_reciclaje = TransPeso.objects.filter(
-                emailusuario__email=email,
-                estado=True  # Solo considerar registros activos
-            ).values(
-                'tiporec'
-            ).annotate(
-                total_peso=Sum('cantidadpeso')  # Usar cantidadpeso en lugar de peso
-            )
-            
-            # Crear un diccionario con los totales
-            totales_por_tipo = {
-                'total_reciclado': 0,
-                'plastico': 0,
-                'papel': 0,
-                'vidrio': 0,
-                'carton': 0,
-                'latas': 0
-            }
-            
-            # Mapear los IDs de tipo de reciclaje a nombres
-            tipo_mapping = {
-                3: 'plastico',
-                2: 'carton', 
-                12: 'vidrio',
-                16: 'papel',
-                9: 'latas'
-            }
-            
-            # Llenar los totales
-            for total in totales_reciclaje:
-                tipo_nombre = tipo_mapping.get(total['tiporec'])
-                if tipo_nombre:
-                    peso = total['total_peso'] or 0
-                    totales_por_tipo[tipo_nombre] = round(peso, 2)  # Redondear a 2 decimales
-                    totales_por_tipo['total_reciclado'] += peso
-            
-            # Redondear el total general
-            totales_por_tipo['total_reciclado'] = round(totales_por_tipo['total_reciclado'], 2)
-            
-            return Response(totales_por_tipo, status=status.HTTP_200_OK)
-            
-        except Exception as e:
-            return Response(
-                {'error': f'Error al obtener los datos: {str(e)}'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-class AdminTransPesoViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAdminOrTrabajador]
-    serializer_class = TransPesoSerializer
+class TransPesoViewSet(viewsets.ModelViewSet):
     queryset = TransPeso.objects.all().order_by('-fechatrans')
-
-    def get_queryset(self):
-        # Filtrar por estado si se especifica en la URL
-        estado = self.request.query_params.get('estado', None)
-        queryset = TransPeso.objects.all().order_by('-fechatrans')
-        if estado is not None:
-            queryset = queryset.filter(estado=estado.lower() == 'true')
-        return queryset
-
-    @action(detail=True, methods=['patch'])
-    def aprobar(self, request, pk=None):
-        try:
-            peso = self.get_object()
-            peso.estado = True
-            peso.save()
-            return Response({"message": "Peso aprobado con éxito."})
-        except TransPeso.DoesNotExist:
-            return Response(
-                {"error": "Registro de peso no encontrado."}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-        
-    @action(detail=True, methods=['patch'])
-    def desaprobar(self, request, pk=None):
-        try:
-            peso = self.get_object()
-            peso.estado = False
-            peso.save()
-            return Response({"message": "Peso desaprobado con éxito."})
-        except TransPeso.DoesNotExist:
-            return Response(
-                {"error": "Registro de peso no encontrado."}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-    @action(detail=True, methods=['delete'])
-    def eliminar(self, request, pk=None):
-        try:
-            peso = self.get_object()
-            peso.delete()
-            return Response(
-                {"message": "Registro de peso eliminado con éxito."}, 
-                status=status.HTTP_204_NO_CONTENT
-            )
-        except TransPeso.DoesNotExist:
-            return Response(
-                {"error": "Registro de peso no encontrado."}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer_class = TransPesoSerializer
     
+    def get_permissions(self):
+        if self.action in ['list', 'create', 'update', 'partial_update', 'destroy', 'aprobar']:
+            permission_classes = [IsAdminOrTrabajador]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
+    @action(
+        detail=False,
+        methods=['get'],
+        url_path='totalpesos/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})',
+        url_name='user-totalpesos'
+    )
+    def retrieve_totalpesos(self, request, email=None):
+        """
+        Obtiene los totales de peso por tipo de reciclaje para un usuario específico.
+        """
+        try:
+            # Verificar que el usuario solo pueda ver sus propios datos
+            if request.user.email != email and not request.user.is_staff:
+                return Response(
+                    {'error': 'No tiene permiso para ver estos datos'}, 
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            # Obtener todos los pesos aprobados del usuario
+            pesos = TransPeso.objects.filter(
+                emailusuario=email,
+                estado=True
+            ).values('tiporec').annotate(
+                total_peso=Sum('cantidadpeso')
+            )
+
+            # Formatear la respuesta
+            resultado = {
+                'email': email,
+                'pesos_por_tipo': {
+                    'plastico': 0,
+                    'carton': 0,
+                    'vidrio': 0,
+                    'papel': 0,
+                    'latas': 0
+                }
+            }
+
+            for peso in pesos:
+                tipo_id = peso['tiporec']
+                total = peso['total_peso'] or 0
+                tipo_nombre = {
+                    3: 'plastico',
+                    2: 'carton',
+                    12: 'vidrio',
+                    16: 'papel',
+                    9: 'latas'
+                }.get(tipo_id, 'desconocido')
+                
+                if tipo_nombre in resultado['pesos_por_tipo']:
+                    resultado['pesos_por_tipo'][tipo_nombre] = round(total, 2)
+
+            return Response(resultado)
+
+        except Exception as e:
+            print(f"Error en retrieve_totalpesos: {str(e)}")  # Para debug
+            return Response(
+                {'error': f'Error al obtener puntuación: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+class AprobarPesoView(APIView):
+    permission_classes = [IsAdminOrTrabajador]
+
+    def put(self, request, pk):
+        try:
+            transpeso = TransPeso.objects.get(pk=pk)
+            serializer = TransPesoSerializer(
+                transpeso, 
+                data={'estado': request.data.get('estado', True)}, 
+                partial=True
+            )
+            
+            if serializer.is_valid():
+                transpeso_actualizado = serializer.save()
+                return Response({
+                    'message': 'Estado del peso actualizado correctamente',
+                    'data': TransPesoSerializer(transpeso_actualizado).data
+                })
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        except TransPeso.DoesNotExist:
+            return Response(
+                {'error': 'Registro de peso no encontrado'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
 class PuntosPesaPlasticoView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -986,3 +967,40 @@ def listar_pedidos(request):
         pedidos = Pedido.objects.filter(usuario=request.user)
         serializer = PedidoSerializer(pedidos, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def obtener_puntos_usuario(request, email):
+    try:
+        # Verificar que el usuario solo pueda ver sus propios datos
+        if request.user.email != email and not request.user.is_staff:
+            return Response(
+                {'error': 'No tiene permiso para ver estos datos'}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        puntuacion = PuntuacioUsuario.objects.filter(emailusuario=email).first()
+        
+        if not puntuacion:
+            # Si no existe, crear un registro con valores iniciales
+            return Response({
+                'puntosplas': 0,
+                'puntospapel': 0,
+                'putnosvidrio': 0,
+                'puntoscarton': 0,
+                'puntoslatas': 0
+            })
+        
+        return Response({
+            'puntosplas': puntuacion.puntosplas,
+            'puntospapel': puntuacion.puntospapel,
+            'putnosvidrio': puntuacion.putnosvidrio,
+            'puntoscarton': puntuacion.puntoscarton,
+            'puntoslatas': puntuacion.puntoslatas
+        })
+
+    except Exception as e:
+        return Response(
+            {'error': f'Error al obtener puntos: {str(e)}'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
