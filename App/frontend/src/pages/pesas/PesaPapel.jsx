@@ -70,7 +70,7 @@ function PesaPapel() {
                 emailusuario: currentUser.email,
                 cantidadpeso: pesoKg,
                 estado: false,
-                tiporec: 16,
+                tiporec: 16
             };
 
             const response = await client.post(

@@ -290,7 +290,7 @@ class AdminUsuarios(viewsets.ViewSet):
         return Response(tipos, status=status.HTTP_200_OK)
 
 class UpdateUsuario(generics.UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated, IsAdministrador]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Usuario.objects.all()
     serializer_class = UsuarioUpdateSerializaer
 
@@ -655,6 +655,7 @@ class ComunaListView(APIView):
         return Response(serializer.data)
 	
 class CrearDireccionesViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Direcciones.objects.all()
     serializer_class = DireccionesSerializer
 
@@ -787,7 +788,7 @@ class TransPesoViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action in ['list', 'create', 'update', 'partial_update', 'destroy', 'aprobar']:
-            permission_classes = [IsAdminOrTrabajador]
+            permission_classes = [IsAuthenticated]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]

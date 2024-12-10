@@ -27,7 +27,7 @@ const getCsrfToken = () => {
 const VerPerfil = ({usuario}) => {
 
   const navigate = useNavigate(); 
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState('');
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);

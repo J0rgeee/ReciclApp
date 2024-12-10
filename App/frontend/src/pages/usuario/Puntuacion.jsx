@@ -77,7 +77,7 @@ const Puntuacion = ({ usuario }) => {
       <Card className="text-center mb-4 card-menu-user">
         <Card.Img 
           variant="top" 
-          src={usuario.foto} 
+          src='Usuarios/perfilH.png'
           style={{ 
             borderRadius: '50%', 
             width: '100px', 
@@ -172,7 +172,7 @@ const Puntuacion = ({ usuario }) => {
             <div className="recycling-item">
               <FaWineBottle className="material-icon glass" />
               <div>
-                <h5>{puntos.puntosvidrios || 0} puntos</h5>
+                <h5>{puntos.putnosvidrio || 0} puntos</h5>
                 <small>Vidrio</small>
               </div>
             </div>
@@ -192,7 +192,6 @@ const Puntuacion = ({ usuario }) => {
                 <small>Latas</small>
               </div>
             </div>
-            <h1>{total}</h1>
           </div>
       </Card>
 

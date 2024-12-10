@@ -13,12 +13,15 @@ const client = axios.create({
 
 function AgregarPv() {
   const [show, setShow] = useState(false);
+  const [comunas, setComunas] = useState([]);
   const [formData, setFormData] = useState({
     "nombre": '',
     "direccion": '',
     "nro": '',
     "estado": false,
-    "nomComuna": ''
+    "nomComuna": '',
+    "lat": 0,
+    "lng": 0
   });
 
   const resetForm = () => {
@@ -30,6 +33,17 @@ function AgregarPv() {
         "nomComuna": ''
     });
 };
+
+useEffect(() => {
+  // Obtener las comunas disponibles
+  client.get('/api/Comuna/comuna/')
+    .then(response => {
+      setComunas(response.data);
+    })
+    .catch(error => {
+      console.error("Error al obtener las comunas:", error);
+    });
+}, []);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -128,16 +142,23 @@ function AgregarPv() {
               />
             </Form.Group>
 
-            <Form.Group controlId="formNomComuna">
-              <Form.Label>Comuna</Form.Label>
-              <Form.Control
-                type="text"
-                name="nomComuna"
-                value={formData.nomComuna}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
+            <Form.Group controlId="formComuna">
+                <Form.Label>Comuna</Form.Label>
+                <Form.Control
+                  as="select"
+                  name="nomComuna"
+                  value={formData.nomComuna}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Seleccione una comuna</option>
+                  {comunas.map(comuna => (
+                    <option key={comuna.idComuna} value={comuna.idComuna}>
+                      {comuna.nombre}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
 
             <Button variant="primary" type="submit">
               Guardar

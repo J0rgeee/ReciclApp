@@ -70,7 +70,7 @@ function PesaVidrio () {
                 emailusuario: currentUser.email,
                 cantidadpeso: pesoKg,
                 estado: false,
-                tiporec: 12,
+                tiporec: 12
             };
 
             const response = await client.post(

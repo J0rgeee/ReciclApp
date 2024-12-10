@@ -75,7 +75,7 @@ function PesaCarton() {
               emailusuario: currentUser.email,
               cantidadpeso: pesoKg,
               estado: false,
-              tiporec: 2,
+              tiporec: 2
           };
 
           const response = await client.post(

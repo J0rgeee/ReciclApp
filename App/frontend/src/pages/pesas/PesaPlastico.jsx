@@ -74,7 +74,7 @@ function PesaPlastico() {
                 emailusuario: currentUser.email,
                 cantidadpeso: pesoKg,
                 estado: false,
-                tiporec: 3,
+                tiporec: 3
             };
 
             const response = await client.post(

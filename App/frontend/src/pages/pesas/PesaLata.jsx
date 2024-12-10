@@ -70,7 +70,7 @@ function PesaLata() {
                 emailusuario: currentUser.email,
                 cantidadpeso: pesoKg,
                 estado: false,
-                tiporec: 9,
+                tiporec: 9
             };
 
             const response = await client.post(
