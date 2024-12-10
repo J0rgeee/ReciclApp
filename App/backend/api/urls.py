@@ -67,7 +67,7 @@ urlpatterns = [
     path("Contacto/", include(router9.urls)),
     path("Producto/", include(router10.urls)),
     path('Dire/', include(router11.urls)),
-    path('', include(router12.urls)), #notificaciones
+    path('noti/', include(router12.urls)), #notificaciones
     path('pendientes/', include(router13.urls)),
     path('api/pedido/', views.crear_pedido, name='crear_pedido'),
     path('api/pedidos/', views.listar_pedidos, name='listar_pedidos'),
