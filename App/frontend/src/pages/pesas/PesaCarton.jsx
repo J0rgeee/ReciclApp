@@ -106,7 +106,7 @@ function PesaCarton() {
         <Container>
             <Row className="justify-content-center">
                 <Col md={8}>
-                    <h1 className="text-center mb-4">RECICLAJE DE PLÁSTICO</h1>
+                    <h1 className="text-center mb-4">RECICLAJE DE CARTÓN</h1>
                     <div className="text-center mb-4">
                         <h2>Peso Actual:</h2>
                         {error ? (
