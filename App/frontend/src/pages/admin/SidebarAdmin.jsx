@@ -20,7 +20,7 @@ const client = axios.create({
 });
 */
 
-const SidebarAdmin = ({  isVisible }) => {
+const SidebarAdmin = ({ isVisible }) => {
   const [activeDiv, setActiveDiv] = useState(0);
   const [usuario, setUsuario] = useState([]);
   const [showTransition, setShowTransition] = useState(false);
@@ -63,77 +63,72 @@ const SidebarAdmin = ({  isVisible }) => {
 
   return (
     <div className="d-flex-side">
-       <Nav
-      className="flex-column sidebar-admin"
-      activeKey={activeKey} // Vincula el estado al `activeKey`
-      onSelect={(selectedKey) => setActiveKey(selectedKey)} // Actualiza el estado al seleccionar
-    >
-      <img
-        variant="top"
-        src={usuario.img} // Reemplaza con la ruta de tu imagen
-        className="img"
-      />
-      <h4 className="text-center m-3">
-        Administrador <br />
-        {usuario.username || "Cargando..."}
-      </h4>
-      <Nav.Link eventKey="0" className="p-2">
-        <Button
-          className={`button ${activeKey === "0" ? "active" : ""}`}
-          onClick={() => handleButtonClick(0)}
-        >
-          Panel de control
-        </Button>
-      </Nav.Link>
-      <Nav.Link eventKey="1" className="p-2">
-        <Button
-          className={`button ${activeKey === "1" ? "active" : ""}`}
-          onClick={() => handleButtonClick(1)}
-        >
-          Administrar Usuarios
-        </Button>
-      </Nav.Link>
-      <Nav.Link eventKey="2" className="p-2">
-        <Button
-          className={`button ${activeKey === "2" ? "active" : ""}`}
-          onClick={() => handleButtonClick(2)}
-        >
-          Administrar Puntos Verdes
-        </Button>
-      </Nav.Link>
-      <Nav.Link eventKey="3" className="p-2">
-        <Button
-          className={`button ${activeKey === "3" ? "active" : ""}`}
-          onClick={() => handleButtonClick(3)}
-        >
-          Administrar Foro
-        </Button>
-      </Nav.Link>
-      <Nav.Link eventKey="4" className="p-2">
-        <Button
-          className={`button ${activeKey === "4" ? "active" : ""}`}
-          onClick={() => handleButtonClick(4)}
-        >
-          Administrar Retiros
-        </Button>
-      </Nav.Link>
-      <Nav.Link eventKey="5" className="p-2">
-        <Button
-          className={`button ${activeKey === "5" ? "active" : ""}`}
-          onClick={() => handleButtonClick(5)}
-        >
-          Administrar Tienda
-        </Button>
-      </Nav.Link>
-      <Nav.Link eventKey="6" className="p-2">
-        <Button
-          className={`button ${activeKey === "6" ? "active" : ""}`}
-          onClick={() => handleButtonClick(6)}
-        >
-          Administrar Pesos
-        </Button>
-      </Nav.Link>
-    </Nav>
+      <Nav
+        className="flex-column sidebar-admin"
+        activeKey={activeKey} // Vincula el estado al `activeKey`
+        onSelect={(selectedKey) => setActiveKey(selectedKey)} // Actualiza el estado al seleccionar
+      >
+        <h4 className="text-center m-3">
+          Administrador <br />
+          {usuario.username || "Cargando..."}
+        </h4>
+        <Nav.Link eventKey="0" className="p-2">
+          <Button
+            className={`button ${activeKey === "0" ? "active" : ""}`}
+            onClick={() => handleButtonClick(0)}
+          >
+            Panel de control
+          </Button>
+        </Nav.Link>
+        <Nav.Link eventKey="1" className="p-2">
+          <Button
+            className={`button ${activeKey === "1" ? "active" : ""}`}
+            onClick={() => handleButtonClick(1)}
+          >
+            Administrar Usuarios
+          </Button>
+        </Nav.Link>
+        <Nav.Link eventKey="2" className="p-2">
+          <Button
+            className={`button ${activeKey === "2" ? "active" : ""}`}
+            onClick={() => handleButtonClick(2)}
+          >
+            Administrar Puntos Verdes
+          </Button>
+        </Nav.Link>
+        <Nav.Link eventKey="3" className="p-2">
+          <Button
+            className={`button ${activeKey === "3" ? "active" : ""}`}
+            onClick={() => handleButtonClick(3)}
+          >
+            Administrar Foro
+          </Button>
+        </Nav.Link>
+        <Nav.Link eventKey="4" className="p-2">
+          <Button
+            className={`button ${activeKey === "4" ? "active" : ""}`}
+            onClick={() => handleButtonClick(4)}
+          >
+            Administrar Retiros
+          </Button>
+        </Nav.Link>
+        <Nav.Link eventKey="5" className="p-2">
+          <Button
+            className={`button ${activeKey === "5" ? "active" : ""}`}
+            onClick={() => handleButtonClick(5)}
+          >
+            Administrar Tienda
+          </Button>
+        </Nav.Link>
+        <Nav.Link eventKey="6" className="p-2">
+          <Button
+            className={`button ${activeKey === "6" ? "active" : ""}`}
+            onClick={() => handleButtonClick(6)}
+          >
+            Administrar Pesos
+          </Button>
+        </Nav.Link>
+      </Nav>
       <div className="content" key={activeDiv}>
         {showTransition && (
           <div className="transition-overlay">

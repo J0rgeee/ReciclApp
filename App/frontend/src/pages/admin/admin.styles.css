@@ -198,6 +198,7 @@
     height: calc(100vh - 113.22px);
     display: flex;
     background-color: #8FBC8F;
+    flex-wrap: nowrap;
 }
 
 html,

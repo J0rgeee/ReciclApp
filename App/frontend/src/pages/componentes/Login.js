@@ -131,7 +131,7 @@ export function Login() {
 
         const enviarNotificacion = async () => {
             try {
-                await axios.post('http://localhost:8000/api/notificaciones/', {
+                await axios.post('http://localhost:8000/api/noti/notificaciones/', {
                     email,
                     mensaje,
                 });
@@ -159,11 +159,11 @@ export function Login() {
                                     required
                                 />
                             </Form.Group>
-                            <Form.Group className="mb-3" controlId="usuario">
+                            <Form.Group className="mb-3" controlId="mensaje">
                                 <Form.Label>Mensaje</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Nombre de usuario"
+                                    placeholder="Mensaje"
                                     value={mensaje} onChange={e => setMensaje(e.target.value)}
                                     required
                                 />

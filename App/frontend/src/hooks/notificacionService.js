@@ -5,7 +5,7 @@ const getCsrfToken = () => {
     return cookie ? cookie.split('=')[1] : null;
   };
 
-const BASE_URL = 'http://localhost:8000/api/notificaciones';
+const BASE_URL = 'http://localhost:8000/api/noti/notificaciones';
 
 const notificacionService = {
   listar: async () => {
