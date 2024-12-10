@@ -4,7 +4,7 @@ from rest_framework.documentation import include_docs_urls # type: ignore
 from rest_framework.routers import DefaultRouter
 from api import views
 from . import views
-from .views import  PublicacionesPendientesView, TransPesoCreateAPIView
+from .views import  PublicacionesPendientesView, TransPesoCreateAPIView, TransPesoViewSet, AprobarPesoView
 
 
 router = routers.DefaultRouter()
@@ -46,13 +46,12 @@ router12.register(r'notificaciones', views.NotificacionViewSet, basename='notifi
 router13 = DefaultRouter()
 router13.register(r'', PublicacionesPendientesView, basename='pendientes')
 
-router_pesos = DefaultRouter()
-router_pesos.register(r'admin/pesos', views.AdminTransPesoViewSet, basename='admin-pesos')
-
 peso_viewset = views.TransPesoViewSet.as_view({'get': 'retrieve_puntuacion_usuario'})
 puntuacion_viewset = views.PuntuacionViewSet.as_view({'get': 'retrieve_puntuacion_usuario'})
 metas_viewset = views.MetasViewSet.as_view({'get': 'list_metas_usuario'})
 
+router14 = DefaultRouter()
+router14.register(r'transpeso', TransPesoViewSet, basename='transpeso')
 
 
 urlpatterns = [
@@ -72,8 +71,7 @@ urlpatterns = [
     path('pendientes/', include(router13.urls)),
     path('api/pedido/', views.crear_pedido, name='crear_pedido'),
     path('api/pedidos/', views.listar_pedidos, name='listar_pedidos'),
-    path('', include(router_pesos.urls)),
-
+    path('', include(router14.urls)),
     # path('read-serial/', views.ReadWeightDataView.as_view(), name='read_serial_data'),
 
      path('read-weight/', views.read_weight_data, name='read-weight'),
@@ -92,6 +90,8 @@ urlpatterns = [
     path('transpeso/', TransPesoCreateAPIView.as_view(), name='create-transpeso'),
     path('totalpesos/<str:email>/', peso_viewset, name='peso-usuario'),
     path('admin/stats/', views.admin_stats, name='admin-stats'),
+    path('transpeso/<int:pk>/aprobar/', AprobarPesoView.as_view(), name='aprobar-peso'),
+    path('puntos/<str:email>/', views.obtener_puntos_usuario, name='obtener-puntos'),
 
     # path('save-weight/', views.save_weight, name='save_weight'),
 
@@ -111,4 +111,5 @@ urlpatterns = [
     path('publicaciones/<int:idPublicacion>/comments/<int:idComentario>/', views.comentarios_publicacion, name='eliminar_comentario'),
 
     path('get-google-maps-api-key/', views.get_google_maps_api_key, name='get_google_maps_api_key'),
+
 ]   

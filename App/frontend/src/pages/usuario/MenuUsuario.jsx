@@ -38,10 +38,10 @@ const MenuUsuario = () => {
         
           <Nav justify variant="underline" className="navuser" activeKey={activeDiv} onSelect={(selectedKey) => setActiveDiv(selectedKey)}>
             <Nav.Item>
-              <Nav.Link eventKey="1">Perfil</Nav.Link>
+              <Nav.Link eventKey="1">Puntuación</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link eventKey="2">Puntuación</Nav.Link>
+              <Nav.Link eventKey="2">Perfil</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="3">Retiros</Nav.Link>
@@ -61,8 +61,8 @@ const MenuUsuario = () => {
           </Nav>
         </div>
         <div>
-          {activeDiv === "1" && <VerPerfil usuario={usuario}/>}
-          {activeDiv === "2" && <Puntuacion  usuario={usuario}/>}
+          {activeDiv === "2" && <VerPerfil usuario={usuario}/>}
+          {activeDiv === "1" && <Puntuacion  usuario={usuario}/>}
           {activeDiv === "3" && <div><Retiros/></div>}
           {activeDiv === "4" && <div><Metas email={usuario.email}/></div>}
           {activeDiv === "5" && <Direcciones email={usuario.email} />}
