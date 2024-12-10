@@ -48,6 +48,7 @@ const AgregarPublicacion = () => {
     formData.append('desc', desc);
     formData.append('emailUsuario', currentUser.email);
     formData.append('img', file);
+    console.log(formData);
 
     try {
       // Realizar la solicitud POST al backend
@@ -57,7 +58,7 @@ const AgregarPublicacion = () => {
         },
         withCredentials: true,  // Permitir envío de cookies de sesión
       });
-      
+
       setMensajeExito("Publicación agregada exitosamente");
       setDesc('');
       setFile('');

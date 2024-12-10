@@ -43,9 +43,11 @@ const MenuUsuario = () => {
             <Nav.Item>
               <Nav.Link eventKey="2">Perfil</Nav.Link>
             </Nav.Item>
+            {/* 
             <Nav.Item>
               <Nav.Link eventKey="3">Retiros</Nav.Link>
             </Nav.Item>
+            */}
             <Nav.Item>
               <Nav.Link eventKey="4">Metas</Nav.Link>
             </Nav.Item>
@@ -63,7 +65,7 @@ const MenuUsuario = () => {
         <div>
           {activeDiv === "2" && <VerPerfil usuario={usuario}/>}
           {activeDiv === "1" && <Puntuacion  usuario={usuario}/>}
-          {activeDiv === "3" && <div><Retiros/></div>}
+          {/*{activeDiv === "3" && <div><Retiros/></div>}*/}
           {activeDiv === "4" && <div><Metas email={usuario.email}/></div>}
           {activeDiv === "5" && <Direcciones email={usuario.email} />}
           {activeDiv === "6" && <HistorialCompras />}

@@ -94,13 +94,13 @@ export function BarraNavegacion() {
         <Navbar className='navbar-reci' expand="md">
           <Container className='p-2'>
             <Navbar.Brand>RecyBear</Navbar.Brand>
-            <Navbar.Brand><img src="/logo.png" className="logoreci" alt="logoReci" /></Navbar.Brand>
+            <Navbar.Brand><img src="/Designer (3).png" className="logoreci" alt="logoReci" /></Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
               <Link to='/'><Image src='/botones/b1.png' className="m-2 imgbr" /></Link>
               <Link to='/foro'><Image src='/botones/b2.png' className="m-2 imgbr" /></Link>
               <Link to='/tienda'><Image src='/botones/b3.png' className="m-2 imgbr" /></Link>
-              <Link to='/pesa'><Image src='/pesa.png' width="80" className="m-2 imgbr" /></Link>
+              <Link to='/pesa'><Image src='/botones/bpeso.png' width="80" className="m-2 imgbr" /></Link>
               <Button variant="danger" onClick={submitLogout}>
                 <img src='/botones/logout.svg' />
                 Cerrar sesión

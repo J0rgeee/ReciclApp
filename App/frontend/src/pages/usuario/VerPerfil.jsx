@@ -85,33 +85,37 @@ const VerPerfil = ({usuario}) => {
   const submitUpdate = async (e) => {
     e.preventDefault();
     try {
-      console.log(file);
-      await client.put(`/api/user/update/${usuario.email}/`, {
-        email : usuario.email,
-        username : formulario.username,
-        nombre : formulario.nombre,
-        apellido : formulario.apellido,
-        telefono : formulario.telefono,
-        foto : file.name
-      },{
+      const formData = new FormData();
+      
+      // Añadir los campos al FormData
+      formData.append('email', usuario.email);
+      formData.append('username', formulario.username);
+      formData.append('nombre', formulario.nombre);
+      formData.append('apellido', formulario.apellido);
+      formData.append('telefono', formulario.telefono);
+      
+      // Añadir la foto si existe
+      if (file) {
+        formData.append('foto', file);
+      }
+
+      await client.put(`/api/user/update/${usuario.email}/`, formData, {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-          'X-CSRFToken': csrftoken,  // Token CSRF desde la cookie
+          'X-CSRFToken': csrftoken,
         }
       });
+
       Swal.fire({
         icon: 'success',
         title: 'Éxito',
-        text: 'Usuario Actualizado con exito',
+        text: 'Usuario Actualizado con éxito',
       });
     } catch (error) {
       console.log({error});
-      console.log({formulario});
       Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error al Actualizar Usuario',
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al Actualizar Usuario',
       });
     }  
   };
@@ -181,7 +185,7 @@ const VerPerfil = ({usuario}) => {
             <Row lg={2} className='mb-3'>
               <Form.Group as={Col} controlId="formFoto">
                 <Form.Label>Foto</Form.Label>
-                <Form.Control type="file" disabled={isDisabled} placeholder={formulario.foto} onChange={handleFileChange} />
+                <Form.Control type="file" disabled={isDisabled} placeholder={file} onChange={handleFileChange} />
               </Form.Group>
               </Row>
             <Button variant="secondary" type='submit'>Guarda Cambios</Button>

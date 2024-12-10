@@ -21,6 +21,9 @@ from django.contrib.auth.hashers import make_password  # Para encriptar contrase
 from django.db.models import Sum
 import serial
 from .permissions import IsAdministrador, IsTrabajador, IsAdminOrTrabajador
+from django.core.files.storage import default_storage
+import os
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # Create your views here.
 class PtoVerdeView (viewsets.ModelViewSet):
@@ -290,9 +293,10 @@ class AdminUsuarios(viewsets.ViewSet):
         return Response(tipos, status=status.HTTP_200_OK)
 
 class UpdateUsuario(generics.UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = Usuario.objects.all()
     serializer_class = UsuarioUpdateSerializaer
+    parser_classes = (MultiPartParser, FormParser)
 
     def get_object(self):
         email = self.kwargs.get('email')
@@ -302,6 +306,40 @@ class UpdateUsuario(generics.UpdateAPIView):
             return Usuario.objects.get(email=email)
         except Usuario.DoesNotExist:
             self.permission_denied(self.request, message="Usuario no encontrado")
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = {}
+        
+        # Copiar datos simples
+        for key in request.data.keys():
+            if key != 'foto':
+                data[key] = request.data[key]
+        
+        # Manejar la imagen si se proporciona
+        if 'foto' in request.FILES:
+            foto = request.FILES['foto']
+            # Crear el nombre del archivo
+            ext = foto.name.split('.')[-1]
+            filename = f'user_{instance.email}.{ext}'
+            
+            # Crear la ruta completa
+            filepath = os.path.join('images', filename)
+            
+            # Guardar el archivo usando default_storage
+            with default_storage.open(filepath, 'wb+') as destination:
+                for chunk in foto.chunks():
+                    destination.write(chunk)
+            
+            # Añadir la ruta al diccionario de datos
+            data['foto'] = filepath
+        
+        # Actualizar usando el serializador
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class DesUsuario(generics.UpdateAPIView):
     #Desactivar o activar usuario (por el administrador)
